@@ -1,0 +1,42 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Messages"
+        app:iconSpaceReserved="false">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="Your Signature"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="reply"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="reply"
+            app:title="Default reply action"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Sync"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="Sync email periodically"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="Only download attachments when manually requested"
+            app:summaryOn="Automatically download attachments for incoming emails
+    "
+            app:title="Download incoming attachments"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
