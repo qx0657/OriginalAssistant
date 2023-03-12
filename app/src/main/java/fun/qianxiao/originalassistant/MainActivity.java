@@ -1,10 +1,13 @@
 package fun.qianxiao.originalassistant;
 
 import android.content.Intent;
+import android.view.View;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 
@@ -38,7 +41,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                KeyboardUtils.hideSoftInput(getWindow());
             }
 
             @Override
@@ -60,6 +63,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             @Override
             public void onTabSelect(int position) {
                 if (binding.viewPager.getCurrentItem() != position) {
+                    KeyboardUtils.hideSoftInput(getWindow());
                     binding.viewPager.setCurrentItem(position);
                 }
             }
@@ -83,7 +87,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
                 @Override
                 public void onRefuse() {
-                    requestPermission();
+                    AppUtils.exitApp();
                 }
 
                 private void requestPermission() {
@@ -96,10 +100,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
 
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new OriginalFragment());
-        fragments.add(new TestFragment());
-        fragments.add(new FindFragment());
-        fragments.add(new MeFragment());
+        fragments.add(new OriginalFragment<MainActivity>());
+        fragments.add(new TestFragment<MainActivity>());
+        fragments.add(new FindFragment<MainActivity>());
+        fragments.add(new MeFragment<MainActivity>());
         MyPageAdapter adapter = new MyPageAdapter(getSupportFragmentManager(), fragments, PAGES_TAB_TEXTS);
         binding.viewPager.setAdapter(adapter);
         tabEntities.clear();
@@ -130,5 +134,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private void startActivity(Class<?> ac) {
         this.startActivity(new Intent(context, ac));
+    }
+
+    public void setTabNavigationHide(boolean hide) {
+        if (hide) {
+            binding.tabLayout.setVisibility(View.INVISIBLE);
+        } else {
+            binding.tabLayout.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -4,4 +4,7 @@
     <dimen name="text_margin">16dp</dimen>
     <!-- 默认背景圆角大小-->
     <dimen name="default_bg_radius">10dp</dimen>
+
+    <dimen name="original_f_edit_text_padding_top">30dp</dimen>
+    <dimen name="original_f_radio_button_padding_left">3dp</dimen>
 </resources>

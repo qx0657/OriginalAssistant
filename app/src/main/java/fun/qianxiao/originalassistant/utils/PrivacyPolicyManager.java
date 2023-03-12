@@ -42,7 +42,7 @@ public class PrivacyPolicyManager {
         String privacyPolicy = "本应用非常重视用户隐私政策并严格遵守相关的法律规定。" +
                 "本app尊重并保护所有使用服务用户的个人隐私权。" +
                 "为了给您提供更准确、更优质的服务，本应用会按照本《隐私权政策》的规定使用和披露您的个人信息。" +
-                "本应用会请求使用位置权限、手机信息权限、存储权限等以更好的为您提供服务。";
+                "本应用会请求使用存储权限等以更好的为您提供服务。";
         style.append(privacyPolicy);
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override

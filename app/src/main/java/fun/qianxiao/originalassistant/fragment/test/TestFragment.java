@@ -1,5 +1,6 @@
 package fun.qianxiao.originalassistant.fragment.test;
 
+import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.databinding.FragmentTestBinding;
 
@@ -9,7 +10,7 @@ import fun.qianxiao.originalassistant.databinding.FragmentTestBinding;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class TestFragment extends BaseFragment<FragmentTestBinding> {
+public class TestFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentTestBinding, A> {
 
     @Override
     protected void initListener() {

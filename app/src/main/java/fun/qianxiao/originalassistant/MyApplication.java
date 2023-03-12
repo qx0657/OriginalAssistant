@@ -8,8 +8,6 @@ import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
 import com.umeng.commonsdk.UMConfigure;
 
-import fun.qianxiao.originalassistant.BuildConfig;
-
 /**
  * MyApplication
  *

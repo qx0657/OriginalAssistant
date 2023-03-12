@@ -1,5 +1,6 @@
 package fun.qianxiao.originalassistant.base;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +24,9 @@ import java.util.Objects;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
+public abstract class BaseFragment<T extends ViewBinding, A extends BaseActivity<?>> extends Fragment {
     protected T binding;
+    protected A activity;
 
     @Nullable
     @Override
@@ -34,6 +36,13 @@ public abstract class BaseFragment<T extends ViewBinding> extends Fragment {
         initListener();
         initData();
         return binding.getRoot();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activity = (A) requireActivity();
     }
 
     /**

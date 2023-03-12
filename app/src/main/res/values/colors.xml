@@ -11,6 +11,8 @@
     <color name="SkyBlue">#87CEEB</color>
     <!--深天蓝-->
     <color name="DeepSkyBlue">#00BFFF</color>
+    <!--淡蓝色-->
+    <color name="LightSkyBlue">#87CEFA</color>
     <!--深灰-->
     <color name="DeepGray">#121212</color>
 

@@ -34,7 +34,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 
     private void enterApp() {
         startActivity(new Intent(context, MainActivity.class));
-        ((Activity)context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
     }
 

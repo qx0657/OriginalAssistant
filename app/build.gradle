@@ -72,8 +72,8 @@ dependencies {
     // FlycoTabLayout https://github.com/H07000223/FlycoTabLayout
     implementation 'io.github.h07000223:flycoTabLayout:3.0.0'
 
-    // FloatingActionButton https://github.com/Clans/FloatingActionButton
-    implementation 'com.github.clans:fab:1.6.4'
+    // FloatingActionMenu https://github.com/zendesk/android-floating-action-button
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 
     // sqlite utils https://github.com/pardom-zz/ActiveAndroid
     //implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'

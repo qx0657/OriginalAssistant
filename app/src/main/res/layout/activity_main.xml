@@ -31,6 +31,7 @@
         app:tl_indicator_height="3dp"
         app:tl_indicator_width="10dp"
         app:tl_indicator_gravity="BOTTOM"
-        app:tl_textsize="14sp"/>
+        app:tl_textsize="14sp"
+        app:tl_textBold="BOTH"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

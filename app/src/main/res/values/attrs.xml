@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="DayColorPrimaryNightWhite" format="color" />
+    <attr name="DayWhiteNightBlack" format="color" />
+
+    <attr name="EditTextCursorColor" format="color" />
+    <attr name="FloatingActionButtonLabelBgColor" format="color" />
+    <attr name="FloatingActionButtonNormalColor" format="color" />
+    <attr name="FloatingActionButtonPressedColor" format="color" />
+    <attr name="RippleTransparentColor" format="color" />
+</resources>

@@ -9,4 +9,15 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="special_instructions">
+        <item></item>
+        <item>进入游戏赠送大量货币</item>
+        <item>无条件使用货币不减反加</item>
+        <item>足够货币下使用不减反加</item>
+        <item>飞行模式下购买时出现支付页面返回即可购买成功</item>
+        <item>点击购买直接成功</item>
+        <item>解锁游戏所有关卡</item>
+        <item>解锁游戏所有物品</item>
+    </string-array>
 </resources>
