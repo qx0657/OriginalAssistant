@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="180dp"
     android:layout_height="180dp"
-    android:background="@drawable/bg_default_radius_dialog"
+    android:background="@drawable/bg_radius_loading_dialog"
     android:gravity="center"
     android:layout_gravity="center"
     android:orientation="vertical"

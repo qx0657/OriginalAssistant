@@ -20,6 +20,6 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
 
     @Override
     protected void initData() {
-        binding.textView.setText("开发中");
+
     }
 }
