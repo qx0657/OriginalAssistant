@@ -41,6 +41,8 @@ public class AppListTool {
                 PackageInfo packageInfo = packageManager.getPackageInfo(resolveInfo.activityInfo.packageName, PackageManager.GET_ATTRIBUTIONS);
                 appInfo.setAppName(resolveInfo.loadLabel(packageManager));
                 appInfo.setPackageName(resolveInfo.activityInfo.packageName);
+                appInfo.setVersionName(packageInfo.versionName);
+                appInfo.setVersionCode(packageInfo.versionCode);
                 appInfo.setIcon(resolveInfo.loadIcon(packageManager));
                 appInfo.setLastUpdateTime(packageInfo.lastUpdateTime);
                 appInfoList.add(appInfo);

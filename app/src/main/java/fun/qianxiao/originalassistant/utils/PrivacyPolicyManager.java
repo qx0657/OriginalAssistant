@@ -40,19 +40,21 @@ public class PrivacyPolicyManager {
     public void confrim(OnPrivacyPolicyListener onPrivacyPolicyListener) {
         SpannableStringBuilder style = new SpannableStringBuilder();
         String privacyPolicy = "本应用非常重视用户隐私政策并严格遵守相关的法律规定。" +
-                "本app尊重并保护所有使用服务用户的个人隐私权。" +
-                "为了给您提供更准确、更优质的服务，本应用会按照本《隐私权政策》的规定使用和披露您的个人信息。" +
+                "本App尊重并保护所有使用服务用户的个人隐私权。" +
+                "为了给您提供更优质的服务，本应用会按照本《隐私权政策》的规定使用和披露您的个人信息。" +
                 "本应用会请求使用存储权限等以更好的为您提供服务。";
         style.append(privacyPolicy);
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View widget) {
-                ToastUtils.showShort("跳转隐私政策界面");
-            }
-        };
         int start = privacyPolicy.indexOf("《隐私权政策》");
-        int end = start + "《隐私权政策》".length();
-        style.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (start != -1) {
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    ToastUtils.showShort("跳转隐私政策界面");
+                }
+            };
+            int end = start + "《隐私权政策》".length();
+            style.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
 
         ConfirmPopupView confirmPopupView = new XPopup.Builder(getContext())
                 .dismissOnBackPressed(false)

@@ -23,6 +23,7 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
     public final String TAG = "BaseAdapter";
     protected List<BEAN> dataList;
     protected ItemClickListener<BEAN> itemClickListener;
+    protected ItemLongClickListener<BEAN> itemLongClickListener;
 
     public BaseAdapter(List<BEAN> dataList) {
         this.dataList = dataList;
@@ -34,11 +35,24 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
          *
          * @param bean item_data
          */
-        void onItemClick(B bean);
+        void onItemClick(View v, B bean);
+    }
+
+    public interface ItemLongClickListener<B> {
+        /**
+         * 条目长按事件
+         *
+         * @param bean item_data
+         */
+        void onItemLongClick(View v, B bean);
     }
 
     public void setItemClickListener(ItemClickListener<BEAN> itemClickListener) {
         this.itemClickListener = itemClickListener;
+    }
+
+    public void setItemLongClickListener(ItemLongClickListener<BEAN> itemLongClickListener) {
+        this.itemLongClickListener = itemLongClickListener;
     }
 
     @SuppressWarnings("unchecked")

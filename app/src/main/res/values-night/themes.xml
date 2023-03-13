@@ -15,6 +15,7 @@
 
         <item name="DayColorPrimaryNightWhite">@color/white</item>
         <item name="DayWhiteNightBlack">@color/black</item>
+        <item name="DayWhiteNightDeepGray">@color/DeepGray</item>
 
         <item name="EditTextCursorColor">@color/white</item>
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>

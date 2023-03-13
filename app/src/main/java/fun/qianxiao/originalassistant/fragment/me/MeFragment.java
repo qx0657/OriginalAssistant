@@ -2,15 +2,16 @@ package fun.qianxiao.originalassistant.fragment.me;
 
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
+import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
 import fun.qianxiao.originalassistant.databinding.FragmentTestBinding;
 
 /**
- * TODO
+ * MeFragment
  *
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentTestBinding, A> {
+public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentMeBinding, A> {
 
     @Override
     protected void initListener() {

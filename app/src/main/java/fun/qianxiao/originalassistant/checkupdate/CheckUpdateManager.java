@@ -85,9 +85,9 @@ public final class CheckUpdateManager implements ILoadingView {
                             JSONObject jsonObject = new JSONObject(data);
                             if (jsonObject.getInt("newversioncode") > context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode) {
                                 //发现新版本
-                                String newversionname = jsonObject.getString("newversionname");
-                                String newapkmd5 = jsonObject.getString("newapkmd5");
-                                String downloadurl = jsonObject.getString("downloadurl");
+                                String newversionname = jsonObject.optString("newversionname");
+                                String newapkmd5 = jsonObject.optString("newapkmd5");
+                                String downloadurl = jsonObject.optString("downloadurl");
                                 boolean isforceupdate = jsonObject.getInt("isforceupdate") == 1;
 
                                 File mApkFile = new File(PathUtils.getExternalAppDownloadPath(), AppUtils.getAppName() + ".v." + newversionname + ".apk");
@@ -99,7 +99,7 @@ public final class CheckUpdateManager implements ILoadingView {
                                 }
                                 AlertDialog.Builder builder = new AlertDialog.Builder(context)
                                         .setTitle("发现新版本(V." + newversionname + ")")
-                                        .setMessage(jsonObject.getString("updatacontent"))
+                                        .setMessage(jsonObject.optString("updatacontent"))
                                         .setCancelable(false)
                                         //点击事件在下面设置 防止点击后dialog消失
                                         .setPositiveButton(isApkFullyDownloaded ? "立即安装" : "立即更新", null);

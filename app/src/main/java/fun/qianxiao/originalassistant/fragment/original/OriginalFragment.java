@@ -29,6 +29,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import fun.qianxiao.originalassistant.MainActivity;
@@ -41,7 +42,7 @@ import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
 
 /**
- * TODO
+ * OriginalFragment
  *
  * @Author QianXiao
  * @Date 2023/3/10
@@ -64,7 +65,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 binding.famOriginal.setVisibility(View.GONE);
             } else {
                 ((MainActivity) activity).setTabNavigationHide(false);
-                binding.famOriginal.setVisibility(View.VISIBLE);
+                ThreadUtils.runOnUiThreadDelayed(() -> binding.famOriginal.setVisibility(View.VISIBLE), 50);
             }
         });
     }
@@ -76,6 +77,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
                     String[] s = getResources().getStringArray(R.array.special_instructions);
+                    /*
+                    Use tag of view to save the added to prevent repeated addition
+                     */
                     Object tag = binding.etSpecialInstructions.getTag();
                     String tag_s = "";
                     if (tag != null) {
@@ -161,6 +165,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 AppCompatRadioButton radioButton = (AppCompatRadioButton) viewGroup.getChildAt(i);
                 if (radioButton.getId() != buttonView.getId() && isChecked) {
+                    /*
+                    Use tag of view to save index and them use PostInfo.AppLanguage.values()[i] to convert to enum.
+                     */
                     binding.llCategoryRadioButtonGroup.setTag(i);
                     radioButton.setChecked(false);
                 }
@@ -174,7 +181,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private void setFloatingActionButtonListener() {
         binding.fabSelectApp.setOnClickListener(view -> {
             binding.famOriginal.collapse();
-            selectApp();
+            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
         });
         binding.fabCleanContent.setOnClickListener(view -> {
             binding.famOriginal.collapse();

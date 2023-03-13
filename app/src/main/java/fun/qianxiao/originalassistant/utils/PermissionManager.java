@@ -2,6 +2,9 @@ package fun.qianxiao.originalassistant.utils;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
@@ -12,19 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO
+ * PermissionManager
  *
  * @Author QianXiao
  * @Date 2023/3/10
  */
 public class PermissionManager {
-    private Context context;
     private int hasReRequestTimes = 0;
     private final int MAX_TRY_REQUEST_TIMES = 3;
 
-    public PermissionManager(Context context) {
-        this.context = context;
-    }
+    private static PermissionManager instance;
 
     private final String[] NEEDED_PERMISSIONS = new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -36,7 +36,36 @@ public class PermissionManager {
             //Manifest.permission.ACCESS_COARSE_LOCATION,
     };
 
+    private PermissionManager() {
+
+    }
+
+    public static PermissionManager getInstance() {
+        if (instance == null) {
+            synchronized (PermissionManager.class) {
+                if (instance == null) {
+                    instance = new PermissionManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void requestReadWritePermission() {
+        PermissionUtils.permission(new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        }).request();
+    }
+
+    public void requestManageExternalStoragePermission(Context context) {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+        intent.setData(Uri.parse("package:" + context.getPackageName()));
+        context.startActivity(intent);
+    }
+
     public void requestNeeded() {
+        hasReRequestTimes = 0;
         PermissionUtils.permission(NEEDED_PERMISSIONS)
                 .callback(new PermissionUtils.FullCallback() {
                     @Override
@@ -57,10 +86,6 @@ public class PermissionManager {
                 })
                 .rationale((activity, shouldRequest) -> shouldRequest.again(true))
                 .request();
-    }
-
-    private Context getContext() {
-        return context;
     }
 
     public boolean hasAllPermission() {

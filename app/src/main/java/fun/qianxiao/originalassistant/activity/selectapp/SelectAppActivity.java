@@ -1,24 +1,47 @@
 package fun.qianxiao.originalassistant.activity.selectapp;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.PointF;
+import android.os.Build;
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.impl.AttachListPopupView;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 
+import java.io.File;
 import java.util.List;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.adapter.AppInfoAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
+import fun.qianxiao.originalassistant.base.BaseAdapter;
 import fun.qianxiao.originalassistant.bean.AppInfo;
+import fun.qianxiao.originalassistant.config.AppConfig;
+import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivitySelectAppBinding;
 import fun.qianxiao.originalassistant.utils.AppListTool;
+import fun.qianxiao.originalassistant.utils.PermissionManager;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -42,6 +65,68 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
 
     private MyLoadingDialog loadingDialog;
 
+    private float touchX;
+    private float touchY;
+
+    private final BaseAdapter.ItemClickListener<AppInfo> itemClickListener = (v, bean) -> {
+        Intent data = new Intent();
+        data.putExtra(KEY_APP_NAME, bean.getAppName());
+        data.putExtra(KEY_APP_PACKAGE_NAME, bean.getPackageName());
+        SelectAppActivity.this.setResult(RESULT_CODE_SELECT_APP_OK, data);
+        SelectAppActivity.this.finish();
+    };
+
+    private final BaseAdapter.ItemLongClickListener<AppInfo> itemLongClickListener = (v, bean) -> {
+        v.getParent().requestDisallowInterceptTouchEvent(true);
+        AttachListPopupView attachListPopupView = new XPopup.Builder(context)
+                .asAttachList(new String[]{bean.getAppName().toString(), "提取安装包"}, null,
+                        new OnSelectListener() {
+                            @Override
+                            public void onSelect(int position, String text) {
+                                if (position == 1) {
+                                    exportApk(bean);
+                                }
+                            }
+                        });
+        attachListPopupView.popupInfo.touchPoint = new PointF(touchX, touchY);
+        attachListPopupView.show();
+    };
+
+    private void exportApkInner(AppInfo bean) {
+        String appPath = AppUtils.getAppPath(bean.getPackageName());
+        String storePath = SPUtils.getInstance().getString(SPConstants.KEY_APK_EXPORT_DIR, AppConfig.DEFAULT_APK_EXPORT_DIR);
+        if (!storePath.endsWith(File.separator)) {
+            storePath = storePath + File.separator;
+        }
+        String outPath = storePath + bean.getPackageName() + "_" + bean.getVersionName() + "_" + bean.getVersionCode() + ".apk";
+        LogUtils.i(appPath, outPath);
+        if (FileUtils.copy(appPath, outPath)) {
+            ToastUtils.showShort("Apk导出成功");
+        } else {
+            LogUtils.e("Apk导出失败");
+            ToastUtils.showShort("Apk导出失败");
+        }
+    }
+
+    private void exportApk(AppInfo bean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                exportApkInner(bean);
+            } else {
+                ToastUtils.showShort("请给与" + AppUtils.getAppName() + "所有文件权限");
+                PermissionManager.getInstance().requestManageExternalStoragePermission(context);
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                exportApkInner(bean);
+            } else {
+                ToastUtils.showShort("请给与" + AppUtils.getAppName() + "文件读写权限");
+                PermissionManager.getInstance().requestReadWritePermission();
+            }
+        }
+    }
+
     @Override
     protected void initListener() {
 
@@ -56,6 +141,23 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         setTitle("选择游戏");
         binding.rvAppList.setLayoutManager(new LinearLayoutManager(context));
         getAppList();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN || ev.getAction() == MotionEvent.ACTION_MOVE) {
+            touchX = ev.getRawX();
+            touchY = ev.getRawY();
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private void initRecycleViewAnim() {
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.app_info_item_anim);
+        LayoutAnimationController layoutAnimationController = new LayoutAnimationController(animation);
+        layoutAnimationController.setOrder(LayoutAnimationController.ORDER_NORMAL);
+        layoutAnimationController.setDelay(0.1f);
+        binding.rvAppList.setLayoutAnimation(layoutAnimationController);
     }
 
     private void getAppList() {
@@ -73,13 +175,13 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull List<AppInfo> s) {
-                        if (!s.isEmpty()) {
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull List<AppInfo> appInfoList) {
+                        if (!appInfoList.isEmpty()) {
                             final long endTime = TimeUtils.getNowMills();
-                            long spendTIme = endTime - startTime;
-                            LogUtils.i("getAppList size " + s.size() + " spend time: " + spendTIme + "ms");
+                            long spendTime = endTime - startTime;
+                            LogUtils.i("getAppList size " + appInfoList.size() + " spend time: " + spendTime + "ms");
 
-                            showAppList(s);
+                            showAppList(appInfoList);
                         } else {
                             ToastUtils.showShort("获取App列表为空");
                         }
@@ -99,15 +201,11 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     }
 
     private void showAppList(List<AppInfo> appInfoList) {
-        AppInfoAdapter adapter = new AppInfoAdapter(appInfoList);
-        adapter.setItemClickListener(bean -> {
-            Intent data = new Intent();
-            data.putExtra(KEY_APP_NAME, bean.getAppName());
-            data.putExtra(KEY_APP_PACKAGE_NAME, bean.getPackageName());
-            setResult(RESULT_CODE_SELECT_APP_OK, data);
-            finish();
-        });
+        AppInfoAdapter adapter = new AppInfoAdapter(context, appInfoList);
+        adapter.setItemClickListener(itemClickListener);
+        adapter.setItemLongClickListener(itemLongClickListener);
         binding.rvAppList.setAdapter(adapter);
+        initRecycleViewAnim();
     }
 
     @Override

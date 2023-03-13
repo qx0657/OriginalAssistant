@@ -91,9 +91,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 }
 
                 private void requestPermission() {
-                    PermissionManager permissionManager = new PermissionManager(context);
-                    if (!permissionManager.hasAllPermission()) {
-                        permissionManager.requestNeeded();
+                    if (!PermissionManager.getInstance().hasAllPermission()) {
+                        PermissionManager.getInstance().requestNeeded();
                     }
                 }
             });

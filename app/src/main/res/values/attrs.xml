@@ -2,6 +2,7 @@
 <resources>
     <attr name="DayColorPrimaryNightWhite" format="color" />
     <attr name="DayWhiteNightBlack" format="color" />
+    <attr name="DayWhiteNightDeepGray" format="color" />
 
     <attr name="EditTextCursorColor" format="color" />
     <attr name="FloatingActionButtonLabelBgColor" format="color" />

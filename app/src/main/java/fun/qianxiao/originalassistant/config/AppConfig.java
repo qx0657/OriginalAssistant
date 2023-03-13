@@ -1,5 +1,9 @@
 package fun.qianxiao.originalassistant.config;
 
+import com.blankj.utilcode.util.PathUtils;
+
+import java.io.File;
+
 /**
  * TODO
  *
@@ -7,11 +11,29 @@ package fun.qianxiao.originalassistant.config;
  * @Date 2023/3/10
  */
 public class AppConfig {
-    //域名
+    /**
+     * App英文名
+     */
+    public static final String APP_NAME_EN = "OriginalAssistant";
+    /**
+     * 域名
+     */
     public static final String APP_HOST = "http://qianxiao.fun";
-    //检查更新配置
-    public static final String CHECKUPDATE_URL = "http://qianxiao.fun/app/commonApp/updateConfig.php";
-
+    /**
+     * 检查更新配置
+     */
+    public static final String CHECKUPDATE_URL = "http://qianxiao.fun/app/original_assistant/update_config.php";
+    /**
+     * 隐私政策链接
+     */
+    public static final String PRIVACY_POLICY_URL = "http://qianxiao.fun/app/original_assistant/privacy_policy.html";
+    /**
+     * 默认Apk导出目录
+     */
+    public static final String DEFAULT_APK_EXPORT_DIR = PathUtils.getExternalStoragePath() + File.separator + APP_NAME_EN;
+    /**
+     * 3楼App包名列表
+     */
     public static final String[] HULUXIA_APP_PACKAGE_NAME = new String[]{
             "com.huati",
             "com.huluxia.gametools"
