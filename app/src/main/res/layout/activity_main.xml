@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fun.qianxiao.originalassistant.MainActivity">
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
@@ -12,8 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tabLayout"
-        />
+        app:layout_constraintBottom_toTopOf="@id/tabLayout" />
 
     <com.flyco.tablayout.CommonTabLayout
         android:id="@+id/tabLayout"
@@ -32,6 +32,6 @@
         app:tl_indicator_width="10dp"
         app:tl_indicator_gravity="BOTTOM"
         app:tl_textsize="14sp"
-        app:tl_textBold="BOTH"/>
+        app:tl_textBold="BOTH" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

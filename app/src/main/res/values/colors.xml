@@ -16,4 +16,7 @@
     <!--深灰-->
     <color name="DeepGray">#121212</color>
 
+    <color name="black91">#222222</color>
+    <color name="black87">#333333</color>
+
 </resources>

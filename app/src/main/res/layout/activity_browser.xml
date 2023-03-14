@@ -2,10 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -13,6 +15,7 @@
         android:layout_height="3dip"
         android:progressDrawable="@drawable/bg_progress_browser"
         android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/ll_error_browser"
         android:layout_width="match_parent"
@@ -20,17 +23,19 @@
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone">
+
         <TextView
             android:id="@+id/tv_error_code_browser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="404"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/tv_error_description_browser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="找不到"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </LinearLayout>
 </RelativeLayout>

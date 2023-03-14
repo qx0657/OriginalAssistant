@@ -3,22 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" >
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="20dp">
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏名称"
                 app:hintTextColor="?attr/DayColorPrimaryNightWhite"
                 android:layout_marginTop="10dp">
+
                 <EditText
                     android:id="@+id/et_game_name"
                     android:layout_width="match_parent"
@@ -28,13 +31,15 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏包名"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_game_package_name"
                     android:layout_width="match_parent"
@@ -45,13 +50,15 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏大小"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_game_size"
                     android:layout_width="match_parent"
@@ -61,13 +68,15 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏版本"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_game_version"
                     android:layout_width="match_parent"
@@ -77,13 +86,15 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏版本值"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_game_version_code"
                     android:layout_width="match_parent"
@@ -94,8 +105,9 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <LinearLayout
                 android:id="@+id/ll_category_radio_button_group"
                 android:layout_width="match_parent"
@@ -103,7 +115,7 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:tag="0" >
+                android:tag="0">
 
                 <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/rb_game_language_chinese_game"
@@ -135,20 +147,23 @@
                     android:button="@drawable/radiobutton_selector" />
 
             </LinearLayout>
+
             <Spinner
                 android:id="@+id/spinner_special_instructions_select"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:entries="@array/special_instructions"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_special_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="特殊说明"
                 app:endIconMode="clear_text"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_special_instructions"
                     android:layout_width="match_parent"
@@ -158,11 +173,13 @@
                     android:maxLines="3"
                     android:paddingStart="2dp" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="游戏介绍"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite" >
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
                 <EditText
                     android:id="@+id/et_game_introduction"
                     android:layout_width="match_parent"
@@ -174,12 +191,14 @@
                     android:minLines="10"
                     android:paddingStart="2dp" />
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="下载链接"
                 app:hintTextColor="?attr/DayColorPrimaryNightWhite"
                 android:layout_marginBottom="52dp">
+
                 <EditText
                     android:id="@+id/et_download_url"
                     android:layout_width="match_parent"
@@ -189,10 +208,11 @@
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
-                    android:imeOptions="actionDone"/>
+                    android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </ScrollView>
+
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fam_original"
         android:layout_width="wrap_content"
@@ -206,7 +226,7 @@
         app:fab_addButtonSize="mini"
         app:fab_expandDirection="up"
         app:fab_labelsPosition="left"
-        app:fab_labelStyle="@style/fab_menu_labels_style" >
+        app:fab_labelStyle="@style/fab_menu_labels_style">
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_select_app"
@@ -216,7 +236,8 @@
             app:fab_colorPressed="?attr/FloatingActionButtonPressedColor"
             app:fab_icon="@drawable/ic_svg_game"
             app:fab_title="选择"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
+
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_clean_content"
             android:layout_width="wrap_content"
@@ -225,7 +246,8 @@
             app:fab_colorPressed="?attr/FloatingActionButtonPressedColor"
             app:fab_icon="@drawable/ic_svg_clean"
             app:fab_title="清空"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
+
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_copy_content"
             android:layout_width="wrap_content"
@@ -234,7 +256,8 @@
             app:fab_colorPressed="?attr/FloatingActionButtonPressedColor"
             app:fab_icon="@drawable/ic_svg_copy"
             app:fab_title="复制"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
+
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_goto_app"
             android:layout_width="wrap_content"
@@ -243,6 +266,6 @@
             app:fab_colorPressed="?attr/FloatingActionButtonPressedColor"
             app:fab_icon="@drawable/ic_svg_hulu"
             app:fab_title="跳转"
-            app:fab_size="mini"/>
+            app:fab_size="mini" />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>

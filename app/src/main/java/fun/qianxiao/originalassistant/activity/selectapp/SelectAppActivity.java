@@ -101,7 +101,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         String outPath = storePath + bean.getPackageName() + "_" + bean.getVersionName() + "_" + bean.getVersionCode() + ".apk";
         LogUtils.i(appPath, outPath);
         if (FileUtils.copy(appPath, outPath)) {
-            ToastUtils.showShort("Apk导出成功");
+            ToastUtils.showShort("Apk导出成功: " + outPath);
         } else {
             LogUtils.e("Apk导出失败");
             ToastUtils.showShort("Apk导出失败");

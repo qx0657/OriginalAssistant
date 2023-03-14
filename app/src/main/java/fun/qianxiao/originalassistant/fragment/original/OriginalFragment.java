@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -146,7 +147,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     @SuppressLint("ClickableViewAccessibility")
     private void setScrollEditTextListener() {
         View.OnTouchListener editTextScrollListener = (view, motionEvent) -> {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && view.hasFocus()) {
+            EditText editText = (EditText) view;
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && view.hasFocus() &&
+                    editText.getLineCount() > editText.getMaxLines()) {
                 view.getParent().requestDisallowInterceptTouchEvent(true);
             } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 view.getParent().requestDisallowInterceptTouchEvent(false);

@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="DayColorPrimaryNightWhite" format="color" />
+    <attr name="DayColorPrimaryNightBlack80" format="color" />
+    <attr name="DayColorPrimaryNightBlack80Pressed" format="color" />
+    <attr name="DayWhiteNightColorPrimaryDay" format="color" />
     <attr name="DayWhiteNightBlack" format="color" />
+    <attr name="DayDefaultTextViewNightWhite" format="color" />
+    <attr name="DayDefaultTextViewNightWhitePressed" format="color" />
     <attr name="DayWhiteNightDeepGray" format="color" />
 
     <attr name="EditTextCursorColor" format="color" />
@@ -9,4 +14,7 @@
     <attr name="FloatingActionButtonNormalColor" format="color" />
     <attr name="FloatingActionButtonPressedColor" format="color" />
     <attr name="RippleTransparentColor" format="color" />
+    <attr name="IconItemMe" format="color" />
+    <attr name="DefaultTextViewColor" format="color" />
+    <attr name="DefaultTextViewColorPressed" format="color" />
 </resources>

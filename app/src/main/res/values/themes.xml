@@ -14,7 +14,12 @@
         <!-- Customize your theme here. -->
 
         <item name="DayColorPrimaryNightWhite">?attr/colorPrimary</item>
+        <item name="DayColorPrimaryNightBlack80">?attr/colorPrimary</item>
+        <item name="DayColorPrimaryNightBlack80Pressed">@color/LightSkyBlue</item>
+        <item name="DayWhiteNightColorPrimaryDay">@color/white</item>
         <item name="DayWhiteNightBlack">@color/white</item>
+        <item name="DayDefaultTextViewNightWhite">#606060</item>
+        <item name="DayDefaultTextViewNightWhitePressed">#7C7C7C</item>
         <item name="DayWhiteNightDeepGray">@color/white</item>
         
         <item name="EditTextCursorColor">@color/DeepSkyBlue</item>
@@ -24,6 +29,10 @@
         <item name="FloatingActionButtonNormalColor">?attr/colorPrimary</item>
         <item name="FloatingActionButtonPressedColor">?attr/colorSecondary</item>
         <item name="RippleTransparentColor">#30808080</item>
+        <item name="IconItemMe">#606060</item>
+        <item name="DefaultTextViewColor">#606060</item>
+        <item name="DefaultTextViewColorPressed">#919191</item>
+        <item name="android:textColor">@color/color_default_textview</item>
     </style>
     <style name="Theme.CommonApp.NoActionBar">
         <item name="windowActionBar">false</item>

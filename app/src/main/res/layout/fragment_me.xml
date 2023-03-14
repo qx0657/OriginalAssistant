@@ -12,26 +12,31 @@
         android:layout_marginHorizontal="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/ic_svg_default_avatar"
             android:layout_marginStart="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="?attr/DayColorPrimaryNightWhite" />
+
         <TextView
             android:id="@+id/tv_nick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="点击登录"
+            android:textColor="@color/color_tv_nick"
             android:textSize="16sp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             app:layout_constraintStart_toEndOf="@id/iv_avatar"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/tv_id"
             android:layout_width="wrap_content"
@@ -41,8 +46,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             app:layout_constraintStart_toEndOf="@id/iv_avatar"
-            app:layout_constraintTop_toBottomOf="@id/tv_nick"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_nick" />
+
         <TextView
+            android:id="@+id/tv_signin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="签到"
@@ -53,8 +60,9 @@
             android:layout_marginEnd="18dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,6 +73,7 @@
         android:layout_marginHorizontal="24dp"
         android:alpha="0.9"
         android:background="@drawable/bg_radius_post_statistics_me_f">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,19 +81,22 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_marginStart="6dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="123"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="发帖量"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,93 +104,112 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_marginEnd="6dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="123"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="发帖量"
+                android:text="收录量"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="80dp"
-        android:paddingStart="28dp">
+        android:paddingHorizontal="28dp">
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/ll_about"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingVertical="14dp">
+            android:paddingVertical="14dp"
+            android:gravity="center_vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#606060"
+                app:tint="?attr/IconItemMe"
                 android:src="@drawable/ic_svg_about" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="关于"
-                android:layout_marginStart="10dp"/>
+                android:layout_marginStart="10dp" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/ll_setting"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingVertical="14dp">
+            android:paddingVertical="14dp"
+            android:gravity="center_vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#606060"
+                app:tint="?attr/IconItemMe"
                 android:src="@drawable/ic_svg_setting" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置"
-                android:layout_marginStart="10dp"/>
+                android:layout_marginStart="10dp" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/ll_support"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingVertical="14dp">
+            android:paddingVertical="14dp"
+            android:gravity="center_vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#606060"
+                app:tint="?attr/IconItemMe"
                 android:src="@drawable/ic_svg_small" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="捐赠支持"
-                android:layout_marginStart="10dp"/>
+                android:layout_marginStart="10dp" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/ll_help"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingVertical="14dp">
+            android:paddingVertical="14dp"
+            android:gravity="center_vertical">
+
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                app:tint="#606060"
+                app:tint="?attr/IconItemMe"
                 android:src="@drawable/ic_svg_explain" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="帮助中心"
-                android:layout_marginStart="10dp"/>
+                android:layout_marginStart="10dp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

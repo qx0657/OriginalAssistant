@@ -3,7 +3,7 @@
 
     <stroke
         android:width="1dp"
-        android:color="?attr/colorPrimary"/>
+        android:color="?attr/DayColorPrimaryNightWhite"/>
     <corners
         android:radius="@dimen/default_bg_radius"
         />
