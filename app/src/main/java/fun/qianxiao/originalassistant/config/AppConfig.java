@@ -28,9 +28,13 @@ public class AppConfig {
      */
     public static final String PRIVACY_POLICY_URL = "http://qianxiao.fun/app/original_assistant/privacy_policy.html";
     /**
+     * App外部目录
+     */
+    public static final String APP_EXTERNAL_DIR = PathUtils.getExternalStoragePath() + File.separator + APP_NAME_EN;
+    /**
      * 默认Apk导出目录
      */
-    public static final String DEFAULT_APK_EXPORT_DIR = PathUtils.getExternalStoragePath() + File.separator + APP_NAME_EN;
+    public static final String DEFAULT_APK_EXPORT_DIR = APP_EXTERNAL_DIR + File.separator + "apks";
     /**
      * 3楼App包名列表
      */

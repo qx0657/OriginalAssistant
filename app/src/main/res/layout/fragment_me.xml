@@ -30,10 +30,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="点击登录"
+            android:paddingVertical="5dp"
+            android:paddingEnd="100dp"
             android:textColor="@color/color_tv_nick"
             android:textSize="16sp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
+            android:paddingStart="16dp"
+            android:layout_marginTop="28dp"
             app:layout_constraintStart_toEndOf="@id/iv_avatar"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +46,7 @@
             android:text="ID: 12345"
             android:textSize="12sp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="11dp"
             app:layout_constraintStart_toEndOf="@id/iv_avatar"
             app:layout_constraintTop_toBottomOf="@id/tv_nick" />
 
@@ -85,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123"
+                android:text="0"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
                 android:textSize="16sp" />
 
@@ -108,7 +110,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123"
+                android:text="0"
                 android:textColor="?attr/DayColorPrimaryNightWhite"
                 android:textSize="16sp" />
 

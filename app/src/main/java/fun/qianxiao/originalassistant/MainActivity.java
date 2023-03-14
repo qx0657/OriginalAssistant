@@ -24,6 +24,8 @@ import fun.qianxiao.originalassistant.fragment.original.OriginalFragment;
 import fun.qianxiao.originalassistant.fragment.test.TestFragment;
 import fun.qianxiao.originalassistant.utils.PermissionManager;
 import fun.qianxiao.originalassistant.utils.PrivacyPolicyManager;
+import fun.qianxiao.originalassistant.view.loading.ILoadingView;
+import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 
 /**
  * MainActivity
@@ -31,10 +33,12 @@ import fun.qianxiao.originalassistant.utils.PrivacyPolicyManager;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements ILoadingView {
     private final String[] PAGES_TITLES = new String[]{"原创助手", "测试助手", "发现", "我的"};
     private final String[] PAGES_TAB_TEXTS = new String[]{"原创", "测试", "发现", "我的"};
     private ArrayList<CustomTabEntity> tabEntities = new ArrayList<>();
+
+    private MyLoadingDialog loadingDialog;
 
     @Override
     protected void initListener() {
@@ -140,6 +144,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             binding.tabLayout.setVisibility(View.INVISIBLE);
         } else {
             binding.tabLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void openLoadingDialog(String msg) {
+        if (loadingDialog == null) {
+            loadingDialog = new MyLoadingDialog(context);
+        }
+        if (!loadingDialog.isShowing()) {
+            loadingDialog.setMessage(msg);
+            loadingDialog.show();
+        }
+    }
+
+    @Override
+    public void closeLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 }

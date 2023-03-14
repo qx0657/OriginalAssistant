@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,6 +60,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         setFloatingActionButtonListener();
         setEdiTextActionLitener();
         setSpecialInstructionsSpinnerListener();
+        setSpecialInstructionsEditTextChangeListener();
 
         KeyboardUtils.registerSoftInputChangedListener(activity, height -> {
             if (height != 0) {
@@ -67,6 +70,27 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             } else {
                 ((MainActivity) activity).setTabNavigationHide(false);
                 ThreadUtils.runOnUiThreadDelayed(() -> binding.famOriginal.setVisibility(View.VISIBLE), 50);
+            }
+        });
+    }
+
+    private void setSpecialInstructionsEditTextChangeListener() {
+        binding.etSpecialInstructions.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (TextUtils.isEmpty(s.toString())) {
+                    binding.etSpecialInstructions.setTag(null);
+                }
             }
         });
     }

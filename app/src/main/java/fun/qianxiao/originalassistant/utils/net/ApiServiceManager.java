@@ -23,7 +23,7 @@ public class ApiServiceManager {
                 .readTimeout(DEFAULT_READ_TIME, TimeUnit.SECONDS)
                 .addInterceptor(new BasicParamsInterceptor.Builder()
                         .addHeaderLine("App: true")
-                        .addHeaderLine("User-Agent: okhttp/4.9.0 APP-QX")
+                        .addHeaderLine("User-Agent: okhttp/4.9.3 APP_Original_Assistant")
                         .build())
                 .build();
         retrofit = new Retrofit.Builder()
