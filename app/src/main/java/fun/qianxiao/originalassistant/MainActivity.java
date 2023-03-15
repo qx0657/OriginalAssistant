@@ -109,6 +109,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
         fragments.add(new MeFragment<MainActivity>());
         MyPageAdapter adapter = new MyPageAdapter(getSupportFragmentManager(), fragments, PAGES_TAB_TEXTS);
         binding.viewPager.setAdapter(adapter);
+        binding.viewPager.setOffscreenPageLimit(4);
         tabEntities.clear();
         for (int i = 0; i < PAGES_TAB_TEXTS.length; i++) {
             int finalI = i;

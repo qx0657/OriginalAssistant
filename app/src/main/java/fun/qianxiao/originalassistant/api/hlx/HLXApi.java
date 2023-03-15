@@ -24,9 +24,10 @@ public interface HLXApi {
     /**
      * Get user info
      *
-     * @param key key
+     * @param key    key
+     * @param userId userId
      * @return
      */
-    @GET("http://floor.huluxia.com/user/info/ANDROID/4.1.8?user_id=")
-    Observable<ResponseBody> userInfo(@Query("_key") String key);
+    @GET("http://floor.huluxia.com/user/info/ANDROID/4.1.8")
+    Observable<ResponseBody> userInfo(@Query("_key") String key, @Query("user_id") String userId);
 }

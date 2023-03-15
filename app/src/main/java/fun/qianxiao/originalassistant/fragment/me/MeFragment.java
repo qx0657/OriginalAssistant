@@ -1,5 +1,6 @@
 package fun.qianxiao.originalassistant.fragment.me;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -11,6 +12,9 @@ import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.impl.InputConfirmPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
@@ -33,11 +37,12 @@ import fun.qianxiao.originalassistant.view.loading.ILoadingView;
  * @Date 2023/3/10
  */
 public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentMeBinding, A> implements ILoadingView {
-    InputConfirmPopupView keyInputConfirmPopupView;
+    private InputConfirmPopupView keyInputConfirmPopupView;
+    private InputConfirmPopupView userIdInputConfirmPopupView;
 
     @Override
     protected void initListener() {
-        binding.tvNick.setOnClickListener(v -> login());
+        binding.tvNick.setOnClickListener(v -> showLogin());
         binding.tvSignin.setOnClickListener(v -> signIn());
         binding.tvId.setOnClickListener(v -> copyId());
         binding.ivAvatar.setOnClickListener(v -> binding.tvId.performClick());
@@ -58,10 +63,28 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
             if (keyInputConfirmPopupView != null) {
                 XPopupUtils.moveUpToKeyboard(height + 100, keyInputConfirmPopupView);
             }
+            if (userIdInputConfirmPopupView != null) {
+                XPopupUtils.moveUpToKeyboard(height + 100, userIdInputConfirmPopupView);
+            }
         });
     }
 
-    private void login() {
+    private void baseInputXPopViewShow(InputConfirmPopupView popupView) {
+        TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
+        tvContent.setGravity(Gravity.START);
+        popupView.popupInfo.autoDismiss = false;
+        popupView.show();
+        ThreadUtils.runOnUiThreadDelayed(() -> popupView.getCancelTextView().setOnClickListener(v -> {
+            baseInputXPopViewDismiss(popupView);
+        }), 100);
+    }
+
+    private void baseInputXPopViewDismiss(InputConfirmPopupView popupView) {
+        KeyboardUtils.hideSoftInput(popupView.getEditText());
+        ThreadUtils.runOnUiThreadDelayed(popupView::dismiss, 50);
+    }
+
+    private void showLogin() {
         if (true) {
             keyInputConfirmPopupView = new XPopup.Builder(activity).asInputConfirm(
                     "Key登录", "可使用抓包软件抓包获取，见请求字段'_key'，长度112位", "", "请输入Key",
@@ -75,8 +98,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             HLXApiManager.INSTANCE.checkKey(text, (valid, errMsg) -> {
                                 if (valid) {
                                     SPUtils.getInstance().put(SPConstants.KEY_HLX_KEY, text);
-                                    KeyboardUtils.hideSoftInput(keyInputConfirmPopupView.getEditText());
-                                    ThreadUtils.runOnUiThreadDelayed(keyInputConfirmPopupView::dismiss, 50);
+                                    baseInputXPopViewDismiss(keyInputConfirmPopupView);
                                     loginingByKey();
                                 } else {
                                     ToastUtils.showShort(errMsg);
@@ -84,30 +106,37 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             });
                         }
                     });
-            TextView tvContent = keyInputConfirmPopupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
-            tvContent.setGravity(Gravity.START);
-            keyInputConfirmPopupView.popupInfo.autoDismiss = false;
-            keyInputConfirmPopupView.show();
-            ThreadUtils.runOnUiThreadDelayed(() -> keyInputConfirmPopupView.getCancelTextView().setOnClickListener(v -> {
-                KeyboardUtils.hideSoftInput(keyInputConfirmPopupView.getEditText());
-                ThreadUtils.runOnUiThreadDelayed(keyInputConfirmPopupView::dismiss, 50);
-            }), 100);
+            baseInputXPopViewShow(keyInputConfirmPopupView);
         }
     }
 
     private void loginingByKey() {
-        openLoadingDialog("登录中");
-        HLXApiManager.INSTANCE.getUserInfo(SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY), new HLXApiManager.OnGetUserInfoResult() {
-            @Override
-            public void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg) {
-                closeLoadingDialog();
-                if (success) {
-                    ToastUtils.showShort("登录成功" + hlxUserInfo.getNick());
-                } else {
-                    ToastUtils.showShort(errMsg);
-                }
-            }
-        });
+        userIdInputConfirmPopupView = new XPopup.Builder(activity).asInputConfirm(
+                "UserID", "当前不支持通过key获取用户信息，可使用抓包软件抓包获取，见请求字段'user_id'", "", "请输入user_id",
+                userId -> {
+                    if (TextUtils.isEmpty(userId)) {
+                        ToastUtils.showShort("输入为空");
+                    } else {
+                        openLoadingDialog("登录中");
+                        HLXApiManager.INSTANCE.getUserInfo(
+                                SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY),
+                                userId,
+                                new HLXApiManager.OnGetUserInfoResult() {
+                                    @Override
+                                    public void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg) {
+                                        closeLoadingDialog();
+                                        if (success) {
+                                            ToastUtils.showShort("登录成功 " + hlxUserInfo.getAvatarUrl());
+                                            baseInputXPopViewDismiss(userIdInputConfirmPopupView);
+                                            displayUserInfo(hlxUserInfo);
+                                        } else {
+                                            ToastUtils.showShort(errMsg);
+                                        }
+                                    }
+                                });
+                    }
+                });
+        baseInputXPopViewShow(userIdInputConfirmPopupView);
     }
 
     private void signIn() {
@@ -115,12 +144,24 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
     }
 
     private void copyId() {
-        ClipboardUtils.copyText("12345");
-        ToastUtils.showShort("ID已复制至剪贴板");
+        Object tag = binding.tvId.getTag();
+        if (tag != null) {
+            ClipboardUtils.copyText((CharSequence) tag);
+            ToastUtils.showShort("ID已复制至剪贴板");
+        }
     }
 
     @Override
     protected void initData() {
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void displayUserInfo(HLXUserInfo userInfo) {
+        binding.tvId.setText("ID: " + userInfo.getUserId());
+        binding.tvId.setTag(String.valueOf(userInfo.getUserId()));
+        binding.tvNick.setText(userInfo.getNick());
+        Glide.with(binding.ivAvatar).load(userInfo.getAvatarUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(binding.ivAvatar);
     }
 
     @Override

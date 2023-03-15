@@ -94,12 +94,13 @@ public enum HLXApiManager {
     /**
      * Get user info
      *
-     * @param key key
+     * @param key    key
+     * @param userId userId
      */
-    public void getUserInfo(String key, OnGetUserInfoResult result) {
+    public void getUserInfo(String key, String userId, OnGetUserInfoResult result) {
         ApiServiceManager.getInstance()
                 .create(HLXApi.class)
-                .userInfo(key)
+                .userInfo(key, userId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
