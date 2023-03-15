@@ -19,6 +19,14 @@ public class HLXUserInfo {
      * 头像链接
      */
     private String avatarUrl;
+    /**
+     * 发帖数
+     */
+    private int postCount;
+    /**
+     * 回帖数
+     */
+    private int commentCount;
 
     public long getUserId() {
         return userId;
@@ -42,5 +50,21 @@ public class HLXUserInfo {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 }

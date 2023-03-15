@@ -17,9 +17,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.impl.InputConfirmPopupView;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.util.XPopupUtils;
 
 import fun.qianxiao.originalassistant.MainActivity;
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.AboutActivity;
 import fun.qianxiao.originalassistant.activity.SettingsActivity;
 import fun.qianxiao.originalassistant.api.hlx.HLXApiManager;
@@ -44,8 +46,12 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
     protected void initListener() {
         binding.tvNick.setOnClickListener(v -> showLogin());
         binding.tvSignin.setOnClickListener(v -> signIn());
-        binding.tvId.setOnClickListener(v -> copyId());
-        binding.ivAvatar.setOnClickListener(v -> binding.tvId.performClick());
+        binding.tvId.setOnClickListener(v -> setUserId());
+        binding.tvId.setOnLongClickListener(v -> {
+            copyId();
+            return true;
+        });
+        binding.ivAvatar.setOnClickListener(v -> binding.tvNick.performClick());
         binding.llAbout.setOnClickListener(v -> {
             ActivityUtils.startActivity(new Intent(activity, AboutActivity.class));
         });
@@ -69,23 +75,35 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         });
     }
 
+    private void copyId() {
+        Object tag = binding.tvId.getTag();
+        if (tag != null) {
+            ClipboardUtils.copyText((CharSequence) tag);
+            ToastUtils.showShort("ID已复制至剪贴板");
+        }
+    }
+
     private void baseInputXPopViewShow(InputConfirmPopupView popupView) {
-        TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
-        tvContent.setGravity(Gravity.START);
-        popupView.popupInfo.autoDismiss = false;
-        popupView.show();
-        ThreadUtils.runOnUiThreadDelayed(() -> popupView.getCancelTextView().setOnClickListener(v -> {
-            baseInputXPopViewDismiss(popupView);
-        }), 100);
+        if (popupView != null) {
+            TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
+            tvContent.setGravity(Gravity.START);
+            popupView.popupInfo.autoDismiss = false;
+            popupView.show();
+            ThreadUtils.runOnUiThreadDelayed(() -> popupView.getCancelTextView().setOnClickListener(v -> {
+                baseInputXPopViewDismiss(popupView);
+            }), 100);
+        }
     }
 
     private void baseInputXPopViewDismiss(InputConfirmPopupView popupView) {
-        KeyboardUtils.hideSoftInput(popupView.getEditText());
-        ThreadUtils.runOnUiThreadDelayed(popupView::dismiss, 50);
+        if (popupView != null) {
+            KeyboardUtils.hideSoftInput(popupView.getEditText());
+            ThreadUtils.runOnUiThreadDelayed(popupView::dismiss, 50);
+        }
     }
 
     private void showLogin() {
-        if (true) {
+        if (TextUtils.isEmpty(SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY))) {
             keyInputConfirmPopupView = new XPopup.Builder(activity).asInputConfirm(
                     "Key登录", "可使用抓包软件抓包获取，见请求字段'_key'，长度112位", "", "请输入Key",
                     text -> {
@@ -98,6 +116,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             HLXApiManager.INSTANCE.checkKey(text, (valid, errMsg) -> {
                                 if (valid) {
                                     SPUtils.getInstance().put(SPConstants.KEY_HLX_KEY, text);
+                                    setKeyToNick(text);
                                     baseInputXPopViewDismiss(keyInputConfirmPopupView);
                                     loginingByKey();
                                 } else {
@@ -107,61 +126,166 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                         }
                     });
             baseInputXPopViewShow(keyInputConfirmPopupView);
+        } else {
+            new XPopup.Builder(getContext())
+                    .dismissOnBackPressed(false)
+                    .dismissOnTouchOutside(false)
+                    .asConfirm("温馨提示", "是否重设Key?", new OnConfirmListener() {
+                        @Override
+                        public void onConfirm() {
+                            SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                            displayUserInfo(null);
+                            String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
+                            setUserId(userId);
+                        }
+                    })
+                    .show();
         }
     }
 
     private void loginingByKey() {
-        userIdInputConfirmPopupView = new XPopup.Builder(activity).asInputConfirm(
-                "UserID", "当前不支持通过key获取用户信息，可使用抓包软件抓包获取，见请求字段'user_id'", "", "请输入user_id",
-                userId -> {
-                    if (TextUtils.isEmpty(userId)) {
-                        ToastUtils.showShort("输入为空");
-                    } else {
-                        openLoadingDialog("登录中");
-                        HLXApiManager.INSTANCE.getUserInfo(
-                                SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY),
-                                userId,
-                                new HLXApiManager.OnGetUserInfoResult() {
-                                    @Override
-                                    public void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg) {
-                                        closeLoadingDialog();
-                                        if (success) {
-                                            ToastUtils.showShort("登录成功 " + hlxUserInfo.getAvatarUrl());
-                                            baseInputXPopViewDismiss(userIdInputConfirmPopupView);
-                                            displayUserInfo(hlxUserInfo);
-                                        } else {
-                                            ToastUtils.showShort(errMsg);
-                                        }
-                                    }
-                                });
+        String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
+        if (TextUtils.isEmpty(userId)) {
+            ToastUtils.showShort("设置Key成功，如需获取用户信息请设置userId");
+        } else {
+            loginHLX(SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY), userId, false);
+        }
+    }
+
+    private void loginHLX(String key, String userId, boolean isSilent) {
+        if (!isSilent) {
+            openLoadingDialog("登录中");
+        }
+        HLXApiManager.INSTANCE.getUserInfo(
+                key,
+                userId,
+                new HLXApiManager.OnGetUserInfoResult() {
+                    @Override
+                    public void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg) {
+                        closeLoadingDialog();
+                        if (success) {
+                            if (!isSilent) {
+                                ToastUtils.showShort("登录成功");
+                            }
+                            baseInputXPopViewDismiss(userIdInputConfirmPopupView);
+                            displayUserInfo(hlxUserInfo);
+                        } else {
+                            if (!isSilent) {
+                                ToastUtils.showShort(errMsg);
+                            }
+                        }
                     }
                 });
-        baseInputXPopViewShow(userIdInputConfirmPopupView);
+    }
+
+    private void signInInner(String key) {
+        openLoadingDialog("签到中");
+        HLXApiManager.INSTANCE.signIn(key, 45, new HLXApiManager.OnSignInResult() {
+            @Override
+            public void onResult(boolean success, String errMsg) {
+                closeLoadingDialog();
+                if (success) {
+                    ToastUtils.showShort("签到成功");
+                } else {
+                    ToastUtils.showShort(errMsg);
+                }
+            }
+        });
     }
 
     private void signIn() {
-        ToastUtils.showShort("签到");
+        String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+        if (TextUtils.isEmpty(key)) {
+            ToastUtils.showShort("未登录");
+        } else {
+            signInInner(key);
+        }
     }
 
-    private void copyId() {
+    private void setUserId() {
         Object tag = binding.tvId.getTag();
         if (tag != null) {
-            ClipboardUtils.copyText((CharSequence) tag);
-            ToastUtils.showShort("ID已复制至剪贴板");
+            new XPopup.Builder(getContext())
+                    .dismissOnBackPressed(false)
+                    .dismissOnTouchOutside(false)
+                    .asConfirm("温馨提示", "是否重设userId?", new OnConfirmListener() {
+                        @Override
+                        public void onConfirm() {
+                            SPUtils.getInstance().remove(SPConstants.KEY_HLX_USER_ID);
+                            displayUserInfo(null);
+                            String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+                            setKeyToNick(key);
+                        }
+                    })
+                    .show();
+        } else {
+            userIdInputConfirmPopupView = new XPopup.Builder(activity).asInputConfirm(
+                    "UserID", "可使用抓包软件抓包获取，见请求字段'user_id'", "", "请输入user_id",
+                    userId -> {
+                        if (TextUtils.isEmpty(userId)) {
+                            ToastUtils.showShort("输入为空");
+                        } else {
+                            SPUtils.getInstance().put(SPConstants.KEY_HLX_USER_ID, userId);
+                            baseInputXPopViewDismiss(userIdInputConfirmPopupView);
+                            setUserId(userId);
+                            String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+                            if (TextUtils.isEmpty(key)) {
+                                ToastUtils.showShort("userId设置成功，请设置key登录");
+                            } else {
+                                loginHLX(key, userId, false);
+                            }
+                        }
+                    });
+            baseInputXPopViewShow(userIdInputConfirmPopupView);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setKeyToNick(String key) {
+        if (!TextUtils.isEmpty(key)) {
+            binding.tvNick.setText(key.substring(0, 4) + "****" + key.substring(key.length() - 4));
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setUserId(String userId) {
+        if (!TextUtils.isEmpty(userId)) {
+            binding.tvId.setTag(userId);
+            binding.tvId.setText("ID: " + userId);
         }
     }
 
     @Override
     protected void initData() {
-
+        String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+        if (!TextUtils.isEmpty(key)) {
+            setKeyToNick(key);
+        }
+        String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
+        if (!TextUtils.isEmpty(userId)) {
+            setUserId(userId);
+        }
+        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(userId)) {
+            loginHLX(key, userId, true);
+        }
     }
 
     @SuppressLint("SetTextI18n")
     private void displayUserInfo(HLXUserInfo userInfo) {
-        binding.tvId.setText("ID: " + userInfo.getUserId());
-        binding.tvId.setTag(String.valueOf(userInfo.getUserId()));
-        binding.tvNick.setText(userInfo.getNick());
-        Glide.with(binding.ivAvatar).load(userInfo.getAvatarUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(binding.ivAvatar);
+        if (userInfo == null) {
+            binding.tvId.setText("ID: 未设置（点击设置）");
+            binding.tvId.setTag(null);
+            binding.tvNick.setText("点击登录");
+            binding.tvPostCount.setText("-");
+            binding.tvCommentCount.setText("-");
+            binding.ivAvatar.setImageResource(R.drawable.ic_svg_default_avatar);
+        } else {
+            setUserId(String.valueOf(userInfo.getUserId()));
+            binding.tvNick.setText(userInfo.getNick());
+            binding.tvPostCount.setText(String.valueOf(userInfo.getPostCount()));
+            binding.tvCommentCount.setText(String.valueOf(userInfo.getCommentCount()));
+            Glide.with(binding.ivAvatar).load(userInfo.getAvatarUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(binding.ivAvatar);
+        }
     }
 
     @Override

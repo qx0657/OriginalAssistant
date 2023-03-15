@@ -1,9 +1,13 @@
 package fun.qianxiao.originalassistant.api.hlx;
 
+import com.blankj.utilcode.util.EncryptUtils;
+import com.blankj.utilcode.util.TimeUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
 import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
@@ -26,6 +30,8 @@ public enum HLXApiManager {
      */
     INSTANCE;
 
+    private final String SIGN_SALT = "fa1c28a5b62e79c3e63d9030b6142e4b";
+
     public interface OnCheckKeyResult {
         /**
          * OnCheckKeyResult onResult
@@ -39,7 +45,8 @@ public enum HLXApiManager {
     /**
      * Check whether the key is valid
      *
-     * @param key key
+     * @param key    key
+     * @param result Callback
      */
     public void checkKey(final String key, OnCheckKeyResult result) {
         ApiServiceManager.getInstance()
@@ -87,6 +94,7 @@ public enum HLXApiManager {
          *
          * @param success     if success
          * @param hlxUserInfo {@link HLXUserInfo}
+         * @param errMsg      errMsg
          */
         void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg);
     }
@@ -96,11 +104,12 @@ public enum HLXApiManager {
      *
      * @param key    key
      * @param userId userId
+     * @param result Callback
      */
     public void getUserInfo(String key, String userId, OnGetUserInfoResult result) {
         ApiServiceManager.getInstance()
                 .create(HLXApi.class)
-                .userInfo(key, userId)
+                .userInfo(key, Long.parseLong(userId))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -119,6 +128,8 @@ public enum HLXApiManager {
                                 userInfo.setUserId(jsonObject.optLong("userID"));
                                 userInfo.setNick(jsonObject.optString("nick"));
                                 userInfo.setAvatarUrl(jsonObject.optString("avatar"));
+                                userInfo.setPostCount(jsonObject.optInt("postCount"));
+                                userInfo.setCommentCount(jsonObject.optInt("commentCount"));
                                 result.onResult(true, userInfo, null);
                             } else {
                                 result.onResult(false, null, jsonObject.optString("msg"));
@@ -132,6 +143,65 @@ public enum HLXApiManager {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         result.onResult(false, null, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public interface OnSignInResult {
+        /**
+         * OnSignInResult onResult
+         *
+         * @param success success
+         * @param errMsg  errMsg
+         */
+        void onResult(boolean success, String errMsg);
+    }
+
+    /**
+     * Sign in
+     *
+     * @param key    key
+     * @param catId  cat_id
+     * @param result Callback
+     */
+    public void signIn(String key, int catId, OnSignInResult result) {
+        long tsp = TimeUtils.getNowMills();
+        String sign = EncryptUtils.encryptMD5ToString("cat_id" + catId + "time" + tsp + SIGN_SALT).toUpperCase(Locale.ROOT);
+        ApiServiceManager.getInstance()
+                .create(HLXApi.class)
+                .signIn(key, catId, tsp, sign)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.optInt("status", 0) == 1) {
+                                result.onResult(true, null);
+                            } else {
+                                result.onResult(false, jsonObject.optString("msg"));
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                            result.onResult(false, e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        result.onResult(false, e.getMessage());
                     }
 
                     @Override
