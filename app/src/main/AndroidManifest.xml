@@ -4,7 +4,8 @@
     package="fun.qianxiao.originalassistant">
 
     <!-- 获取应用列表 -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <!-- 网络 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +18,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <!--手机信息-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 安装未知来源应用 -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- 震动 -->
@@ -36,7 +37,8 @@
         android:theme="@style/Theme.CommonApp"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".activity.SplashActivity"
+        <activity
+            android:name=".activity.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashActivityTheme">
             <intent-filter>
@@ -45,18 +47,24 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
-        <activity android:name=".activity.AboutActivity"
+        <activity
+            android:name=".activity.AboutActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.CommonApp.NoActionBar"/>
+            android:theme="@style/Theme.CommonApp.NoActionBar" />
 
-        <activity android:name=".activity.SettingsActivity"/>
+        <activity android:name=".activity.SettingsActivity" />
 
         <activity android:name=".activity.BrowserActivity" />
         <activity android:name=".activity.opensourcelicense.OpenSourceLicenseActivity" />
         <activity android:name=".activity.selectapp.SelectAppActivity" />
+        <activity android:name=".activity.test.InternalPurchaseSuccessActivity" />
+        <activity android:name=".activity.test.MovingBricksActivity" />
+        <activity android:name=".activity.test.CrackFailedActivity" />
+        <activity android:name=".activity.test.ReviseSuccessActivity" />
     </application>
 
 </manifest>

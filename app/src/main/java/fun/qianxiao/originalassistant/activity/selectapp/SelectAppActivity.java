@@ -7,13 +7,11 @@ import android.graphics.PointF;
 import android.os.Build;
 import android.os.Environment;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -206,15 +204,6 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         adapter.setItemLongClickListener(itemLongClickListener);
         binding.rvAppList.setAdapter(adapter);
         initRecycleViewAnim();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            setResult(RESULT_CODE_SELECT_APP_NONE);
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

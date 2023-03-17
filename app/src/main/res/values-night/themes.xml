@@ -33,5 +33,7 @@
         <item name="DefaultTextViewColor">#b8b8b8</item>
         <item name="DefaultTextViewColorPressed">#EAEAEA</item>
         <item name="android:textColor">@color/color_default_textview</item>
+        <item name="BgTestSelectItemColor">@color/black91</item>
+        <item name="BgTestSelectItemColorPressed">@color/black87</item>
     </style>
 </resources>

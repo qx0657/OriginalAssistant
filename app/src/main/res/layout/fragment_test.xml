@@ -1,12 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="test"
-        android:gravity="center" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/ll_internal_purchase_success"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_test_select_item"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="18dp"
+                android:paddingHorizontal="28dp">
+
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    app:tint="?attr/IconItemMe"
+                    android:src="@drawable/ic_svg_right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="内购成功"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_revise_success"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_test_select_item"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="18dp"
+                android:paddingHorizontal="28dp"
+                android:layout_marginStart="12dp">
+
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    app:tint="?attr/IconItemMe"
+                    android:src="@drawable/ic_svg_right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="修改成功"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:id="@+id/ll_crack_failed"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_test_select_item"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="18dp"
+                android:paddingHorizontal="28dp">
+
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    app:tint="?attr/IconItemMe"
+                    android:src="@drawable/ic_svg_wrong" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="破解失败"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_moving_bricks"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_test_select_item"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingVertical="18dp"
+                android:paddingHorizontal="28dp"
+                android:layout_marginStart="12dp">
+
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    app:tint="?attr/IconItemMe"
+                    android:src="@drawable/ic_svg_wrong" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="搬砖"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

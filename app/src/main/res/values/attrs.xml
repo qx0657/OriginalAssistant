@@ -17,4 +17,6 @@
     <attr name="IconItemMe" format="color" />
     <attr name="DefaultTextViewColor" format="color" />
     <attr name="DefaultTextViewColorPressed" format="color" />
+    <attr name="BgTestSelectItemColor" format="color" />
+    <attr name="BgTestSelectItemColorPressed" format="color" />
 </resources>

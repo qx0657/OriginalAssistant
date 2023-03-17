@@ -21,7 +21,7 @@
         <item name="DayDefaultTextViewNightWhite">#606060</item>
         <item name="DayDefaultTextViewNightWhitePressed">#7C7C7C</item>
         <item name="DayWhiteNightDeepGray">@color/white</item>
-        
+
         <item name="EditTextCursorColor">@color/DeepSkyBlue</item>
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>
 
@@ -33,20 +33,26 @@
         <item name="DefaultTextViewColor">#606060</item>
         <item name="DefaultTextViewColorPressed">#919191</item>
         <item name="android:textColor">@color/color_default_textview</item>
+        <item name="BgTestSelectItemColor">@color/white95</item>
+        <item name="BgTestSelectItemColorPressed">@color/white90</item>
     </style>
+
     <style name="Theme.CommonApp.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="Theme.MyApplication.AppBarOverlay"
-        parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.MyApplication.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="Theme.MyApplication.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="SplashActivityTheme" parent="Theme.CommonApp.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
     </style>
-    <style name="fab_menu_labels_style" >
+
+    <style name="fab_menu_labels_style">
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/fab_label_background</item>
     </style>

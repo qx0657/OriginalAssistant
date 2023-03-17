@@ -30,6 +30,7 @@ import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
+import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 
 /**
@@ -239,6 +240,8 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             userId -> {
                                 if (TextUtils.isEmpty(userId)) {
                                     ToastUtils.showShort("输入为空");
+                                } else if (!MyStringUtils.isNumeric(userId)) {
+                                    ToastUtils.showShort("输入非法");
                                 } else {
                                     baseInputXPopViewDismiss(userIdInputConfirmPopupView);
                                     setUserId(userId);

@@ -3,5 +3,5 @@
     android:color="?attr/RippleTransparentColor">
     <item
         android:id="@android:id/mask"
-        android:drawable="?attr/DayWhiteNightBlack"/>
+        android:drawable="?attr/DayWhiteNightBlack" />
 </ripple>
