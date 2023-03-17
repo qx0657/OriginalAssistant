@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
+import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -107,6 +108,10 @@ public enum HLXApiManager {
      * @param result Callback
      */
     public void getUserInfo(String key, String userId, OnGetUserInfoResult result) {
+        if (!MyStringUtils.isNumeric(userId)) {
+            result.onResult(false, null, "userId非法");
+            return;
+        }
         ApiServiceManager.getInstance()
                 .create(HLXApi.class)
                 .userInfo(key, Long.parseLong(userId))
