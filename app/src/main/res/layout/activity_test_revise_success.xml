@@ -29,7 +29,7 @@
                     android:paddingTop="@dimen/original_f_edit_text_padding_top"
                     android:background="@android:color/transparent"
                     android:maxLines="1"
-                    android:paddingStart="2dp"
+                    android:paddingStart="@dimen/radio_button_padding_left"
                     android:singleLine="true"
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -53,23 +53,6 @@
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="游戏大小"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
-
-                <EditText
-                    android:id="@+id/et_game_size"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:background="@android:color/transparent"
-                    android:maxLines="1"
-                    android:paddingStart="2dp"
-                    android:singleLine="true"
-                    android:imeOptions="actionDone" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -109,112 +92,129 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/ll_category_radio_button_group"
+                android:id="@+id/ll_mod_type_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:gravity="center"
+                android:gravity="start|center_vertical"
                 android:orientation="horizontal"
                 android:tag="0">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_chinese_game"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="中文游戏"
-                    android:button="@drawable/radiobutton_selector"
-                    android:checked="true" />
+                    android:text="修改类型" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_english_game"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="英文游戏"
-                    android:button="@drawable/radiobutton_selector" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_other_game"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="其他"
-                    android:button="@drawable/radiobutton_selector" />
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/cb_mod_type_large_amount_of_currency"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:text="大量货币"
+                        android:foreground="@null"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/check_box_padding_left"
+                        android:button="@drawable/checkbox_selector" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/cb_mod_type_unlock_level"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:text="解锁关卡"
+                        android:foreground="@null"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/check_box_padding_left"
+                        android:button="@drawable/checkbox_selector" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/cb_mod_type_unlock_item"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:text="解锁物品"
+                        android:foreground="@null"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/check_box_padding_left"
+                        android:button="@drawable/checkbox_selector" />
+
+                    <androidx.appcompat.widget.AppCompatCheckBox
+                        android:id="@+id/cb_mod_type_purchase_reverse"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:text="购买反加"
+                        android:foreground="@null"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/check_box_padding_left"
+                        android:button="@drawable/checkbox_selector" />
+                </LinearLayout>
 
             </LinearLayout>
 
-            <Spinner
-                android:id="@+id/spinner_special_instructions_select"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:entries="@array/special_instructions"
-                android:layout_marginBottom="8dp" />
-
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_special_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="特殊说明"
-                app:endIconMode="clear_text"
+                android:hint="其他情况"
                 app:hintTextColor="?attr/DayColorPrimaryNightWhite">
 
                 <EditText
-                    android:id="@+id/et_special_instructions"
+                    android:id="@+id/et_other_situations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/original_f_edit_text_padding_top"
                     android:background="@android:color/transparent"
-                    android:maxLines="3"
-                    android:paddingStart="2dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="游戏介绍"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
-
-                <EditText
-                    android:id="@+id/et_game_introduction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:minHeight="160dp"
-                    android:background="@android:color/transparent"
-                    android:maxLines="10"
-                    android:minLines="10"
-                    android:paddingStart="2dp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="下载链接"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite"
-                android:layout_marginBottom="52dp">
-
-                <EditText
-                    android:id="@+id/et_download_url"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:background="@android:color/transparent"
+                    android:inputType="text"
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_toast_radio_button_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:tag="0">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="是否有弹窗" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/rb_toast_true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:background="@null"
+                    android:paddingLeft="@dimen/radio_button_padding_left"
+                    android:paddingEnd="15dp"
+                    android:text="有"
+                    android:button="@drawable/radiobutton_selector"
+                    android:checked="true" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/rb_toast_false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:background="@null"
+                    android:layout_marginStart="12dp"
+                    android:paddingLeft="@dimen/radio_button_padding_left"
+                    android:text="无"
+                    android:paddingEnd="15dp"
+                    android:button="@drawable/radiobutton_selector" />
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/fam_original"
+        android:id="@+id/fam_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"

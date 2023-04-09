@@ -28,7 +28,7 @@ public class AppInfo implements Comparable<AppInfo> {
     /**
      * Unnecessary
      */
-    private int versionCode;
+    private long versionCode;
     /**
      * For sort
      */
@@ -66,11 +66,11 @@ public class AppInfo implements Comparable<AppInfo> {
         this.versionName = versionName;
     }
 
-    public int getVersionCode() {
+    public long getVersionCode() {
         return versionCode;
     }
 
-    public void setVersionCode(int versionCode) {
+    public void setVersionCode(long versionCode) {
         this.versionCode = versionCode;
     }
 

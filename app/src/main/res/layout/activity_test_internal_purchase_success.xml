@@ -53,23 +53,6 @@
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="游戏大小"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
-
-                <EditText
-                    android:id="@+id/et_game_size"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:background="@android:color/transparent"
-                    android:maxLines="1"
-                    android:paddingStart="2dp"
-                    android:singleLine="true"
-                    android:imeOptions="actionDone" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -109,112 +92,183 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/ll_category_radio_button_group"
+                android:id="@+id/ll_fly_mode_support_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:gravity="center"
+                android:gravity="start"
                 android:orientation="horizontal"
                 android:tag="0">
 
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="是否支持飞行模式" />
+
                 <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_chinese_game"
+                    android:id="@+id/rb_fly_mode_support"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="中文游戏"
+                    android:text="支持"
+                    android:paddingEnd="15dp"
                     android:button="@drawable/radiobutton_selector"
                     android:checked="true" />
 
                 <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_english_game"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="英文游戏"
-                    android:button="@drawable/radiobutton_selector" />
-
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_game_language_other_game"
+                    android:id="@+id/rb_fly_mode_not_support"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="其他"
+                    android:text="不支持"
+                    android:paddingEnd="15dp"
                     android:button="@drawable/radiobutton_selector" />
 
             </LinearLayout>
 
-            <Spinner
-                android:id="@+id/spinner_special_instructions_select"
-                android:layout_width="64dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:entries="@array/special_instructions"
-                android:layout_marginBottom="8dp" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_special_instructions"
+            <LinearLayout
+                android:id="@+id/ll_mot_type_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="特殊说明"
-                app:endIconMode="clear_text"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+                android:layout_marginTop="15dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:tag="0">
 
-                <EditText
-                    android:id="@+id/et_special_instructions"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:background="@android:color/transparent"
-                    android:maxLines="3"
-                    android:paddingStart="2dp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:text="破解类型" />
 
-            <com.google.android.material.textfield.TextInputLayout
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_purchase_success_return"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="购买返回成功"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_purchase_success_directly"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="购买直接成功"
+                        android:button="@drawable/radiobutton_selector" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_toast_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="游戏介绍"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+                android:layout_marginTop="15dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:tag="0">
 
-                <EditText
-                    android:id="@+id/et_game_introduction"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:minHeight="160dp"
-                    android:background="@android:color/transparent"
-                    android:maxLines="10"
-                    android:minLines="10"
-                    android:paddingStart="2dp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:text="是否有弹窗" />
 
-            <com.google.android.material.textfield.TextInputLayout
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/rb_toast_true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:background="@null"
+                    android:paddingLeft="@dimen/radio_button_padding_left"
+                    android:text="有"
+                    android:paddingEnd="15dp"
+                    android:button="@drawable/radiobutton_selector"
+                    android:checked="true" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/rb_toast_false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:background="@null"
+                    android:layout_marginStart="12dp"
+                    android:paddingLeft="@dimen/radio_button_padding_left"
+                    android:text="无"
+                    android:paddingEnd="15dp"
+                    android:button="@drawable/radiobutton_selector" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="下载链接"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite"
-                android:layout_marginBottom="52dp">
+                android:layout_marginTop="15dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:tag="0">
 
-                <EditText
-                    android:id="@+id/et_download_url"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="140dp"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
-                    android:background="@android:color/transparent"
-                    android:maxLines="1"
-                    android:paddingStart="2dp"
-                    android:singleLine="true"
-                    android:imeOptions="actionDone" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:text="运营商" />
+
+                <LinearLayout
+                    android:id="@+id/ll_sim_channel_radio_button_group"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_sim_channel_cmcc"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="移动"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_sim_channel_cucc"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="联通"
+                        android:button="@drawable/radiobutton_selector" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_sim_channel_ctcc"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="电信"
+                        android:button="@drawable/radiobutton_selector" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_sim_channel_none"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="无卡"
+                        android:button="@drawable/radiobutton_selector" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/fam_original"
+        android:id="@+id/fam_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"

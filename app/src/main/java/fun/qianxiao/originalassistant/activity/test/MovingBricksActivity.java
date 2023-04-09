@@ -1,6 +1,19 @@
 package fun.qianxiao.originalassistant.activity.test;
 
-import fun.qianxiao.originalassistant.databinding.ActivityMovingBricksBinding;
+
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
+
+import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.ThreadUtils;
+import com.blankj.utilcode.util.ToastUtils;
+
+import fun.qianxiao.originalassistant.bean.AppInfo;
+import fun.qianxiao.originalassistant.databinding.ActivityTestMovingBricksBinding;
 
 /**
  * MovingBricksActivity
@@ -8,10 +21,96 @@ import fun.qianxiao.originalassistant.databinding.ActivityMovingBricksBinding;
  * @Author QianXiao
  * @Date 2023/3/17
  */
-public class MovingBricksActivity extends BaseTestActivity<ActivityMovingBricksBinding> {
+public class MovingBricksActivity extends BaseTestActivity<ActivityTestMovingBricksBinding> {
     @Override
     protected void initListener() {
+        setRadioButtonChangeLister();
+        setFloatingActionButtonListener();
 
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            if (height != 0) {
+                binding.famTest.collapse();
+                binding.famTest.setVisibility(View.GONE);
+            } else {
+                ThreadUtils.runOnUiThreadDelayed(() -> binding.famTest.setVisibility(View.VISIBLE), 50);
+            }
+        });
+    }
+
+    private void setFloatingActionButtonListener() {
+        binding.fabSelectApp.setOnClickListener(view -> {
+            binding.famTest.collapse();
+            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
+        });
+        binding.fabCleanContent.setOnClickListener(view -> {
+            binding.famTest.collapse();
+            cleanAllInputContent();
+        });
+        binding.fabCopyContent.setOnClickListener(view -> {
+            binding.famTest.collapse();
+            copyContent();
+        });
+        binding.fabGotoApp.setOnClickListener(view -> {
+            binding.famTest.collapse();
+            gotoApp();
+        });
+    }
+
+    private void cleanAllInputContent() {
+        binding.etGameName.setText("");
+        binding.etGamePackageName.setText("");
+        binding.etGameVersion.setText("");
+        binding.etGameVersionCode.setText("");
+    }
+
+    private void copyContent() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("【游戏名称】");
+        sb.append(binding.etGameName.getText().toString());
+        sb.append("\n");
+        sb.append("【游戏包名】");
+        sb.append(binding.etGamePackageName.getText().toString());
+        sb.append("\n");
+        sb.append("【游戏版本】");
+        sb.append(binding.etGameVersion.getText().toString());
+        sb.append("\n");
+        sb.append("【游戏版本值】");
+        sb.append(binding.etGameVersionCode.getText().toString());
+        sb.append("\n");
+        sb.append("【测试结果】");
+        sb.append(getResultText());
+        ClipboardUtils.copyText(sb.toString());
+        ToastUtils.showShort("已复制到剪贴板");
+    }
+
+    private String getResultText() {
+        for (int i = 0; i < binding.llMoveTypeRadioButtonGroup.getChildCount(); i++) {
+            View view = binding.llMoveTypeRadioButtonGroup.getChildAt(i);
+            if (view instanceof AppCompatRadioButton) {
+                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
+                if (radioButton.isChecked()) {
+                    return radioButton.getText().toString();
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setRadioButtonChangeLister() {
+        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
+            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View view = viewGroup.getChildAt(i);
+                if (view instanceof AppCompatRadioButton) {
+                    AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
+                    if (radioButton.getId() != buttonView.getId() && isChecked) {
+                        radioButton.setChecked(false);
+                    }
+                }
+            }
+        };
+        binding.rbMoveTypeOtherSite.setOnCheckedChangeListener(onCheckedChangeListener);
+        binding.rbMoveTypeOtherAuthor.setOnCheckedChangeListener(onCheckedChangeListener);
     }
 
     @Override
@@ -20,7 +119,21 @@ public class MovingBricksActivity extends BaseTestActivity<ActivityMovingBricksB
     }
 
     @Override
+    protected void onSelectApp(AppInfo appInfo) {
+        binding.etGameName.setText(appInfo.getAppName());
+        binding.etGamePackageName.setText(appInfo.getPackageName());
+        binding.etGameVersion.setText(appInfo.getVersionName());
+        binding.etGameVersionCode.setText(String.valueOf(appInfo.getVersionCode()));
+    }
+
+    @Override
     protected CharSequence getTestTitle() {
         return "搬砖";
+    }
+
+    @Override
+    public void onDestroy() {
+        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
+        super.onDestroy();
     }
 }
