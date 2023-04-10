@@ -174,7 +174,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/ll_toast_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -187,27 +186,33 @@
                     android:layout_height="wrap_content"
                     android:text="是否有弹窗" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_toast_true"
+                <RadioGroup
                     android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:paddingEnd="15dp"
-                    android:text="有"
-                    android:button="@drawable/radiobutton_selector"
-                    android:checked="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_toast_false"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:layout_marginStart="12dp"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="无"
-                    android:paddingEnd="15dp"
-                    android:button="@drawable/radiobutton_selector" />
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_toast_true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:paddingEnd="15dp"
+                        android:text="有"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_toast_false"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:layout_marginStart="12dp"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="无"
+                        android:paddingEnd="15dp"
+                        android:button="@drawable/radiobutton_selector" />
+                </RadioGroup>
             </LinearLayout>
 
         </LinearLayout>

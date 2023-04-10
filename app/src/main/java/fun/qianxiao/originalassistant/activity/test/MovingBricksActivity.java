@@ -1,14 +1,9 @@
 package fun.qianxiao.originalassistant.activity.test;
 
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
-
 import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -24,46 +19,19 @@ import fun.qianxiao.originalassistant.databinding.ActivityTestMovingBricksBindin
 public class MovingBricksActivity extends BaseTestActivity<ActivityTestMovingBricksBinding> {
     @Override
     protected void initListener() {
-        setRadioButtonChangeLister();
-        setFloatingActionButtonListener();
-
-        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
-            if (height != 0) {
-                binding.famTest.collapse();
-                binding.famTest.setVisibility(View.GONE);
-            } else {
-                ThreadUtils.runOnUiThreadDelayed(() -> binding.famTest.setVisibility(View.VISIBLE), 50);
-            }
-        });
+        super.initListener();
     }
 
-    private void setFloatingActionButtonListener() {
-        binding.fabSelectApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
-        });
-        binding.fabCleanContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            cleanAllInputContent();
-        });
-        binding.fabCopyContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            copyContent();
-        });
-        binding.fabGotoApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            gotoApp();
-        });
-    }
-
-    private void cleanAllInputContent() {
+    @Override
+    protected void cleanAllInputContent() {
         binding.etGameName.setText("");
         binding.etGamePackageName.setText("");
         binding.etGameVersion.setText("");
         binding.etGameVersionCode.setText("");
     }
 
-    private void copyContent() {
+    @Override
+    protected void copyContent() {
         StringBuilder sb = new StringBuilder();
         sb.append("【游戏名称】");
         sb.append(binding.etGameName.getText().toString());
@@ -84,33 +52,8 @@ public class MovingBricksActivity extends BaseTestActivity<ActivityTestMovingBri
     }
 
     private String getResultText() {
-        for (int i = 0; i < binding.llMoveTypeRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llMoveTypeRadioButtonGroup.getChildAt(i);
-            if (view instanceof AppCompatRadioButton) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                if (radioButton.isChecked()) {
-                    return radioButton.getText().toString();
-                }
-            }
-        }
-        return null;
-    }
-
-    private void setRadioButtonChangeLister() {
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
-            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View view = viewGroup.getChildAt(i);
-                if (view instanceof AppCompatRadioButton) {
-                    AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                    if (radioButton.getId() != buttonView.getId() && isChecked) {
-                        radioButton.setChecked(false);
-                    }
-                }
-            }
-        };
-        binding.rbMoveTypeOtherSite.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbMoveTypeOtherAuthor.setOnCheckedChangeListener(onCheckedChangeListener);
+        AppCompatRadioButton radioButtonChecked = findViewById(binding.rgMoveTypeRadioButtonGroup.getCheckedRadioButtonId());
+        return radioButtonChecked.getText().toString();
     }
 
     @Override
@@ -129,11 +72,5 @@ public class MovingBricksActivity extends BaseTestActivity<ActivityTestMovingBri
     @Override
     protected CharSequence getTestTitle() {
         return "搬砖";
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
-        super.onDestroy();
     }
 }

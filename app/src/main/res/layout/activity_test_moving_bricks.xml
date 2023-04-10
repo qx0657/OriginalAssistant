@@ -104,8 +104,8 @@
                     android:layout_height="wrap_content"
                     android:text="破解类型" />
 
-                <LinearLayout
-                    android:id="@+id/ll_move_type_radio_button_group"
+                <RadioGroup
+                    android:id="@+id/rg_move_type_radio_button_group"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -129,7 +129,7 @@
                         android:paddingLeft="@dimen/radio_button_padding_left"
                         android:text="其他作者游戏"
                         android:button="@drawable/radiobutton_selector" />
-                </LinearLayout>
+                </RadioGroup>
             </LinearLayout>
 
 

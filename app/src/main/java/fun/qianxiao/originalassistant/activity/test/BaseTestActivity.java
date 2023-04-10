@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -18,12 +19,16 @@ import androidx.viewbinding.ViewBinding;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.IntentUtils;
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.List;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.bean.AppInfo;
@@ -36,6 +41,7 @@ import fun.qianxiao.originalassistant.bean.AppInfo;
  */
 public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActivity<DB> {
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    protected FloatingActionsMenu famTest;
 
     protected final static int SMS_PERMISSION_HAS_REMOVED = 1;
     protected final static int SMS_PERMISSION_HAS_NOT_REMOVED = 0;
@@ -49,6 +55,50 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
     protected final static int SIM_CUCC = 1;
     protected final static int SIM_CTCC = 2;
     protected final static int SIM_NONE = 3;
+
+    @Override
+    protected void initListener() {
+        famTest = binding.getRoot().findViewById(R.id.fam_test);
+        setFloatingActionButtonListener();
+
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            if (height != 0) {
+                famTest.collapse();
+                famTest.setVisibility(View.GONE);
+            } else {
+                ThreadUtils.runOnUiThreadDelayed(() -> famTest.setVisibility(View.VISIBLE), 50);
+            }
+        });
+    }
+
+    private void setFloatingActionButtonListener() {
+        binding.getRoot().findViewById(R.id.fab_select_app).setOnClickListener(view -> {
+            famTest.collapse();
+            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
+        });
+        binding.getRoot().findViewById(R.id.fab_clean_content).setOnClickListener(view -> {
+            famTest.collapse();
+            cleanAllInputContent();
+        });
+        binding.getRoot().findViewById(R.id.fab_copy_content).setOnClickListener(view -> {
+            famTest.collapse();
+            copyContent();
+        });
+        binding.getRoot().findViewById(R.id.fab_goto_app).setOnClickListener(view -> {
+            famTest.collapse();
+            gotoApp();
+        });
+    }
+
+    /**
+     * cleanAllInputContent
+     */
+    protected abstract void cleanAllInputContent();
+
+    /**
+     * copyContent
+     */
+    protected abstract void copyContent();
 
     @Override
     protected void initData() {
@@ -161,5 +211,11 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
             return SIM_CTCC;
         }
         return SIM_NONE;
+    }
+
+    @Override
+    public void onDestroy() {
+        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
+        super.onDestroy();
     }
 }

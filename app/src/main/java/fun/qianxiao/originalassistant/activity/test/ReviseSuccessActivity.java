@@ -2,15 +2,8 @@ package fun.qianxiao.originalassistant.activity.test;
 
 import android.os.Build;
 import android.text.TextUtils;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
-
-import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
-import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import fun.qianxiao.originalassistant.bean.AppInfo;
@@ -25,46 +18,19 @@ import fun.qianxiao.originalassistant.databinding.ActivityTestReviseSuccessBindi
 public class ReviseSuccessActivity extends BaseTestActivity<ActivityTestReviseSuccessBinding> {
     @Override
     protected void initListener() {
-        setRadioButtonChangeLister();
-        setFloatingActionButtonListener();
-
-        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
-            if (height != 0) {
-                binding.famTest.collapse();
-                binding.famTest.setVisibility(View.GONE);
-            } else {
-                ThreadUtils.runOnUiThreadDelayed(() -> binding.famTest.setVisibility(View.VISIBLE), 50);
-            }
-        });
+        super.initListener();
     }
 
-    private void setFloatingActionButtonListener() {
-        binding.fabSelectApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
-        });
-        binding.fabCleanContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            cleanAllInputContent();
-        });
-        binding.fabCopyContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            copyContent();
-        });
-        binding.fabGotoApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            gotoApp();
-        });
-    }
-
-    private void cleanAllInputContent() {
+    @Override
+    protected void cleanAllInputContent() {
         binding.etGameName.setText("");
         binding.etGamePackageName.setText("");
         binding.etGameVersion.setText("");
         binding.etGameVersionCode.setText("");
     }
 
-    private void copyContent() {
+    @Override
+    protected void copyContent() {
         StringBuilder sb = new StringBuilder();
         sb.append("【游戏名称】");
         sb.append(binding.etGameName.getText().toString());
@@ -115,23 +81,6 @@ public class ReviseSuccessActivity extends BaseTestActivity<ActivityTestReviseSu
         ToastUtils.showShort("已复制到剪贴板");
     }
 
-    private void setRadioButtonChangeLister() {
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
-            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View view = viewGroup.getChildAt(i);
-                if (view instanceof AppCompatRadioButton) {
-                    AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                    if (radioButton.getId() != buttonView.getId() && isChecked) {
-                        radioButton.setChecked(false);
-                    }
-                }
-            }
-        };
-        binding.rbToastTrue.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbToastFalse.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
-
     @Override
     protected void initData() {
         super.initData();
@@ -148,11 +97,5 @@ public class ReviseSuccessActivity extends BaseTestActivity<ActivityTestReviseSu
     @Override
     protected CharSequence getTestTitle() {
         return "修改成功";
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
-        super.onDestroy();
     }
 }

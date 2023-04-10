@@ -1,14 +1,10 @@
 package fun.qianxiao.originalassistant.activity.test;
 
 import android.os.Build;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -24,46 +20,19 @@ import fun.qianxiao.originalassistant.databinding.ActivityTestCrackFailedBinding
 public class CrackFailedActivity extends BaseTestActivity<ActivityTestCrackFailedBinding> {
     @Override
     protected void initListener() {
-        setFloatingActionButtonListener();
-        setRadioButtonChangeLister();
-
-        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
-            if (height != 0) {
-                binding.famTest.collapse();
-                binding.famTest.setVisibility(View.GONE);
-            } else {
-                ThreadUtils.runOnUiThreadDelayed(() -> binding.famTest.setVisibility(View.VISIBLE), 50);
-            }
-        });
+        super.initListener();
     }
 
-    private void setFloatingActionButtonListener() {
-        binding.fabSelectApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
-        });
-        binding.fabCleanContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            cleanAllInputContent();
-        });
-        binding.fabCopyContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            copyContent();
-        });
-        binding.fabGotoApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            gotoApp();
-        });
-    }
-
-    private void cleanAllInputContent() {
+    @Override
+    protected void cleanAllInputContent() {
         binding.etGameName.setText("");
         binding.etGamePackageName.setText("");
         binding.etGameVersion.setText("");
         binding.etGameVersionCode.setText("");
     }
 
-    private void copyContent() {
+    @Override
+    protected void copyContent() {
         StringBuilder sb = new StringBuilder();
         sb.append("【游戏名称】");
         sb.append(binding.etGameName.getText().toString());
@@ -98,56 +67,13 @@ public class CrackFailedActivity extends BaseTestActivity<ActivityTestCrackFaile
     }
 
     private String getFailedTypeText() {
-        for (int i = 0; i < binding.llFailedTypeRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llFailedTypeRadioButtonGroup.getChildAt(i);
-            if (view instanceof AppCompatRadioButton) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                if (radioButton.isChecked()) {
-                    return radioButton.getText().toString();
-                }
-            }
-        }
-        return null;
+        AppCompatRadioButton radioButtonChecked = findViewById(binding.rgFailedTypeRadioButtonGroup.getCheckedRadioButtonId());
+        return radioButtonChecked.getText().toString();
     }
 
     private String getSimChannel() {
-        for (int i = 0; i < binding.llSimChannelRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llSimChannelRadioButtonGroup.getChildAt(i);
-            if (view instanceof AppCompatRadioButton) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                if (radioButton.isChecked()) {
-                    return radioButton.getText().toString();
-                }
-            }
-        }
-        return null;
-    }
-
-    private void setRadioButtonChangeLister() {
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
-            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View view = viewGroup.getChildAt(i);
-                if (view instanceof AppCompatRadioButton) {
-                    AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                    if (radioButton.getId() != buttonView.getId() && isChecked) {
-                        radioButton.setChecked(false);
-                    }
-                }
-            }
-        };
-        binding.rbModTypeInternalPurchase.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbModTypeGameModify.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        binding.rbFailedTypeInternalPurchaseFailed.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbFailedTypeGameModifyFailed.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbFailedTypeGameCannotInstall.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbFailedTypeGameCrashOrBlackScreen.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        binding.rbSimChannelCmcc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelCucc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelCtcc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelNone.setOnCheckedChangeListener(onCheckedChangeListener);
+        AppCompatRadioButton radioButtonChecked = findViewById(binding.rgSimChannelRadioButtonGroup.getCheckedRadioButtonId());
+        return radioButtonChecked.getText().toString();
     }
 
     @Override
@@ -157,18 +83,15 @@ public class CrackFailedActivity extends BaseTestActivity<ActivityTestCrackFaile
     }
 
     private void initSimChannel() {
-        AppCompatRadioButton[] simRadioButtons = new AppCompatRadioButton[4];
-        int index = 0;
-        for (int i = 0; i < binding.llSimChannelRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llSimChannelRadioButtonGroup.getChildAt(i);
-            if (view instanceof AppCompatRadioButton) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                simRadioButtons[index++] = radioButton;
-            }
-        }
+        int[] rbSimIds = {
+                binding.rbSimChannelCmcc.getId(),
+                binding.rbSimChannelCucc.getId(),
+                binding.rbSimChannelCtcc.getId(),
+                binding.rbSimChannelNone.getId(),
+        };
         int indexSelf = getSimChannelIndex();
-        if (indexSelf >= 0 && indexSelf < 4 && simRadioButtons[indexSelf] != null) {
-            simRadioButtons[indexSelf].setChecked(true);
+        if (indexSelf >= 0 && indexSelf < rbSimIds.length) {
+            binding.rgSimChannelRadioButtonGroup.check(rbSimIds[indexSelf]);
         }
     }
 
@@ -183,11 +106,5 @@ public class CrackFailedActivity extends BaseTestActivity<ActivityTestCrackFaile
     @Override
     protected CharSequence getTestTitle() {
         return "破解失败";
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
-        super.onDestroy();
     }
 }

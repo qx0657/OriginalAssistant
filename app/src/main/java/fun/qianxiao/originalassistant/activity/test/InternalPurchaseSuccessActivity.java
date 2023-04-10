@@ -2,13 +2,10 @@ package fun.qianxiao.originalassistant.activity.test;
 
 import android.os.Build;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -25,46 +22,19 @@ import fun.qianxiao.originalassistant.databinding.ActivityTestInternalPurchaseSu
 public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTestInternalPurchaseSuccessBinding> {
     @Override
     protected void initListener() {
-        setRadioButtonChangeLister();
-        setFloatingActionButtonListener();
-
-        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
-            if (height != 0) {
-                binding.famTest.collapse();
-                binding.famTest.setVisibility(View.GONE);
-            } else {
-                ThreadUtils.runOnUiThreadDelayed(() -> binding.famTest.setVisibility(View.VISIBLE), 50);
-            }
-        });
+        super.initListener();
     }
 
-    private void setFloatingActionButtonListener() {
-        binding.fabSelectApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            ThreadUtils.runOnUiThreadDelayed(this::selectApp, 100);
-        });
-        binding.fabCleanContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            cleanAllInputContent();
-        });
-        binding.fabCopyContent.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            copyContent();
-        });
-        binding.fabGotoApp.setOnClickListener(view -> {
-            binding.famTest.collapse();
-            gotoApp();
-        });
-    }
-
-    private void cleanAllInputContent() {
+    @Override
+    protected void cleanAllInputContent() {
         binding.etGameName.setText("");
         binding.etGamePackageName.setText("");
         binding.etGameVersion.setText("");
         binding.etGameVersionCode.setText("");
     }
 
-    private void copyContent() {
+    @Override
+    protected void copyContent() {
         StringBuilder sb = new StringBuilder();
         sb.append("【游戏名称】");
         sb.append(binding.etGameName.getText().toString());
@@ -114,8 +84,8 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
     }
 
     private String getSimChannel() {
-        for (int i = 0; i < binding.llSimChannelRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llSimChannelRadioButtonGroup.getChildAt(i);
+        for (int i = 0; i < binding.rgSimChannelRadioButtonGroup.getChildCount(); i++) {
+            View view = binding.rgSimChannelRadioButtonGroup.getChildAt(i);
             if (view instanceof AppCompatRadioButton) {
                 AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
                 if (radioButton.isChecked()) {
@@ -126,34 +96,6 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
         return null;
     }
 
-    private void setRadioButtonChangeLister() {
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = (buttonView, isChecked) -> {
-            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View view = viewGroup.getChildAt(i);
-                if (view instanceof AppCompatRadioButton) {
-                    AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                    if (radioButton.getId() != buttonView.getId() && isChecked) {
-                        radioButton.setChecked(false);
-                    }
-                }
-            }
-        };
-        binding.rbFlyModeSupport.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbFlyModeNotSupport.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        binding.rbPurchaseSuccessReturn.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbPurchaseSuccessDirectly.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        binding.rbToastFalse.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbToastTrue.setOnCheckedChangeListener(onCheckedChangeListener);
-
-        binding.rbSimChannelCmcc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelCucc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelCtcc.setOnCheckedChangeListener(onCheckedChangeListener);
-        binding.rbSimChannelNone.setOnCheckedChangeListener(onCheckedChangeListener);
-    }
-
     @Override
     protected void initData() {
         super.initData();
@@ -161,18 +103,15 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
     }
 
     private void initSimChannel() {
-        AppCompatRadioButton[] simRadioButtons = new AppCompatRadioButton[4];
-        int index = 0;
-        for (int i = 0; i < binding.llSimChannelRadioButtonGroup.getChildCount(); i++) {
-            View view = binding.llSimChannelRadioButtonGroup.getChildAt(i);
-            if (view instanceof AppCompatRadioButton) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
-                simRadioButtons[index++] = radioButton;
-            }
-        }
+        int[] rbSimIds = {
+                binding.rbSimChannelCmcc.getId(),
+                binding.rbSimChannelCucc.getId(),
+                binding.rbSimChannelCtcc.getId(),
+                binding.rbSimChannelNone.getId(),
+        };
         int indexSelf = getSimChannelIndex();
-        if (indexSelf >= 0 && indexSelf < 4 && simRadioButtons[indexSelf] != null) {
-            simRadioButtons[indexSelf].setChecked(true);
+        if (indexSelf >= 0 && indexSelf < rbSimIds.length) {
+            binding.rgSimChannelRadioButtonGroup.check(rbSimIds[indexSelf]);
         }
     }
 
@@ -187,11 +126,5 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
     @Override
     protected CharSequence getTestTitle() {
         return "内购成功";
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
-        super.onDestroy();
     }
 }

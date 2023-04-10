@@ -38,26 +38,26 @@ public class PostContentFormatUtils {
     public static final String FIELD_SEPARATOR = "\n\n";
 
     public static CharSequence format(PostInfo postInfo) {
-        String field_name_app_name = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_NAME, FIELD_NAME_APP_NAME);
-        String field_name_app_language = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_LANGUAGE, FIELD_NAME_APP_LANGUAGE);
-        String field_name_app_size = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SIZE, FIELD_NAME_APP_SIZE);
-        String field_name_app_version = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_VERSION, FIELD_NAME_APP_VERSION);
-        String field_name_app_package_name = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_PACKAGE_NAME, FIELD_NAME_APP_PACKAGE_NAME);
-        String field_name_app_version_code = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_VERSION_CODE, FIELD_NAME_APP_VERSION_CODE);
-        String field_name_app_system_version = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SYSTEM_VERSION, FIELD_NAME_APP_SYSTEM_VERSION);
-        String field_name_app_special_instructions = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SPECIAL_INSTRUCTIONS, FIELD_NAME_APP_SPECIAL_INSTRUCTIONS);
-        String field_name_app_introduction = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_INTRODUCTION, FIELD_NAME_APP_INTRODUCTION);
-        String field_name_app_download_url = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_DOWNLOAD_URL, FIELD_NAME_APP_DOWNLOAD_URL);
+        String fieldNameAppName = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_NAME, FIELD_NAME_APP_NAME);
+        String fieldNameAppLanguage = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_LANGUAGE, FIELD_NAME_APP_LANGUAGE);
+        String fieldNameAppSize = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SIZE, FIELD_NAME_APP_SIZE);
+        String fieldNameAppVersion = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_VERSION, FIELD_NAME_APP_VERSION);
+        String fieldNameAppPackageName = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_PACKAGE_NAME, FIELD_NAME_APP_PACKAGE_NAME);
+        String fieldNameAppVersionCode = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_VERSION_CODE, FIELD_NAME_APP_VERSION_CODE);
+        String fieldNameAppSystemVersion = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SYSTEM_VERSION, FIELD_NAME_APP_SYSTEM_VERSION);
+        String fieldNameAppSpecialInstructions = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SPECIAL_INSTRUCTIONS, FIELD_NAME_APP_SPECIAL_INSTRUCTIONS);
+        String fieldNameAppIntroduction = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_INTRODUCTION, FIELD_NAME_APP_INTRODUCTION);
+        String fieldNameAppDownloadUrl = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_DOWNLOAD_URL, FIELD_NAME_APP_DOWNLOAD_URL);
 
-        return field_name_app_name + postInfo.getAppName() + FIELD_SEPARATOR +
-                field_name_app_language + postInfo.getAppLanguage() + FIELD_SEPARATOR +
-                field_name_app_size + postInfo.getAppSize() + FIELD_SEPARATOR +
-                field_name_app_version + postInfo.getAppVersionName() + FIELD_SEPARATOR +
-                field_name_app_package_name + postInfo.getAppPackageName() + FIELD_SEPARATOR +
-                field_name_app_version_code + postInfo.getAppVersionCode() + FIELD_SEPARATOR +
-                field_name_app_system_version + Build.VERSION.RELEASE + FIELD_SEPARATOR +
-                field_name_app_special_instructions + postInfo.getAppSpecialInstructions() + FIELD_SEPARATOR +
-                field_name_app_introduction + postInfo.getAppIntroduction() + FIELD_SEPARATOR +
-                field_name_app_download_url + postInfo.getAppDownloadUrl();
+        return fieldNameAppName + postInfo.getAppName() + FIELD_SEPARATOR +
+                fieldNameAppLanguage + postInfo.getAppLanguage() + FIELD_SEPARATOR +
+                fieldNameAppSize + postInfo.getAppSize() + FIELD_SEPARATOR +
+                fieldNameAppVersion + postInfo.getAppVersionName() + FIELD_SEPARATOR +
+                fieldNameAppPackageName + postInfo.getAppPackageName() + FIELD_SEPARATOR +
+                fieldNameAppVersionCode + postInfo.getAppVersionCode() + FIELD_SEPARATOR +
+                fieldNameAppSystemVersion + Build.VERSION.RELEASE + FIELD_SEPARATOR +
+                fieldNameAppSpecialInstructions + postInfo.getAppSpecialInstructions() + FIELD_SEPARATOR +
+                fieldNameAppIntroduction + postInfo.getAppIntroduction() + FIELD_SEPARATOR +
+                fieldNameAppDownloadUrl + postInfo.getAppDownloadUrl();
     }
 }

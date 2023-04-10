@@ -92,7 +92,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/ll_mod_type_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -105,26 +104,32 @@
                     android:layout_height="wrap_content"
                     android:text="破解类型" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_mod_type_internal_purchase"
+                <RadioGroup
                     android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:paddingLeft="3dp"
-                    android:paddingEnd="15dp"
-                    android:text="内购破解"
-                    android:button="@drawable/radiobutton_selector"
-                    android:checked="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_mod_type_game_modify"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:paddingEnd="15dp"
-                    android:text="游戏修改"
-                    android:button="@drawable/radiobutton_selector" />
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_mod_type_internal_purchase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="3dp"
+                        android:paddingEnd="15dp"
+                        android:text="内购破解"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_mod_type_game_modify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:paddingEnd="15dp"
+                        android:text="游戏修改"
+                        android:button="@drawable/radiobutton_selector" />
+                </RadioGroup>
             </LinearLayout>
 
             <LinearLayout
@@ -140,8 +145,8 @@
                     android:layout_height="wrap_content"
                     android:text="失败类型" />
 
-                <LinearLayout
-                    android:id="@+id/ll_failed_type_radio_button_group"
+                <RadioGroup
+                    android:id="@+id/rg_failed_type_radio_button_group"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -184,7 +189,7 @@
                         android:text="游戏闪退（黑屏）"
                         android:button="@drawable/radiobutton_selector" />
 
-                </LinearLayout>
+                </RadioGroup>
 
             </LinearLayout>
 
@@ -201,8 +206,8 @@
                     android:layout_height="wrap_content"
                     android:text="运营商" />
 
-                <LinearLayout
-                    android:id="@+id/ll_sim_channel_radio_button_group"
+                <RadioGroup
+                    android:id="@+id/rg_sim_channel_radio_button_group"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -244,7 +249,7 @@
                         android:paddingLeft="@dimen/radio_button_padding_left"
                         android:text="无卡"
                         android:button="@drawable/radiobutton_selector" />
-                </LinearLayout>
+                </RadioGroup>
             </LinearLayout>
 
         </LinearLayout>

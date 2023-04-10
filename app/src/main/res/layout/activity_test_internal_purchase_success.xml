@@ -92,11 +92,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
-                android:id="@+id/ll_fly_mode_support_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:gravity="start"
+                android:gravity="start|center_vertical"
                 android:orientation="horizontal"
                 android:tag="0">
 
@@ -105,31 +104,36 @@
                     android:layout_height="wrap_content"
                     android:text="是否支持飞行模式" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_fly_mode_support"
+                <RadioGroup
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="支持"
-                    android:paddingEnd="15dp"
-                    android:button="@drawable/radiobutton_selector"
-                    android:checked="true" />
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_fly_mode_not_support"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="不支持"
-                    android:paddingEnd="15dp"
-                    android:button="@drawable/radiobutton_selector" />
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_fly_mode_support"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="支持"
+                        android:paddingEnd="15dp"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_fly_mode_not_support"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="不支持"
+                        android:paddingEnd="15dp"
+                        android:button="@drawable/radiobutton_selector" />
+                </RadioGroup>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_mot_type_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -142,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:text="破解类型" />
 
-                <LinearLayout
+                <RadioGroup
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -166,11 +170,10 @@
                         android:paddingLeft="@dimen/radio_button_padding_left"
                         android:text="购买直接成功"
                         android:button="@drawable/radiobutton_selector" />
-                </LinearLayout>
+                </RadioGroup>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_toast_radio_button_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -183,27 +186,33 @@
                     android:layout_height="wrap_content"
                     android:text="是否有弹窗" />
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_toast_true"
+                <RadioGroup
                     android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="有"
-                    android:paddingEnd="15dp"
-                    android:button="@drawable/radiobutton_selector"
-                    android:checked="true" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatRadioButton
-                    android:id="@+id/rb_toast_false"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:background="@null"
-                    android:layout_marginStart="12dp"
-                    android:paddingLeft="@dimen/radio_button_padding_left"
-                    android:text="无"
-                    android:paddingEnd="15dp"
-                    android:button="@drawable/radiobutton_selector" />
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_toast_true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="有"
+                        android:paddingEnd="15dp"
+                        android:button="@drawable/radiobutton_selector"
+                        android:checked="true" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rb_toast_false"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@null"
+                        android:layout_marginStart="12dp"
+                        android:paddingLeft="@dimen/radio_button_padding_left"
+                        android:text="无"
+                        android:paddingEnd="15dp"
+                        android:button="@drawable/radiobutton_selector" />
+                </RadioGroup>
             </LinearLayout>
 
             <LinearLayout
@@ -219,8 +228,8 @@
                     android:layout_height="wrap_content"
                     android:text="运营商" />
 
-                <LinearLayout
-                    android:id="@+id/ll_sim_channel_radio_button_group"
+                <RadioGroup
+                    android:id="@+id/rg_sim_channel_radio_button_group"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -262,7 +271,7 @@
                         android:paddingLeft="@dimen/radio_button_padding_left"
                         android:text="无卡"
                         android:button="@drawable/radiobutton_selector" />
-                </LinearLayout>
+                </RadioGroup>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
