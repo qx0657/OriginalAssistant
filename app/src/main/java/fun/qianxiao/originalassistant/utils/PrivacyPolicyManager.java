@@ -9,9 +9,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.impl.ConfirmPopupView;
+
+import fun.qianxiao.originalassistant.activity.BrowserActivity;
+import fun.qianxiao.originalassistant.config.AppConfig;
 
 /**
  * 隐私政策管理
@@ -49,7 +51,7 @@ public class PrivacyPolicyManager {
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    ToastUtils.showShort("跳转隐私政策界面");
+                    BrowserActivity.load(context, AppConfig.PRIVACY_POLICY_URL);
                 }
             };
             int end = start + "《隐私权政策》".length();

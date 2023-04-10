@@ -5,7 +5,6 @@ import android.os.Build;
 import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
-import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import fun.qianxiao.originalassistant.bean.AppInfo;
