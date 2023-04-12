@@ -36,4 +36,14 @@
         <item name="BgTestSelectItemColor">@color/black91</item>
         <item name="BgTestSelectItemColorPressed">@color/black87</item>
     </style>
+
+    <style name="Theme.CommonApp.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
+    </style>
+
+    <style name="LightAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/black</item>
+    </style>
 </resources>

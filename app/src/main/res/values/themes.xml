@@ -54,4 +54,9 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/fab_label_background</item>
     </style>
+
+    <style name="LightAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/DeepSkyBlue</item>
+    </style>
+
 </resources>

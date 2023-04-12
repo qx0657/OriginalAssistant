@@ -28,6 +28,10 @@ public class AppConfig {
      */
     public static final String PRIVACY_POLICY_URL = "http://sfy.qianxiao.fun/app/original_assistant/privacy_policy.html";
     /**
+     * 项目Github
+     */
+    public static final String PROJECT_GITHUB_URL = "https://github.com/qx0657/OriginalAssistant";
+    /**
      * App外部目录
      */
     public static final String APP_EXTERNAL_DIR = PathUtils.getExternalStoragePath() + File.separator + APP_NAME_EN;

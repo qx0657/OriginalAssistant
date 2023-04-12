@@ -8,10 +8,61 @@
     android:layout_height="match_parent"
     tools:context="fun.qianxiao.originalassistant.activity.AboutActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/text_margin">
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="v.1.0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="原创助手App全新版本，支持Android 11、12、13，提供更好的功能，更好的服务。\n项目已开源，如有兴趣欢迎共同维护。" />
+
+        <TextView
+            android:id="@+id/tv_project_github"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="项目Github地址"
+            android:textColor="@color/color_default_textview" />
+
+        <TextView
+            android:id="@+id/tv_open_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="三方库开源申明"
+            android:textColor="@color/color_default_textview" />
+
+        <TextView
+            android:id="@+id/tv_private_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="隐私政策"
+            android:textColor="@color/color_default_textview" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="Author: 浅笑" />
+
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

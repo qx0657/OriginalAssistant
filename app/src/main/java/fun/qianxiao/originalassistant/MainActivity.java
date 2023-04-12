@@ -133,7 +133,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
         binding.tabLayout.setTabData(tabEntities);
         //startActivity(OpenSourceLicenseActivity.class);
         //BrowserActivity.load(context, "https://www.baidu.com/");
-        new CheckUpdateManager(context).check(true);
+
+        if (privacyPolicyManager.isAgreePrivacyPolicy()) {
+            new CheckUpdateManager(context).check(true);
+        }
     }
 
     private void startActivity(Class<?> ac) {

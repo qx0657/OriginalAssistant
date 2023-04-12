@@ -4,9 +4,12 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +30,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
@@ -97,7 +102,7 @@ public final class CheckUpdateManager implements ILoadingView {
                                 if (isBrowserDownload) {
                                     isApkFullyDownloaded = false;
                                 }
-                                AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.LightAlertDialog)
                                         .setTitle("发现新版本(V." + newversionname + ")")
                                         .setMessage(jsonObject.optString("updatacontent"))
                                         .setCancelable(false)
@@ -111,7 +116,9 @@ public final class CheckUpdateManager implements ILoadingView {
                                 }
                                 AlertDialog dialog = builder.create();
                                 dialog.show();
-                                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
+                                reflectChangeTitleColor(dialog);
+                                Button neutralBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                neutralBtn.setOnClickListener(v -> {
                                     ClipboardUtils.copyText(downloadurl);
                                     ToastUtils.showShort("下载链接已复制至剪贴板");
                                 });
@@ -227,6 +234,25 @@ public final class CheckUpdateManager implements ILoadingView {
                         }
                     }
                 });
+    }
+
+    private void reflectChangeTitleColor(AlertDialog dialog) {
+        try {
+            Field mAlert = AlertDialog.class.getDeclaredField("mAlert");
+            mAlert.setAccessible(true);
+            Object alertController = mAlert.get(dialog);
+
+            Field mTitleView = alertController.getClass().getDeclaredField("mTitleView");
+            mTitleView.setAccessible(true);
+
+            TextView title = (TextView) mTitleView.get(alertController);
+            if (title != null) {
+                title.setTextColor(Color.BLACK);
+                title.setAlpha(0.75f);
+            }
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private void installApp(File mApkFile) {

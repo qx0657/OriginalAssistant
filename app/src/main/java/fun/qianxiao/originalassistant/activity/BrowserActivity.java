@@ -31,10 +31,19 @@ import fun.qianxiao.originalassistant.databinding.ActivityBrowserBinding;
  */
 public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
     private String url;
+    private static final String NAME_URL = "url";
+    private static final String NAME_TITLE = "title";
 
     public static void load(Context context, String url) {
         Intent intent = new Intent(context, BrowserActivity.class);
-        intent.putExtra("url", url);
+        intent.putExtra(NAME_URL, url);
+        context.startActivity(intent);
+    }
+
+    public static void load(Context context, String title, String url) {
+        Intent intent = new Intent(context, BrowserActivity.class);
+        intent.putExtra(NAME_URL, url);
+        intent.putExtra(NAME_TITLE, title);
         context.startActivity(intent);
     }
 
@@ -57,8 +66,8 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
 
         Intent intent = getIntent();
         if (intent != null) {
-            url = intent.getStringExtra("url");
-            String title = intent.getStringExtra("title");
+            url = intent.getStringExtra(NAME_URL);
+            String title = intent.getStringExtra(NAME_TITLE);
 
             if (!TextUtils.isEmpty(title)) {
                 setTitle(title);

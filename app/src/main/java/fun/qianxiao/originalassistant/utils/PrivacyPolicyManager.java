@@ -51,7 +51,7 @@ public class PrivacyPolicyManager {
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    BrowserActivity.load(context, AppConfig.PRIVACY_POLICY_URL);
+                    BrowserActivity.load(context, "隐私政策", AppConfig.PRIVACY_POLICY_URL);
                 }
             };
             int end = start + "《隐私权政策》".length();

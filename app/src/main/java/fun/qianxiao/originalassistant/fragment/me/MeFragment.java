@@ -30,6 +30,7 @@ import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
+import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 
@@ -104,7 +105,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
     }
 
     private void showLogin() {
-        if (TextUtils.isEmpty(SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY))) {
+        if (TextUtils.isEmpty(HlxKeyLocal.read())) {
             keyInputConfirmPopupView = new XPopup.Builder(activity)
                     .dismissOnTouchOutside(false)
                     .asInputConfirm(
@@ -118,7 +119,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                                 } else {
                                     HLXApiManager.INSTANCE.checkKey(text, (valid, errMsg) -> {
                                         if (valid) {
-                                            SPUtils.getInstance().put(SPConstants.KEY_HLX_KEY, text);
+                                            HlxKeyLocal.write(text);
                                             setKeyToNick(text);
                                             baseInputXPopViewDismiss(keyInputConfirmPopupView);
                                             loginingByKey();
@@ -149,7 +150,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         if (TextUtils.isEmpty(userId)) {
             ToastUtils.showShort("设置Key成功，如需获取用户信息请设置userId");
         } else {
-            loginHLX(SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY), userId, false);
+            loginHLX(HlxKeyLocal.read(), userId, false);
         }
     }
 
@@ -210,7 +211,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
     }
 
     private void signIn() {
-        String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+        String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
             ToastUtils.showShort("未登录");
         } else {
@@ -227,7 +228,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                         public void onConfirm() {
                             SPUtils.getInstance().remove(SPConstants.KEY_HLX_USER_ID);
                             displayUserInfo(null);
-                            String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+                            String key = HlxKeyLocal.read();
                             setKeyToNick(key);
                         }
                     })
@@ -245,7 +246,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                                 } else {
                                     baseInputXPopViewDismiss(userIdInputConfirmPopupView);
                                     setUserId(userId);
-                                    String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+                                    String key = HlxKeyLocal.read();
                                     if (TextUtils.isEmpty(key)) {
                                         ToastUtils.showShort("userId设置成功，请设置key登录");
                                     } else {
@@ -277,7 +278,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
 
     @Override
     protected void initData() {
-        String key = SPUtils.getInstance().getString(SPConstants.KEY_HLX_KEY);
+        String key = HlxKeyLocal.read();
         if (!TextUtils.isEmpty(key)) {
             setKeyToNick(key);
         }
