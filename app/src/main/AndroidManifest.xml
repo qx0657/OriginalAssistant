@@ -65,6 +65,8 @@
         <activity android:name=".activity.test.MovingBricksActivity" />
         <activity android:name=".activity.test.CrackFailedActivity" />
         <activity android:name=".activity.test.ReviseSuccessActivity" />
+        <activity android:name=".activity.HelpActivity" />
+        <activity android:name=".activity.SupportActivity" />
     </application>
 
 </manifest>

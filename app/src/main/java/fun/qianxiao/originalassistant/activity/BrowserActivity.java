@@ -15,7 +15,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 
 import com.orhanobut.logger.Logger;
 
@@ -55,13 +54,7 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
     @Override
     protected void initData() {
         setTitle("网页");
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
+        showBackIcon();
         initWebView();
 
         Intent intent = getIntent();

@@ -23,7 +23,9 @@ import com.lxj.xpopup.util.XPopupUtils;
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.AboutActivity;
+import fun.qianxiao.originalassistant.activity.HelpActivity;
 import fun.qianxiao.originalassistant.activity.SettingsActivity;
+import fun.qianxiao.originalassistant.activity.SupportActivity;
 import fun.qianxiao.originalassistant.api.hlx.HLXApiManager;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
@@ -61,10 +63,10 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
             ActivityUtils.startActivity(new Intent(activity, SettingsActivity.class));
         });
         binding.llSupport.setOnClickListener(v -> {
-            ToastUtils.showShort("支持");
+            ActivityUtils.startActivity(new Intent(activity, SupportActivity.class));
         });
         binding.llHelp.setOnClickListener(v -> {
-            ToastUtils.showShort("帮助");
+            ActivityUtils.startActivity(new Intent(activity, HelpActivity.class));
         });
 
         KeyboardUtils.registerSoftInputChangedListener(activity, height -> {

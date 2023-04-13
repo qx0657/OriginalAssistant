@@ -14,7 +14,6 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.ActionBar;
 import androidx.viewbinding.ViewBinding;
 
 import com.blankj.utilcode.util.AppUtils;
@@ -102,11 +101,8 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
 
     @Override
     protected void initData() {
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
         setTitle(getTestTitle());
+        showBackIcon();
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override

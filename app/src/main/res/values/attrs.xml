@@ -5,9 +5,11 @@
     <attr name="DayColorPrimaryNightBlack80Pressed" format="color" />
     <attr name="DayWhiteNightColorPrimaryDay" format="color" />
     <attr name="DayWhiteNightBlack" format="color" />
+    <attr name="DayBlackNightWhite" format="color" />
     <attr name="DayDefaultTextViewNightWhite" format="color" />
     <attr name="DayDefaultTextViewNightWhitePressed" format="color" />
     <attr name="DayWhiteNightDeepGray" format="color" />
+    <attr name="DayWhite95NightBlack91" format="color" />
 
     <attr name="EditTextCursorColor" format="color" />
     <attr name="FloatingActionButtonLabelBgColor" format="color" />

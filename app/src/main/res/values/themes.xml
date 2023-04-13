@@ -18,9 +18,11 @@
         <item name="DayColorPrimaryNightBlack80Pressed">@color/LightSkyBlue</item>
         <item name="DayWhiteNightColorPrimaryDay">@color/white</item>
         <item name="DayWhiteNightBlack">@color/white</item>
+        <item name="DayBlackNightWhite">@color/black</item>
         <item name="DayDefaultTextViewNightWhite">#606060</item>
         <item name="DayDefaultTextViewNightWhitePressed">#7C7C7C</item>
         <item name="DayWhiteNightDeepGray">@color/white</item>
+        <item name="DayWhite95NightBlack91">@color/white95</item>
 
         <item name="EditTextCursorColor">@color/DeepSkyBlue</item>
         <item name="android:textCursorDrawable">@drawable/edit_text_cursor</item>

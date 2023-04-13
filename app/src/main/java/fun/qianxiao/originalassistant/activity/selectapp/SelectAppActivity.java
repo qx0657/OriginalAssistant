@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -132,11 +131,8 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
 
     @Override
     protected void initData() {
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
         setTitle("选择游戏");
+        showBackIcon();
         binding.rvAppList.setLayoutManager(new LinearLayoutManager(context));
         getAppList();
     }
