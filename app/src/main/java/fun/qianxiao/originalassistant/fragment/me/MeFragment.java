@@ -23,13 +23,14 @@ import com.lxj.xpopup.util.XPopupUtils;
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.AboutActivity;
-import fun.qianxiao.originalassistant.activity.HelpActivity;
+import fun.qianxiao.originalassistant.activity.BrowserActivity;
 import fun.qianxiao.originalassistant.activity.SettingsActivity;
 import fun.qianxiao.originalassistant.activity.SupportActivity;
 import fun.qianxiao.originalassistant.api.hlx.HLXApiManager;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
+import fun.qianxiao.originalassistant.config.AppConfig;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
@@ -66,7 +67,8 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
             ActivityUtils.startActivity(new Intent(activity, SupportActivity.class));
         });
         binding.llHelp.setOnClickListener(v -> {
-            ActivityUtils.startActivity(new Intent(activity, HelpActivity.class));
+            //ActivityUtils.startActivity(new Intent(activity, HelpActivity.class));
+            BrowserActivity.load(getContext(), "帮助中心", AppConfig.HELP_URL);
         });
 
         KeyboardUtils.registerSoftInputChangedListener(activity, height -> {

@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">原创助手</string>
+    <string name="about_app">原创助手App全新版本，支持Android 11、12、13，提供更好的功能，更好的服务。\n项目已开源，如有兴趣欢迎共同维护。</string>
+    <string name="support_tips">亲爱的用户们， \n\n感谢您们对我们开发的app的支持与信任。我们致力于为您们提供最好的使用体验，并不断推出新的功能与更新来优化您们的使用体验。 \n\n然而，我们需要您们的帮助来维持与改进我们的服务。如果您喜欢我们的app并愿意支持我们，您可以考虑捐赠我们。您的每一次支持，都能够使我们更加专注与投入地开发与改进我们的服务。 \n\n再次感谢您们的支持与信任，我们会一如既往地为您们提供最好的服务。 \n\n谢谢！</string>
+    <string name="p_key_switch_title">p_key_switch_title</string>
+    <string name="p_key_team_name">p_key_team_name</string>
+    <string name="p_key_title_format">p_key_title_format</string>
+    <string name="post_title_format_default">【%s原创】%s.ver.%s</string>
+    <string name="p_key_special_instructions">p_key_special_instructions</string>
+    <string name="p_key_post_prefix">p_key_post_prefix</string>
+    <string name="p_key_post_suffix">p_key_post_suffix</string>
+    <string name="p_key_switch_post_one_key">p_key_switch_post_one_key</string>
+    <string name="p_key_switch_post_rich">p_key_switch_post_rich</string>
+    <string name="p_key_download_picture_num">p_key_download_picture_num</string>
+    <string name="p_key_get_introduction_length_max">p_key_get_introduction_length_max</string>
+    <string name="p_key_current_translate_api">p_key_current_translate_api</string>
 </resources>

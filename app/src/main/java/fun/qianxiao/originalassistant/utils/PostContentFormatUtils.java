@@ -1,9 +1,12 @@
 package fun.qianxiao.originalassistant.utils;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.Utils;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.bean.PostInfo;
 
 /**
@@ -35,7 +38,10 @@ public class PostContentFormatUtils {
     public static final String FIELD_NAME_APP_INTRODUCTION = "【游戏简介】";
     public static final String FIELD_NAME_APP_DOWNLOAD_URL = "【下载地址】";
 
-    public static final String FIELD_SEPARATOR = "\n\n";
+    public static final String FIELD_SEPARATOR = "\n";
+    public static final String FIELD_SEPARATOR_DOUBLE = "\n\n";
+
+    public static final String TITLE_FORMAT_DEFAULT = Utils.getApp().getString(R.string.post_title_format_default);
 
     public static CharSequence format(PostInfo postInfo) {
         String fieldNameAppName = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_NAME, FIELD_NAME_APP_NAME);
@@ -49,15 +55,31 @@ public class PostContentFormatUtils {
         String fieldNameAppIntroduction = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_INTRODUCTION, FIELD_NAME_APP_INTRODUCTION);
         String fieldNameAppDownloadUrl = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_DOWNLOAD_URL, FIELD_NAME_APP_DOWNLOAD_URL);
 
-        return fieldNameAppName + postInfo.getAppName() + FIELD_SEPARATOR +
-                fieldNameAppLanguage + postInfo.getAppLanguage() + FIELD_SEPARATOR +
-                fieldNameAppSize + postInfo.getAppSize() + FIELD_SEPARATOR +
-                fieldNameAppVersion + postInfo.getAppVersionName() + FIELD_SEPARATOR +
-                fieldNameAppPackageName + postInfo.getAppPackageName() + FIELD_SEPARATOR +
-                fieldNameAppVersionCode + postInfo.getAppVersionCode() + FIELD_SEPARATOR +
-                fieldNameAppSystemVersion + Build.VERSION.RELEASE + FIELD_SEPARATOR +
-                fieldNameAppSpecialInstructions + postInfo.getAppSpecialInstructions() + FIELD_SEPARATOR +
-                fieldNameAppIntroduction + postInfo.getAppIntroduction() + FIELD_SEPARATOR +
-                fieldNameAppDownloadUrl + postInfo.getAppDownloadUrl();
+        StringBuilder stringBuilder = new StringBuilder();
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_title)) {
+            String teamName = SettingPreferences.getString(R.string.p_key_team_name, "");
+            String titleFormat = SettingPreferences.getString(R.string.p_key_title_format, TITLE_FORMAT_DEFAULT);
+            stringBuilder.append(String.format(titleFormat, teamName, postInfo.getAppName(), postInfo.getAppVersionName())).append(FIELD_SEPARATOR);
+        }
+        String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+        if (!TextUtils.isEmpty(postPrefix)) {
+            stringBuilder.append(postPrefix).append(FIELD_SEPARATOR);
+        }
+        stringBuilder.append(fieldNameAppName).append(postInfo.getAppName()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppLanguage).append(postInfo.getAppLanguage()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppSize).append(postInfo.getAppSize()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppVersion).append(postInfo.getAppVersionName()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppPackageName).append(postInfo.getAppPackageName()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppVersionCode).append(postInfo.getAppVersionCode()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppSystemVersion).append(Build.VERSION.RELEASE).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppSpecialInstructions).append(postInfo.getAppSpecialInstructions()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppIntroduction).append(postInfo.getAppIntroduction()).append(FIELD_SEPARATOR_DOUBLE);
+        stringBuilder.append(fieldNameAppDownloadUrl).append(postInfo.getAppDownloadUrl());
+        ;
+        String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+        if (!TextUtils.isEmpty(postSuffix)) {
+            stringBuilder.append(FIELD_SEPARATOR).append(postSuffix);
+        }
+        return stringBuilder.toString();
     }
 }

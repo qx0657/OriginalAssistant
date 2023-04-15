@@ -1,44 +1,114 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:title="Messages"
+        app:title="配置信息"
         app:iconSpaceReserved="false">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="Your Signature"
-            app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:key="@string/p_key_switch_title"
+            app:title="自动生成标题"
+            app:iconSpaceReserved="false" />
 
         <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="Default reply action"
+            app:key="@string/p_key_team_name"
+            app:dependency="p_key_switch_title"
+            app:title="团队名称"
+            app:dialogTitle="请选择团队"
             app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            app:entries="@array/team_name_entries"
+            app:entryValues="@array/team_name_values" />
+
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_title_format"
+            app:dependency="p_key_switch_title"
+            app:title="标题格式"
+            app:defaultValue="@string/post_title_format_default"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:summarySingleLine="true"
+            app:summaryEllipsize="middle"
+            app:editTextSingleLine="true"
+            app:editTextHint="【%s原创】%s.ver.%s" />
+
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_special_instructions"
+            app:title="特别说明选项"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:summarySingleLine="true"
+            app:summaryEllipsize="middle" />
+
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_post_prefix"
+            app:title="帖子前补充信息"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:summarySingleLine="true"
+            app:summaryEllipsize="middle" />
+
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_post_suffix"
+            app:title="帖子尾补充信息"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:summarySingleLine="true"
+            app:summaryEllipsize="middle" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="一键发帖"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            app:key="@string/p_key_switch_post_one_key"
+            app:dependency="@string/p_key_switch_title"
+            app:title="一键发帖"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
+            app:key="@string/p_key_switch_post_rich"
+            app:dependency="@string/p_key_switch_post_one_key"
+            app:title="图文发帖"
+            app:summary="请确保您的账号有图文发帖权限"
+            app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:title="Sync"
+        app:title="获取与下载"
         app:iconSpaceReserved="false">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="Sync email periodically"
-            app:iconSpaceReserved="false" />
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_download_picture_num"
+            app:title="下载图片数量"
+            app:defaultValue="5"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:editTextInputType="number" />
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="Only download attachments when manually requested"
-            app:summaryOn="Automatically download attachments for incoming emails
-    "
-            app:title="Download incoming attachments"
-            app:iconSpaceReserved="false" />
+        <fun.qianxiao.originalassistant.view.MyEditTextPreference
+            app:key="@string/p_key_get_introduction_length_max"
+            app:title="获取简介内容最长限制"
+            app:defaultValue="1200"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true"
+            app:editTextInputType="number" />
+    </PreferenceCategory>
 
+    <PreferenceCategory
+        app:title="功能选择"
+        app:iconSpaceReserved="false">
+
+        <ListPreference
+            app:key="@string/p_key_current_translate_api"
+            app:defaultValue="1"
+            app:entries="@array/translate_api_entries"
+            app:entryValues="@array/translate_api_values"
+            app:title="翻译接口"
+            app:dialogTitle="选择翻译接口"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

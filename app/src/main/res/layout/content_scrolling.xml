@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="16dp"
             android:paddingHorizontal="6dp"
-            android:text="原创助手App全新版本，支持Android 11、12、13，提供更好的功能，更好的服务。\n项目已开源，如有兴趣欢迎共同维护。" />
+            android:text="@string/about_app" />
 
         <TextView
             android:id="@+id/tv_project_github"

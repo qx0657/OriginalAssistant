@@ -28,6 +28,10 @@ public class AppConfig {
      */
     public static final String PRIVACY_POLICY_URL = "http://sfy.qianxiao.fun/app/original_assistant/privacy_policy.html";
     /**
+     * 帮助中心链接
+     */
+    public static final String HELP_URL = "http://sfy.qianxiao.fun/app/original_assistant/help.html";
+    /**
      * 项目Github
      */
     public static final String PROJECT_GITHUB_URL = "https://github.com/qx0657/OriginalAssistant";

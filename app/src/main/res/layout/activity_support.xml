@@ -14,11 +14,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="28dp"
             android:paddingVertical="33dp"
-            android:text="亲爱的用户们，
-\n\n感谢您们对我们开发的app的支持与信任。我们致力于为您们提供最好的使用体验，并不断推出新的功能与更新来优化您们的使用体验。
-\n\n然而，我们需要您们的帮助来维持与改进我们的服务。如果您喜欢我们的app并愿意支持我们，您可以考虑捐赠我们。您的每一次支持，都能够使我们更加专注与投入地开发与改进我们的服务。
-\n\n再次感谢您们的支持与信任，我们会一如既往地为您们提供最好的服务。
-\n\n谢谢！"
+            android:text="@string/support_tips"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout

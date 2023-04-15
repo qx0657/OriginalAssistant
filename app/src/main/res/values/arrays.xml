@@ -1,13 +1,30 @@
 <resources>
     <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <string-array name="translate_api_entries">
+        <item>自动</item>
+        <item>谷歌翻译</item>
+        <item>有道翻译</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="translate_api_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="team_name_entries">
+        <item>无邪团队</item>
+        <item>初夏团队</item>
+        <item>无忧团队</item>
+        <item>开拓者团队</item>
+        <item>血羽团队</item>
+    </string-array>
+    <string-array name="team_name_values">
+        <item>无邪</item>
+        <item>初夏</item>
+        <item>无忧</item>
+        <item>开拓者</item>
+        <item>血羽</item>
     </string-array>
 
     <string-array name="special_instructions">

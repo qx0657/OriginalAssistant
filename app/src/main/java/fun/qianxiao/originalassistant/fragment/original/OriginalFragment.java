@@ -18,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -32,8 +33,14 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
@@ -43,6 +50,7 @@ import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.PostInfo;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
+import fun.qianxiao.originalassistant.utils.SettingPreferences;
 
 /**
  * OriginalFragment
@@ -101,7 +109,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    String[] s = getResources().getStringArray(R.array.special_instructions);
+                    String[] s = getSpecialInstructionTexts();
                     /*
                     Use tag of view to save the added to prevent repeated addition
                      */
@@ -303,6 +311,39 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 }
             }
         });
+        initSpecialInstructionsSpinner();
+    }
+
+    private void initSpecialInstructionsSpinner() {
+        if (!TextUtils.isEmpty(SettingPreferences.getString(R.string.p_key_special_instructions))) {
+            List<Map<String, String>> data = new ArrayList<>();
+            Map<String, String> specialInstructionsMap = new LinkedHashMap<>();
+            specialInstructionsMap.put("text", "");
+            for (String s : getSpecialInstructionTexts()) {
+                specialInstructionsMap = new LinkedHashMap<>();
+                specialInstructionsMap.put("text", s);
+                data.add(specialInstructionsMap);
+            }
+            SimpleAdapter simpleAdapter = new SimpleAdapter(getContext(), data, android.R.layout.simple_spinner_dropdown_item,
+                    new String[]{"text"},
+                    new int[]{android.R.id.text1});
+            binding.spinnerSpecialInstructionsSelect.setDropDownWidth(ScreenUtils.getAppScreenWidth());
+            binding.spinnerSpecialInstructionsSelect.setAdapter(simpleAdapter);
+        }
+    }
+
+    private String[] getSpecialInstructionTexts() {
+        if (TextUtils.isEmpty(SettingPreferences.getString(R.string.p_key_special_instructions))) {
+            return getResources().getStringArray(R.array.special_instructions);
+        }
+        String pKeySpecialInstructions = SettingPreferences.getString(R.string.p_key_special_instructions);
+        String[] strings = pKeySpecialInstructions.split("\n");
+        String[] stringsRes = new String[strings.length + 1];
+        stringsRes[0] = "";
+        for (int i = 0; i < strings.length; i++) {
+            stringsRes[i + 1] = strings[i];
+        }
+        return stringsRes;
     }
 
     @Override
