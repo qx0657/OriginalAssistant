@@ -38,8 +38,8 @@ public abstract class Translate<T> implements ITranslate {
     protected abstract void response(JSONObject jsonObject, OnTranslateListener onTranslateListener);
 
     @Override
-    public void translate(String en, OnTranslateListener onTranslateListener) {
-        request(en).subscribeOn(Schedulers.newThread())
+    public void translate(String text, OnTranslateListener onTranslateListener) {
+        request(text).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -72,5 +72,11 @@ public abstract class Translate<T> implements ITranslate {
                 });
     }
 
-    protected abstract Observable<ResponseBody> request(String en);
+    /**
+     * request
+     *
+     * @param text text
+     * @return {@link Observable<ResponseBody>}
+     */
+    protected abstract Observable<ResponseBody> request(String text);
 }

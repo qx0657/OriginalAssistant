@@ -24,9 +24,9 @@ public class GoogleTranslate extends Translate<GoogleApi> {
     }
 
     @Override
-    protected Observable<ResponseBody> request(String en) {
-        String tk = getTk(en);
-        return getApi().translate(en, tk);
+    protected Observable<ResponseBody> request(String text) {
+        String tk = getTk(text);
+        return getApi().translate(text, tk);
     }
 
     private String getTk(String input) {

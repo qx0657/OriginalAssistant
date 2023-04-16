@@ -22,5 +22,11 @@ public interface ITranslate {
         void onTranslateResult(int code, String msg, String result);
     }
 
-    void translate(String en, OnTranslateListener onTranslateListener);
+    /**
+     * translate
+     *
+     * @param text text
+     * @param onTranslateListener onTranslateListener
+     */
+    void translate(String text, OnTranslateListener onTranslateListener);
 }

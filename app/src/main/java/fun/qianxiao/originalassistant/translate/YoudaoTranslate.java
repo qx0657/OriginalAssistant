@@ -44,11 +44,11 @@ public class YoudaoTranslate extends Translate<YoudaoApi> {
     }
 
     @Override
-    protected Observable<ResponseBody> request(String en) {
+    protected Observable<ResponseBody> request(String text) {
         String salt = UUID.randomUUID().toString();
         String tsp = String.valueOf(System.currentTimeMillis() / 1000);
-        String sign = sign(en, salt, tsp);
-        return getApi().translate(en, salt, sign, tsp);
+        String sign = sign(text, salt, tsp);
+        return getApi().translate(text, salt, sign, tsp);
     }
 
     private String sign(String text, String salt, String tsp) {

@@ -47,28 +47,28 @@ public class TranslateManager {
         }
     }
 
-    public void translate(TranslateInterfaceType type, String en, ITranslate.OnTranslateListener onTranslateListener) {
+    public void translate(TranslateInterfaceType type, String text, ITranslate.OnTranslateListener onTranslateListener) {
         boolean auto = false;
         switch (type) {
             case AUTO_TRANSLATE:
-                createTranslater(BaiduTranslate.class).translate(en, new ITranslate.OnTranslateListener() {
+                createTranslater(BaiduTranslate.class).translate(text, new ITranslate.OnTranslateListener() {
                     @Override
                     public void onTranslateResult(int code, String msg, String result) {
                         if (code == ITranslate.OnTranslateListener.TRANSLATE_ERROR) {
-                            createTranslater(YoudaoTranslate.class).translate(en, onTranslateListener);
+                            createTranslater(YoudaoTranslate.class).translate(text, onTranslateListener);
                         } else {
                             onTranslateListener.onTranslateResult(code, msg, result);
                         }
                     }
                 });
             case YOUDAO_TRANSLATE:
-                createTranslater(YoudaoTranslate.class).translate(en, onTranslateListener);
+                createTranslater(YoudaoTranslate.class).translate(text, onTranslateListener);
                 break;
             case BAIDU_TRANSLATE:
-                createTranslater(BaiduTranslate.class).translate(en, onTranslateListener);
+                createTranslater(BaiduTranslate.class).translate(text, onTranslateListener);
                 break;
             case GOOGLE_TRANSLATE:
-                createTranslater(GoogleTranslate.class).translate(en, onTranslateListener);
+                createTranslater(GoogleTranslate.class).translate(text, onTranslateListener);
                 break;
             default:
                 break;
