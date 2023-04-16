@@ -7,10 +7,15 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +30,8 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.recyclerview.widget.GridLayoutManager;
 
@@ -55,6 +62,8 @@ import fun.qianxiao.originalassistant.bean.PostInfo;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
 import fun.qianxiao.originalassistant.manager.AppQueryMannager;
+import fun.qianxiao.originalassistant.manager.TranslateManager;
+import fun.qianxiao.originalassistant.translate.ITranslate;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
 import fun.qianxiao.originalassistant.view.RecyclerSpace;
@@ -323,6 +332,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         });
         initSpecialInstructionsSpinner();
         initAppPicturesRecycleView();
+        initFloatButtonData();
+    }
+
+    private void initFloatButtonData() {
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_post_one_key)) {
+            binding.fabGotoApp.setTitle("发帖");
+        }
     }
 
     private void initAppPicturesRecycleView() {
@@ -375,6 +391,49 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             stringsRes[i + 1] = strings[i];
         }
         return stringsRes;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        activity.getMenuInflater().inflate(R.menu.menu_original, menu);
+    }
+
+    /**
+     * see {@link R.menu.menu_original}
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_translate) {
+            String text = binding.etGameIntroduction.getText().toString();
+            if (!TextUtils.isEmpty(text)) {
+                int transApi = Integer.parseInt(SettingPreferences.getString(R.string.p_key_current_translate_api, "0"));
+                TranslateManager.getInstance().translate(TranslateManager.TranslateInterfaceType.values()[transApi],
+                        text, new ITranslate.OnTranslateListener() {
+                            @Override
+                            public void onTranslateResult(int code, String msg, String result) {
+                                if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
+                                    binding.etGameIntroduction.setText(result);
+                                    binding.etGameIntroduction.setSelection(binding.etGameIntroduction.getText().length());
+                                } else {
+                                    ToastUtils.showShort(msg);
+                                }
+
+                            }
+                        });
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

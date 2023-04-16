@@ -2,11 +2,13 @@
     <!-- Reply Preference -->
     <string-array name="translate_api_entries">
         <item>自动</item>
-        <item>谷歌翻译</item>
         <item>有道翻译</item>
+        <item>百度翻译</item>
+        <item>谷歌翻译</item>
     </string-array>
 
     <string-array name="translate_api_values">
+        <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>

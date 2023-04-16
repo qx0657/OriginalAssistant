@@ -6,6 +6,8 @@ import androidx.preference.PreferenceManager;
 
 import com.blankj.utilcode.util.Utils;
 
+import java.util.Map;
+
 /**
  * TODO
  *
@@ -50,5 +52,16 @@ public enum SettingPreferences {
 
     public static String getString(String key, String defValue) {
         return preferences.getString(key, defValue);
+    }
+
+    public static Object get(String key) {
+        Map<String, ?> map = preferences.getAll();
+
+        for (String s : map.keySet()) {
+            if (s.equals(key)) {
+                return map.get(s);
+            }
+        }
+        return null;
     }
 }

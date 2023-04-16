@@ -62,7 +62,6 @@
 
         <SwitchPreference
             app:key="@string/p_key_switch_post_one_key"
-            app:dependency="@string/p_key_switch_title"
             app:title="一键发帖"
             app:iconSpaceReserved="false" />
 
@@ -102,7 +101,8 @@
 
         <ListPreference
             app:key="@string/p_key_current_translate_api"
-            app:defaultValue="1"
+            app:isPreferenceVisible="true"
+            app:defaultValue="0"
             app:entries="@array/translate_api_entries"
             app:entryValues="@array/translate_api_values"
             app:title="翻译接口"

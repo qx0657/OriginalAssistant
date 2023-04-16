@@ -32,7 +32,7 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull AppInfoAdapterViewHolder holder, AppInfo appInfo) {
+    protected void onBindViewHolder(@NonNull AppInfoAdapterViewHolder holder, int position, AppInfo appInfo) {
         holder.binding.tvAppName.setText(appInfo.getAppName());
         holder.binding.tvAppPackageName.setText(appInfo.getPackageName());
         Glide.with(holder.binding.ivAppIcon).load(appInfo.getIcon()).into(holder.binding.ivAppIcon);

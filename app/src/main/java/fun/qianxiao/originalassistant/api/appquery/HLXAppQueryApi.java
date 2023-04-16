@@ -12,10 +12,21 @@ import retrofit2.http.Query;
  * @Date 2023/4/16
  */
 public interface HLXAppQueryApi {
-
+    /**
+     * hlx search
+     *
+     * @param keyword keyword
+     * @return
+     */
     @GET("http://search.huluxia.com/game/search/ANDROID/4.1.5?start=0&count=20")
     Observable<ResponseBody> query(@Query("keyword") String keyword);
 
+    /**
+     * hlx app info detail
+     *
+     * @param app_id app_id
+     * @return
+     */
     @GET("http://tools.huluxia.com/game/detail/ANDROID/4.1.5")
     Observable<ResponseBody> detail(@Query("app_id") long app_id);
 }

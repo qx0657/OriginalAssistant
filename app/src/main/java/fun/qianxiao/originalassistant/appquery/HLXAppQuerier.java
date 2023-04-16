@@ -94,7 +94,7 @@ public class HLXAppQuerier extends AppQuerier<HLXAppQueryApi> {
                     if (jsonObject.optInt("status") == 1) {
                         JSONArray jsonArray = jsonObject.optJSONArray("gameapps");
                         if (jsonArray == null) {
-                            analysisResultInterface.onError(-1, "api request success but gameapps jsonArray is null");
+                            analysisResultInterface.onError(-1, "hlx api request success but gameapps jsonArray is null");
                             return;
                         }
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -107,6 +107,8 @@ public class HLXAppQuerier extends AppQuerier<HLXAppQueryApi> {
                         if (jsonArray.length() > 0) {
                             JSONObject jsonObject1 = jsonArray.optJSONObject(0);
                             getAppInfoInJsonObject(jsonObject1, analysisResultInterface);
+                        } else {
+                            analysisResultInterface.onError(-1, "hlx api request success but gameapps array is empty");
                         }
                     } else {
                         analysisResultInterface.onError(-1, "hlx api status is not ok");

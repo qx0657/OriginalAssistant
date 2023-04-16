@@ -10,11 +10,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
+
+import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
 
 import java.util.Arrays;
 
 import fun.qianxiao.originalassistant.R;
+import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
 
@@ -69,6 +75,27 @@ public class SettingsActivity extends AppCompatActivity {
         @SuppressWarnings("unchecked")
         private <T> T $(CharSequence key) {
             return (T) findPreference(key);
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(Preference preference) {
+            String key = preference.getKey();
+            LogUtils.i(preference.getTitle() + " " + key + ": " + SettingPreferences.get(key));
+            if (key.equals(getString(R.string.p_key_switch_post_one_key))) {
+                SwitchPreference switchPreference = $(R.string.p_key_switch_title);
+                if (SettingPreferences.getBoolean(key)) {
+                    SPUtils.getInstance().put(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON, switchPreference.isChecked());
+                    if (!switchPreference.isChecked()) {
+                        switchPreference.setChecked(true);
+                    }
+                } else {
+                    boolean beforeStatus = SPUtils.getInstance().getBoolean(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON);
+                    switchPreference.setChecked(beforeStatus);
+                }
+            } else if (key.equals(getString(R.string.p_key_switch_title))) {
+                SPUtils.getInstance().remove(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON);
+            }
+            return super.onPreferenceTreeClick(preference);
         }
     }
 

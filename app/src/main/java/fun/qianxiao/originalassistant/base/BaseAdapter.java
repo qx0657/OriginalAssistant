@@ -80,7 +80,7 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         BEAN bean = dataList.get(position);
-        onBindViewHolder(holder, bean);
+        onBindViewHolder(holder, position, bean);
     }
 
     /**
@@ -89,7 +89,11 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
      * @param holder
      * @param bean
      */
-    protected abstract void onBindViewHolder(@NonNull VH holder, BEAN bean);
+    protected abstract void onBindViewHolder(@NonNull VH holder, int position, BEAN bean);
+
+    public List<BEAN> getDataList() {
+        return dataList;
+    }
 
     @Override
     public int getItemCount() {

@@ -29,7 +29,7 @@ public class AppQueryMannager {
     }
 
     public static @NonNull
-    <T extends AppQuerier> IQuery createQuerier(Class<T> clazz) {
+    <T extends AppQuerier<?>> IQuery createQuerier(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (IllegalAccessException | InstantiationException e) {

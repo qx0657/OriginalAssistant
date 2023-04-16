@@ -9,6 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 
 import java.util.List;
 
+import cc.shinichi.library.ImagePreview;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.base.BaseAdapter;
 
@@ -29,7 +30,10 @@ public class AppPicturesAdapter extends BaseAdapter<String, AppPictureAdapterVie
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull AppPictureAdapterViewHolder holder, String s) {
+    protected void onBindViewHolder(@NonNull AppPictureAdapterViewHolder holder, int position, String s) {
         Glide.with(holder.binding.ivImage).load(s).transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners(10))).into(holder.binding.ivImage);
+        holder.binding.ivImage.setOnClickListener(v -> {
+            ImagePreview.getInstance().setContext(v.getContext()).setIndex(position).setImageList(getDataList()).start();
+        });
     }
 }
