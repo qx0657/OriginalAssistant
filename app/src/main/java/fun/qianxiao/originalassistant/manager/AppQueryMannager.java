@@ -1,7 +1,9 @@
 package fun.qianxiao.originalassistant.manager;
 
+import androidx.annotation.NonNull;
+
 import fun.qianxiao.originalassistant.appquery.AppQuerier;
-import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
+import fun.qianxiao.originalassistant.appquery.IQuery;
 
 /**
  * AppQueryMannager
@@ -13,7 +15,6 @@ public class AppQueryMannager {
     private volatile static AppQueryMannager instance;
 
     private AppQueryMannager() {
-        AppQueryMannager.getInstance().createQuerier(HLXAppQuerier.class);
     }
 
     public static AppQueryMannager getInstance() {
@@ -27,14 +28,13 @@ public class AppQueryMannager {
         return instance;
     }
 
-    public <T extends AppQuerier> AppQuerier createQuerier(Class<T> clazz) {
-        if (clazz.getName().equals(HLXAppQuerier.class.getName())) {
-            return new HLXAppQuerier();
+    public static @NonNull
+    <T extends AppQuerier> IQuery createQuerier(Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new UnsupportedOperationException(e);
         }
-
-        // TODO
-
-        throw new UnsupportedOperationException("not support " + clazz.getName());
     }
 
     public void superQuery(String appName, String packageName, AppQuerier.OnAppQueryListener onAppQueryListener) {

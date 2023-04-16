@@ -196,8 +196,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="下载链接"
-                app:hintTextColor="?attr/DayColorPrimaryNightWhite"
-                android:layout_marginBottom="52dp">
+                android:layout_marginBottom="22dp"
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
 
                 <EditText
                     android:id="@+id/et_download_url"
@@ -210,6 +210,12 @@
                     android:singleLine="true"
                     android:imeOptions="actionDone" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_app_pics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="52dp" />
         </LinearLayout>
     </ScrollView>
 

@@ -67,7 +67,6 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
             ActivityUtils.startActivity(new Intent(activity, SupportActivity.class));
         });
         binding.llHelp.setOnClickListener(v -> {
-            //ActivityUtils.startActivity(new Intent(activity, HelpActivity.class));
             BrowserActivity.load(getContext(), "帮助中心", AppConfig.HELP_URL);
         });
 

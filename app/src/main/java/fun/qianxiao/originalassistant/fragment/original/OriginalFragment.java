@@ -26,6 +26,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
@@ -45,12 +46,18 @@ import java.util.Map;
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
+import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
+import fun.qianxiao.originalassistant.appquery.IQuery;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
+import fun.qianxiao.originalassistant.bean.AppQueryResult;
 import fun.qianxiao.originalassistant.bean.PostInfo;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
+import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
+import fun.qianxiao.originalassistant.manager.AppQueryMannager;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
+import fun.qianxiao.originalassistant.view.RecyclerSpace;
 
 /**
  * OriginalFragment
@@ -289,6 +296,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 Intent data = result.getData();
                 if (resultCode == SelectAppActivity.RESULT_CODE_SELECT_APP_OK) {
                     if (data != null) {
+                        cleanAllInputContent();
                         try {
                             String appName = data.getStringExtra(SelectAppActivity.KEY_APP_NAME);
                             String appPackageName = data.getStringExtra(SelectAppActivity.KEY_APP_PACKAGE_NAME);
@@ -304,6 +312,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                             }
                             // getSize auto byte2FitMemorySize
                             binding.etGameSize.setText(FileUtils.getSize(packageInfo.applicationInfo.sourceDir));
+
+                            queryAppInfo(appName, appPackageName);
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -312,6 +322,27 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             }
         });
         initSpecialInstructionsSpinner();
+        initAppPicturesRecycleView();
+    }
+
+    private void initAppPicturesRecycleView() {
+        binding.rvAppPics.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        binding.rvAppPics.addItemDecoration(new RecyclerSpace(4));
+    }
+
+    private void queryAppInfo(String appName, String packageName) {
+        AppQueryMannager.createQuerier(HLXAppQuerier.class).query(appName, packageName, new IQuery.OnAppQueryListener() {
+            @Override
+            public void onResult(int code, String message, AppQueryResult appQueryResult) {
+                LogUtils.i(code, message, appQueryResult.getAppIntroduction(), appQueryResult.getAppPictures());
+                if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
+                    binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
+                    if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
+                        binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
+                    }
+                }
+            }
+        });
     }
 
     private void initSpecialInstructionsSpinner() {

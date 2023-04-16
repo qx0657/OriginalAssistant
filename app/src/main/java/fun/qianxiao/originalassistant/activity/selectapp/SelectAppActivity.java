@@ -110,7 +110,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
             if (Environment.isExternalStorageManager()) {
                 exportApkInner(bean);
             } else {
-                ToastUtils.showShort("请给与" + AppUtils.getAppName() + "所有文件权限");
+                ToastUtils.showShort("请给予" + AppUtils.getAppName() + "所有文件权限");
                 PermissionManager.getInstance().requestManageExternalStoragePermission(context);
             }
         } else {
@@ -118,7 +118,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                     ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 exportApkInner(bean);
             } else {
-                ToastUtils.showShort("请给与" + AppUtils.getAppName() + "文件读写权限");
+                ToastUtils.showShort("请给予" + AppUtils.getAppName() + "文件读写权限");
                 PermissionManager.getInstance().requestReadWritePermission();
             }
         }
