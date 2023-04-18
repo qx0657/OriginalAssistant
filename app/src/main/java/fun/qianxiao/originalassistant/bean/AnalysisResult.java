@@ -7,9 +7,18 @@ package fun.qianxiao.originalassistant.bean;
  * @Date 2023/4/18
  */
 public class AnalysisResult {
+    private String api;
     private AppQueryResult appQueryResult = new AppQueryResult();
     private String errorMsg;
     private boolean success;
+
+    public String getApi() {
+        return api;
+    }
+
+    public void setApi(String api) {
+        this.api = api;
+    }
 
     public AppQueryResult getAppQueryResult() {
         return appQueryResult;

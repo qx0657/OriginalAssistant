@@ -41,13 +41,17 @@
     </string-array>
 
     <string-array name="app_query_channel">
+        <item>不自动获取</item>
         <item>手动弹窗选择</item>
-        <item>自动</item>
-        <item>葫芦侠</item>
+        <item>自动（All）</item>
+        <item>自动-葫芦侠</item>
+        <item>自动-TapTap</item>
     </string-array>
     <string-array name="app_query_channel_value">
+        <item>-3</item>
         <item>-2</item>
         <item>-1</item>
         <item>0</item>
+        <item>1</item>
     </string-array>
 </resources>

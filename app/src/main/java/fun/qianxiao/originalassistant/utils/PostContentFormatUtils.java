@@ -8,6 +8,8 @@ import com.blankj.utilcode.util.Utils;
 
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.bean.PostInfo;
+import fun.qianxiao.originalassistant.config.Constants;
+import fun.qianxiao.originalassistant.config.SPConstants;
 
 /**
  * PostContentFormatUtils
@@ -55,6 +57,18 @@ public class PostContentFormatUtils {
         String fieldNameAppIntroduction = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_INTRODUCTION, FIELD_NAME_APP_INTRODUCTION);
         String fieldNameAppDownloadUrl = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_DOWNLOAD_URL, FIELD_NAME_APP_DOWNLOAD_URL);
 
+        if (SPUtils.getInstance().getInt(SPConstants.KEY_APP_MODE, Constants.APP_MODE_GAME) == Constants.APP_MODE_SOFTWARE) {
+            fieldNameAppName = fieldNameAppName.replace("游戏", "软件");
+            fieldNameAppLanguage = fieldNameAppLanguage.replace("游戏", "软件");
+            fieldNameAppSize = fieldNameAppSize.replace("游戏", "软件");
+            fieldNameAppVersion = fieldNameAppVersion.replace("游戏", "软件");
+            fieldNameAppPackageName = fieldNameAppPackageName.replace("游戏", "软件");
+            fieldNameAppVersionCode = fieldNameAppVersionCode.replace("游戏", "软件");
+            fieldNameAppSystemVersion = fieldNameAppSystemVersion.replace("游戏", "软件");
+            fieldNameAppSpecialInstructions = fieldNameAppSpecialInstructions.replace("游戏", "软件");
+            fieldNameAppIntroduction = fieldNameAppIntroduction.replace("游戏", "软件");
+            fieldNameAppDownloadUrl = fieldNameAppDownloadUrl.replace("游戏", "软件");
+        }
         StringBuilder stringBuilder = new StringBuilder();
         if (SettingPreferences.getBoolean(R.string.p_key_switch_title)) {
             String teamName = SettingPreferences.getString(R.string.p_key_team_name, "");

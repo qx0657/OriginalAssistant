@@ -19,15 +19,16 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
- * Translate
+ * AbstractTranslate<T>
+ * T is the retrofit2 api service
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public abstract class Translate<T> implements ITranslate {
+public abstract class AbstractTranslate<T> implements ITranslate {
     private final T apiService;
 
-    public Translate() {
+    public AbstractTranslate() {
         apiService = ApiServiceManager.getInstance().create(getGenericType());
     }
 

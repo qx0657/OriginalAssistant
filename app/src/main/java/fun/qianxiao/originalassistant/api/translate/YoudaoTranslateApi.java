@@ -6,12 +6,12 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- * YoudaoApi
+ * YoudaoTranslateApi
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface YoudaoApi {
+public interface YoudaoTranslateApi {
     String APP_KEY = "62b13f4b8adc66d0";
     String SECRET = "737E71BCEB51081E6F532BE2B86DC9815F1BD212800D88825BBF04C179A9AF00F72799DF6D2F41BC20C0253F6EA648F1";
 

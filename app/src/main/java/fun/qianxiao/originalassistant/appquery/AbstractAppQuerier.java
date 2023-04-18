@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
@@ -21,16 +23,17 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
- * AppQuerier
+ * AbstractAppQuerier<T>
+ * T is the retrofit2 api service
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public abstract class AppQuerier<T> implements IQuery {
+public abstract class AbstractAppQuerier<T, R> implements IQuery {
     private final T apiService;
 
-    public AppQuerier() {
-        apiService = ApiServiceManager.getInstance().create(getGenericType());
+    public AbstractAppQuerier() {
+        apiService = ApiServiceManager.getInstance().create(getGenericType(0));
     }
 
     protected T getApi() {
@@ -38,27 +41,44 @@ public abstract class AppQuerier<T> implements IQuery {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<T> getGenericType() {
-        return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
+    private Class<T> getGenericType(int index) {
+        return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[index];
     }
 
     @Override
     public void query(String appName, String packageName, OnAppQueryListener onAppQueryListener) {
-        LogUtils.i("app query use " + getGenericType().getSimpleName(), appName, packageName);
+        LogUtils.i("app query use " + getGenericType(0).getSimpleName(), appName, packageName);
         AnalysisResult analysisResult = new AnalysisResult();
+        analysisResult.setApi(getGenericType(0).getSimpleName());
         analysisResult.getAppQueryResult().setAppName(appName);
         analysisResult.getAppQueryResult().setPackageName(packageName);
         search(appName, packageName)
                 .flatMap(new Function<ResponseBody, ObservableSource<ResponseBody>>() {
                     @Override
                     public ObservableSource<ResponseBody> apply(ResponseBody responseBody) throws Throwable {
-                        return searchResponseAnalysisAndDetail(responseBody, analysisResult);
+                        R r;
+                        if (getGenericType(1) == JSONObject.class) {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            r = (R) jsonObject;
+                        } else {
+                            r = (R) responseBody;
+                        }
+                        return searchResponseAnalysisAndDetail(r, analysisResult);
                     }
                 })
                 .map(new Function<ResponseBody, AnalysisResult>() {
                     @Override
                     public AnalysisResult apply(ResponseBody responseBody) throws Throwable {
-                        detailResponseAnalysis(responseBody, analysisResult);
+                        R r;
+                        if (getGenericType(1) == JSONObject.class) {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            r = (R) jsonObject;
+                        } else {
+                            r = (R) responseBody;
+                        }
+                        detailResponseAnalysis(r, analysisResult);
                         return analysisResult;
                     }
                 })
@@ -111,17 +131,17 @@ public abstract class AppQuerier<T> implements IQuery {
     /**
      * searchResponseAnalysisAndDetail
      *
-     * @param searchResponseBody responseBody
-     * @param analysisResult     analysisResult
+     * @param searchResponse searchResponse
+     * @param analysisResult analysisResult
      * @return {@link Observable<ResponseBody>}
      */
-    protected abstract Observable<ResponseBody> searchResponseAnalysisAndDetail(ResponseBody searchResponseBody, AnalysisResult analysisResult);
+    protected abstract Observable<ResponseBody> searchResponseAnalysisAndDetail(R searchResponse, AnalysisResult analysisResult);
 
     /**
      * detailResponseAnalysis
      *
-     * @param detailResponseBody responseBody
-     * @param analysisResult     analysisResult
+     * @param detailResponseJsonObject responseBody
+     * @param analysisResult           analysisResult
      */
-    protected abstract void detailResponseAnalysis(ResponseBody detailResponseBody, AnalysisResult analysisResult);
+    protected abstract void detailResponseAnalysis(R detailResponseJsonObject, AnalysisResult analysisResult);
 }

@@ -11,10 +11,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import fun.qianxiao.originalassistant.translate.AbstractTranslate;
 import fun.qianxiao.originalassistant.translate.BaiduTranslate;
 import fun.qianxiao.originalassistant.translate.GoogleTranslate;
 import fun.qianxiao.originalassistant.translate.ITranslate;
-import fun.qianxiao.originalassistant.translate.Translate;
 import fun.qianxiao.originalassistant.translate.YoudaoTranslate;
 
 /**
@@ -42,13 +42,13 @@ public class TranslateManager {
          */
         GOOGLE_TRANSLATE(GoogleTranslate.class);
 
-        private Class<? extends Translate<?>> channel;
+        private Class<? extends AbstractTranslate<?>> channel;
 
-        TranslateInterfaceType(Class<? extends Translate<?>> channel) {
+        TranslateInterfaceType(Class<? extends AbstractTranslate<?>> channel) {
             this.channel = channel;
         }
 
-        public Class<? extends Translate<?>> getChannel() {
+        public Class<? extends AbstractTranslate<?>> getChannel() {
             return channel;
         }
     }
@@ -68,7 +68,7 @@ public class TranslateManager {
     }
 
     public static @NonNull
-    <T extends Translate<?>> ITranslate createTranslater(Class<T> clazz) {
+    <T extends AbstractTranslate<?>> ITranslate createTranslater(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (IllegalAccessException | InstantiationException e) {

@@ -11,9 +11,10 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import fun.qianxiao.originalassistant.appquery.AppQuerier;
+import fun.qianxiao.originalassistant.appquery.AbstractAppQuerier;
 import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
 import fun.qianxiao.originalassistant.appquery.IQuery;
+import fun.qianxiao.originalassistant.appquery.TapTapAppQuery;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 
 /**
@@ -42,7 +43,7 @@ public class AppQueryMannager {
     }
 
     public static @NonNull
-    <T extends AppQuerier<?>> IQuery createQuerier(Class<T> clazz) {
+    <T extends AbstractAppQuerier<?, ?>> IQuery createQuerier(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (IllegalAccessException | InstantiationException e) {
@@ -54,15 +55,19 @@ public class AppQueryMannager {
         /**
          * 葫芦侠;
          */
-        HLX(HLXAppQuerier.class);
+        HLX(HLXAppQuerier.class),
+        /**
+         * TapTap
+         */
+        TAPTAP(TapTapAppQuery.class);
 
-        private final Class<? extends AppQuerier<?>> channel;
+        private final Class<? extends AbstractAppQuerier<?, ?>> channel;
 
-        AppQueryChannel(Class<? extends AppQuerier<?>> aClass) {
+        AppQueryChannel(Class<? extends AbstractAppQuerier<?, ?>> aClass) {
             this.channel = aClass;
         }
 
-        public Class<? extends AppQuerier<?>> getChannel() {
+        public Class<? extends AbstractAppQuerier<?, ?>> getChannel() {
             return channel;
         }
     }
@@ -76,7 +81,7 @@ public class AppQueryMannager {
      * @param onAppQueryListener onAppQueryListener
      */
     @WorkerThread
-    public synchronized void query(String appName, String packageName, AppQuerier.OnAppQueryListener onAppQueryListener) {
+    public synchronized void query(String appName, String packageName, AbstractAppQuerier.OnAppQueryListener onAppQueryListener) {
         final boolean[] success = {false};
         for (AppQueryChannel appQueryChannel : AppQueryChannel.values()) {
             AppQueryMannager.createQuerier(appQueryChannel.getChannel()).query(appName, packageName, new IQuery.OnAppQueryListener() {

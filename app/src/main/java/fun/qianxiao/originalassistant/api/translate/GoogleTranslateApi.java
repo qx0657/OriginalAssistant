@@ -6,12 +6,12 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 /**
- * GoogleApi
+ * GoogleTranslateApi
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface GoogleApi {
+public interface GoogleTranslateApi {
     /**
      * translate to chinese
      *

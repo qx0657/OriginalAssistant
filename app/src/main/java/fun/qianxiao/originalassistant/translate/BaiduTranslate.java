@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import java.util.Locale;
 
-import fun.qianxiao.originalassistant.api.translate.BaiduApi;
+import fun.qianxiao.originalassistant.api.translate.BaiduTranslateApi;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -18,7 +18,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public class BaiduTranslate extends Translate<BaiduApi> {
+public class BaiduTranslate extends AbstractTranslate<BaiduTranslateApi> {
     @Override
     protected void response(JSONObject jsonObject, OnTranslateListener onTranslateListener) {
         if (!jsonObject.optString("error_code", "0").equals("0")) {
@@ -46,8 +46,8 @@ public class BaiduTranslate extends Translate<BaiduApi> {
     private String sign(String text, String salt) {
         final String CRYPT_KEY_STR = "194ccc6f31cab0013d877cf0e84fc19f";
         final byte[] CRYPT_KEY = ConvertUtils.hexString2Bytes(CRYPT_KEY_STR);
-        String secret = ConvertUtils.bytes2String(EncryptUtils.decryptHexStringAES(BaiduApi.SECRET, CRYPT_KEY, "AES/ECB/PKCS5Padding", null));
-        String md5 = EncryptUtils.encryptMD5ToString(BaiduApi.APP_ID + text + salt + secret);
+        String secret = ConvertUtils.bytes2String(EncryptUtils.decryptHexStringAES(BaiduTranslateApi.SECRET, CRYPT_KEY, "AES/ECB/PKCS5Padding", null));
+        String md5 = EncryptUtils.encryptMD5ToString(BaiduTranslateApi.APP_ID + text + salt + secret);
         return md5.toLowerCase(Locale.ROOT);
 
     }

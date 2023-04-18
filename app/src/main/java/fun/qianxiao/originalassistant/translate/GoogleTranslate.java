@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import fun.qianxiao.originalassistant.api.translate.GoogleApi;
+import fun.qianxiao.originalassistant.api.translate.GoogleTranslateApi;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -17,7 +17,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public class GoogleTranslate extends Translate<GoogleApi> {
+public class GoogleTranslate extends AbstractTranslate<GoogleTranslateApi> {
     @Override
     protected void response(JSONObject jsonObject, OnTranslateListener onTranslateListener) {
         LogUtils.i(jsonObject.toString());

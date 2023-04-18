@@ -42,6 +42,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -61,6 +62,8 @@ import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 import fun.qianxiao.originalassistant.bean.PostInfo;
+import fun.qianxiao.originalassistant.config.Constants;
+import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
 import fun.qianxiao.originalassistant.manager.AppQueryMannager;
@@ -79,6 +82,10 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
 public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A> {
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
+
+    private final int APP_QUERY_NOT_AUTO = -3;
+    private final int APP_QUERY_MANUAL = -2;
+    private final int APP_QUERY_AUTO_ALL = -1;
 
     @Override
     protected void initListener() {
@@ -328,8 +335,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                             }
                             binding.etGameSize.setText(ConvertUtils.byte2FitMemorySize(
                                     FileUtils.getFileLength(packageInfo.applicationInfo.sourceDir), 2));
-
-                            queryAppInfo(appName, appPackageName);
+                            if (!SettingPreferences.getString(R.string.p_key_app_query_channel).equals(String.valueOf(APP_QUERY_NOT_AUTO))) {
+                                queryAppInfo(appName, appPackageName);
+                            }
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -340,6 +348,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         initSpecialInstructionsSpinner();
         initAppPicturesRecycleView();
         initFloatButtonData();
+        initAppMode();
+    }
+
+    private void initAppMode() {
+        setAppMode(SPUtils.getInstance().getInt(SPConstants.KEY_APP_MODE, Constants.APP_MODE_GAME));
     }
 
     private void initFloatButtonData() {
@@ -381,6 +394,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
                         binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
                     }
+                } else {
+                    // ToastUtils.showShort(message);
                 }
             }
         };
@@ -392,9 +407,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         }
         int appQueryChannel = Integer.parseInt(SettingPreferences.getString(R.string.p_key_app_query_channel));
         IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
-        if (appQueryChannel == -2) {
+        if (appQueryChannel == APP_QUERY_MANUAL) {
             manualAppQQueryDialog(appName, packageName);
-        } else if (appQueryChannel == -1) {
+        } else if (appQueryChannel == APP_QUERY_AUTO_ALL) {
             autoAppQuery(appName, packageName, onAppQueryListener);
         } else {
             isAppQuerying.set(true);
@@ -447,11 +462,26 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem menuItemAppModeGame = menu.findItem(R.id.menu_item_app_mode_game);
+        MenuItem menuItemAppModeSoftware = menu.findItem(R.id.menu_item_app_mode_software);
+        int appMode = SPUtils.getInstance().getInt(SPConstants.KEY_APP_MODE, Constants.APP_MODE_GAME);
+        if (appMode == Constants.APP_MODE_GAME) {
+            menuItemAppModeGame.setChecked(true);
+        } else {
+            menuItemAppModeSoftware.setChecked(true);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_item_translate) {
             String text = binding.etGameIntroduction.getText().toString();
             if (!TextUtils.isEmpty(text)) {
                 translateIntroduction(text);
+            } else {
+                ToastUtils.showShort("应用介绍为空");
             }
             return true;
         } else if (item.getItemId() == R.id.menu_item_app_query) {
@@ -459,11 +489,44 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             String packageName = binding.etGamePackageName.getText().toString();
             if (!TextUtils.isEmpty(appName) && !TextUtils.isEmpty(appName)) {
                 manualAppQQueryDialog(appName, packageName);
+                return true;
             } else {
                 ToastUtils.showShort("应用名和包名不能为空");
             }
+        } else if (item.getItemId() == R.id.menu_item_app_mode_game) {
+            SPUtils.getInstance().put(SPConstants.KEY_APP_MODE, Constants.APP_MODE_GAME);
+            item.setChecked(true);
+            setAppMode(Constants.APP_MODE_GAME);
+            return true;
+        } else if (item.getItemId() == R.id.menu_item_app_mode_software) {
+            SPUtils.getInstance().put(SPConstants.KEY_APP_MODE, Constants.APP_MODE_SOFTWARE);
+            item.setChecked(true);
+            setAppMode(Constants.APP_MODE_SOFTWARE);
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setAppMode(int mode) {
+        if (mode == Constants.APP_MODE_GAME) {
+            binding.tlGameName.setHint("游戏名称");
+            binding.tlGamePackageName.setHint("游戏包名");
+            binding.tlGameSize.setHint("游戏大小");
+            binding.tlGameVersion.setHint("游戏版本");
+            binding.tlGameVersionCode.setHint("游戏版本值");
+            binding.tlGameIntroduction.setHint("游戏介绍");
+            binding.rbGameLanguageChineseGame.setText("中文游戏");
+            binding.rbGameLanguageEnglishGame.setText("英文游戏");
+        } else if (mode == Constants.APP_MODE_SOFTWARE) {
+            binding.tlGameName.setHint("软件名称");
+            binding.tlGamePackageName.setHint("软件包名");
+            binding.tlGameSize.setHint("软件大小");
+            binding.tlGameVersion.setHint("软件版本");
+            binding.tlGameVersionCode.setHint("软件版本值");
+            binding.tlGameIntroduction.setHint("软件介绍");
+            binding.rbGameLanguageChineseGame.setText("中文软件");
+            binding.rbGameLanguageEnglishGame.setText("英文软件");
+        }
     }
 
     private void manualAppQQueryDialog(String appName, String packageName) {

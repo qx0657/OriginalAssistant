@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.Locale;
 import java.util.UUID;
 
-import fun.qianxiao.originalassistant.api.translate.YoudaoApi;
+import fun.qianxiao.originalassistant.api.translate.YoudaoTranslateApi;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -19,7 +19,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public class YoudaoTranslate extends Translate<YoudaoApi> {
+public class YoudaoTranslate extends AbstractTranslate<YoudaoTranslateApi> {
     @Override
     protected void response(JSONObject jsonObject, OnTranslateListener onTranslateListener) {
         if (jsonObject.optInt("errorCode", 0) == 0) {
@@ -55,9 +55,9 @@ public class YoudaoTranslate extends Translate<YoudaoApi> {
     private String sign(String text, String salt, String tsp) {
         final String CRYPT_KEY_STR = "576bbe25d7617d99ee55c525f196c1be";
         final byte[] CRYPT_KEY = ConvertUtils.hexString2Bytes(CRYPT_KEY_STR);
-        String secret = ConvertUtils.bytes2String(EncryptUtils.decryptHexStringAES(YoudaoApi.SECRET, CRYPT_KEY, "AES/ECB/PKCS5Padding", null));
+        String secret = ConvertUtils.bytes2String(EncryptUtils.decryptHexStringAES(YoudaoTranslateApi.SECRET, CRYPT_KEY, "AES/ECB/PKCS5Padding", null));
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(YoudaoApi.APP_KEY);
+        stringBuilder.append(YoudaoTranslateApi.APP_KEY);
         if (text.length() > 20) {
             stringBuilder.append(text.substring(0, 10)).append(text.length()).append(text.substring(text.length() - 10));
         } else {
