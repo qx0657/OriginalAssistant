@@ -17,6 +17,7 @@ public interface IQuery {
 
         /**
          * onResult
+         * Note that exec in MainThread
          *
          * @param code           code
          * @param message        message

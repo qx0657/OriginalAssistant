@@ -10,8 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiServiceManager {
     private static final int DEFAULT_CONNECT_TIME = 5;
-    private static final int DEFAULT_WRITE_TIME = 30;
-    private static final int DEFAULT_READ_TIME = 30;
+    private static final int DEFAULT_WRITE_TIME = 5;
+    private static final int DEFAULT_READ_TIME = 5;
     private final Retrofit retrofit;
     private final OkHttpClient okHttpClient;
 

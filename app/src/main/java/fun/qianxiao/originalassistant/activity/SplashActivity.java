@@ -13,7 +13,7 @@ import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.databinding.ActivitySplashBinding;
 
 /**
- * TODO
+ * SplashActivity
  *
  * @Author QianXiao
  * @Date 2023/3/10

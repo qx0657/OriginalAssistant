@@ -2,5 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_item_translate"
-        android:title="翻译" />
+        android:title="翻译游戏介绍" />
+    <item
+        android:id="@+id/menu_item_app_query"
+        android:title="获取应用信息" />
 </menu>

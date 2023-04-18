@@ -8,18 +8,21 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
+import fun.qianxiao.originalassistant.MainActivity;
+import fun.qianxiao.originalassistant.base.BaseFragment;
+
 /**
- * TODO
+ * MyPageAdapter
  *
  * @Author QianXiao
  * @Date 2023/3/10
  */
 public class MyPageAdapter extends FragmentPagerAdapter {
-    private List<Fragment> fragments;
+    private List<BaseFragment<?, MainActivity>> fragments;
     private String[] titles;
 
 
-    public MyPageAdapter(@NonNull FragmentManager fm, List<Fragment> fragments, String[] titles) {
+    public MyPageAdapter(@NonNull FragmentManager fm, List<BaseFragment<?, MainActivity>> fragments, String[] titles) {
         super(fm);
         this.fragments = fragments;
         this.titles = titles;

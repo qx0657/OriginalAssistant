@@ -1,5 +1,7 @@
 package fun.qianxiao.originalassistant.translate;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,22 +25,24 @@ import okhttp3.ResponseBody;
  * @Date 2023/4/16
  */
 public abstract class Translate<T> implements ITranslate {
-    private T apiService;
+    private final T apiService;
 
-    @SuppressWarnings("unchecked")
+    public Translate() {
+        apiService = ApiServiceManager.getInstance().create(getGenericType());
+    }
+
     protected T getApi() {
-        if (apiService == null) {
-            Class<T> tClass = (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
-            apiService = ApiServiceManager.getInstance()
-                    .create(tClass);
-        }
         return apiService;
     }
 
-    protected abstract void response(JSONObject jsonObject, OnTranslateListener onTranslateListener);
+    @SuppressWarnings("unchecked")
+    private Class<T> getGenericType() {
+        return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
+    }
 
     @Override
     public void translate(String text, OnTranslateListener onTranslateListener) {
+        LogUtils.i("translate use " + getGenericType().getSimpleName(), text);
         request(text).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -79,4 +83,12 @@ public abstract class Translate<T> implements ITranslate {
      * @return {@link Observable<ResponseBody>}
      */
     protected abstract Observable<ResponseBody> request(String text);
+
+    /**
+     * response
+     *
+     * @param jsonObject          jsonObject
+     * @param onTranslateListener onTranslateListener
+     */
+    protected abstract void response(JSONObject jsonObject, OnTranslateListener onTranslateListener);
 }

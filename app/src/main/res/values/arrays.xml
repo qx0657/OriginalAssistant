@@ -8,10 +8,10 @@
     </string-array>
 
     <string-array name="translate_api_values">
+        <item>-1</item>
         <item>0</item>
         <item>1</item>
         <item>2</item>
-        <item>3</item>
     </string-array>
 
     <string-array name="team_name_entries">
@@ -38,5 +38,16 @@
         <item>点击购买直接成功</item>
         <item>解锁游戏所有关卡</item>
         <item>解锁游戏所有物品</item>
+    </string-array>
+
+    <string-array name="app_query_channel">
+        <item>手动弹窗选择</item>
+        <item>自动</item>
+        <item>葫芦侠</item>
+    </string-array>
+    <string-array name="app_query_channel_value">
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
     </string-array>
 </resources>

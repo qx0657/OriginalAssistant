@@ -12,6 +12,10 @@ public class AppQueryResult {
     private String packageName;
     private String appName;
     private String appIntroduction;
+    private List<String> appPictures;
+
+    public AppQueryResult() {
+    }
 
     public AppQueryResult(String packageName, String appName) {
         this.packageName = packageName;
@@ -49,6 +53,4 @@ public class AppQueryResult {
     public void setAppPictures(List<String> appPictures) {
         this.appPictures = appPictures;
     }
-
-    private List<String> appPictures;
 }

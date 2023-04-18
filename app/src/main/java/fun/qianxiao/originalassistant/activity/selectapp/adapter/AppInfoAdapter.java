@@ -13,7 +13,7 @@ import fun.qianxiao.originalassistant.base.BaseAdapter;
 import fun.qianxiao.originalassistant.bean.AppInfo;
 
 /**
- * TODO
+ * AppInfoAdapter
  *
  * @Author QianXiao
  * @Date 2023/3/12

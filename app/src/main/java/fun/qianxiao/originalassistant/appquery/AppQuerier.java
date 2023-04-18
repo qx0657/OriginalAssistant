@@ -1,18 +1,22 @@
 package fun.qianxiao.originalassistant.appquery;
 
+import android.text.TextUtils;
+
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
-import fun.qianxiao.originalassistant.bean.AppQueryResult;
+import fun.qianxiao.originalassistant.bean.AnalysisResult;
 import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
@@ -23,62 +27,69 @@ import okhttp3.ResponseBody;
  * @Date 2023/4/16
  */
 public abstract class AppQuerier<T> implements IQuery {
-    private T apiService;
-    protected AppQueryResult appQueryResult;
+    private final T apiService;
+
+    public AppQuerier() {
+        apiService = ApiServiceManager.getInstance().create(getGenericType());
+    }
+
+    protected T getApi() {
+        return apiService;
+    }
 
     @SuppressWarnings("unchecked")
-    protected T getApi() {
-        if (apiService == null) {
-            Class<T> tClass = (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
-            apiService = ApiServiceManager.getInstance()
-                    .create(tClass);
-        }
-        return apiService;
+    private Class<T> getGenericType() {
+        return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
     }
 
     @Override
     public void query(String appName, String packageName, OnAppQueryListener onAppQueryListener) {
-        ApiQueryResponseListener queryObserver = getApiQueryResponseListener();
-        request(appName, packageName)
+        LogUtils.i("app query use " + getGenericType().getSimpleName(), appName, packageName);
+        AnalysisResult analysisResult = new AnalysisResult();
+        analysisResult.getAppQueryResult().setAppName(appName);
+        analysisResult.getAppQueryResult().setPackageName(packageName);
+        search(appName, packageName)
+                .flatMap(new Function<ResponseBody, ObservableSource<ResponseBody>>() {
+                    @Override
+                    public ObservableSource<ResponseBody> apply(ResponseBody responseBody) throws Throwable {
+                        return searchResponseAnalysisAndDetail(responseBody, analysisResult);
+                    }
+                })
+                .map(new Function<ResponseBody, AnalysisResult>() {
+                    @Override
+                    public AnalysisResult apply(ResponseBody responseBody) throws Throwable {
+                        detailResponseAnalysis(responseBody, analysisResult);
+                        return analysisResult;
+                    }
+                })
                 .subscribeOn(Schedulers.newThread())
-                .observeOn(getObserveThread())
-                .subscribe(new Observer<ResponseBody>() {
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<AnalysisResult>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull ResponseBody responseBody) {
-                        appQueryResult = new AppQueryResult(appName, packageName);
-                        final boolean[] error = {false};
-                        final String[] errorMsg = new String[1];
-                        queryObserver.onApiResponse(responseBody, new ApiQueryResponseListener.AnalysisResultInterface() {
-
-                            @Override
-                            public void onError(int code, String msg) {
-                                error[0] = true;
-                                errorMsg[0] = msg;
-                            }
-
-                            @Override
-                            public OnAppQueryListener getOnAppQueryListener() {
-                                return onAppQueryListener;
-                            }
-                        });
-                        if (ThreadUtils.isMainThread()) {
-                            if (!error[0]) {
-                                onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_SUCCESS, null, appQueryResult);
-                            } else {
-                                onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_FAILED, errorMsg[0], null);
-                            }
+                    public void onNext(@NonNull AnalysisResult analysisResult) {
+                        if (analysisResult.isSuccess()) {
+                            onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_SUCCESS, null, analysisResult.getAppQueryResult());
+                        } else {
+                            onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_FAILED, analysisResult.getErrorMsg(), null);
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
-                        onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_FAILED, e.getMessage(), null);
+                        ThreadUtils.runOnUiThread(() -> {
+                            if (!TextUtils.isEmpty(analysisResult.getAppQueryResult().getAppIntroduction())) {
+                                LogUtils.e(e.toString());
+                                onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_SUCCESS, e.getMessage(), analysisResult.getAppQueryResult());
+                            } else {
+                                onAppQueryListener.onResult(OnAppQueryListener.QUERY_CODE_FAILED, e.getMessage(), null);
+                            }
+                        });
                     }
 
                     @Override
@@ -88,39 +99,29 @@ public abstract class AppQuerier<T> implements IQuery {
                 });
     }
 
-    protected Scheduler getObserveThread() {
-        return AndroidSchedulers.mainThread();
-    }
+    /**
+     * search
+     *
+     * @param appName     appName
+     * @param packageName packageName
+     * @return {@link Observable<ResponseBody>}
+     */
+    protected abstract Observable<ResponseBody> search(String appName, String packageName);
 
-    protected abstract @NonNull AppQuerier.ApiQueryResponseListener getApiQueryResponseListener();
+    /**
+     * searchResponseAnalysisAndDetail
+     *
+     * @param searchResponseBody responseBody
+     * @param analysisResult     analysisResult
+     * @return {@link Observable<ResponseBody>}
+     */
+    protected abstract Observable<ResponseBody> searchResponseAnalysisAndDetail(ResponseBody searchResponseBody, AnalysisResult analysisResult);
 
-    protected abstract Observable<ResponseBody> request(String appName, String packageName);
-
-    public interface ApiQueryResponseListener {
-
-        interface AnalysisResultInterface {
-            /**
-             * onError
-             *
-             * @param code code
-             * @param msg  msg
-             */
-            void onError(int code, String msg);
-
-            /**
-             * getOnAppQueryListener
-             *
-             * @return OnAppQueryListener
-             */
-            OnAppQueryListener getOnAppQueryListener();
-        }
-
-        /**
-         * onApiResponse
-         *
-         * @param response       responseBody
-         * @param queryInterface queryInterface
-         */
-        void onApiResponse(@NonNull ResponseBody response, AnalysisResultInterface queryInterface);
-    }
+    /**
+     * detailResponseAnalysis
+     *
+     * @param detailResponseBody responseBody
+     * @param analysisResult     analysisResult
+     */
+    protected abstract void detailResponseAnalysis(ResponseBody detailResponseBody, AnalysisResult analysisResult);
 }

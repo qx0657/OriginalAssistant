@@ -19,7 +19,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 /**
- * TODO
+ * BaseFragment
  *
  * @Author QianXiao
  * @Date 2023/3/10
@@ -66,5 +66,9 @@ public abstract class BaseFragment<T extends ViewBinding, A extends BaseActivity
             LogUtils.e(e.toString());
             return null;
         }
+    }
+
+    public boolean onBackPressed() {
+        return false;
     }
 }

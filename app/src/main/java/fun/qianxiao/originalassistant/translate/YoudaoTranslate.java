@@ -1,5 +1,6 @@
 package fun.qianxiao.originalassistant.translate;
 
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.GsonUtils;
 
@@ -52,6 +53,9 @@ public class YoudaoTranslate extends Translate<YoudaoApi> {
     }
 
     private String sign(String text, String salt, String tsp) {
+        final String CRYPT_KEY_STR = "576bbe25d7617d99ee55c525f196c1be";
+        final byte[] CRYPT_KEY = ConvertUtils.hexString2Bytes(CRYPT_KEY_STR);
+        String secret = ConvertUtils.bytes2String(EncryptUtils.decryptHexStringAES(YoudaoApi.SECRET, CRYPT_KEY, "AES/ECB/PKCS5Padding", null));
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(YoudaoApi.APP_KEY);
         if (text.length() > 20) {
@@ -61,7 +65,7 @@ public class YoudaoTranslate extends Translate<YoudaoApi> {
         }
         stringBuilder.append(salt);
         stringBuilder.append(tsp);
-        stringBuilder.append(YoudaoApi.SECRET);
+        stringBuilder.append(secret);
         return EncryptUtils.encryptSHA256ToString(stringBuilder.toString()).toLowerCase(Locale.ROOT);
     }
 }

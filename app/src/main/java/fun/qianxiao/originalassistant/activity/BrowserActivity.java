@@ -23,7 +23,7 @@ import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.databinding.ActivityBrowserBinding;
 
 /**
- * TODO
+ * BrowserActivity
  *
  * @Author QianXiao
  * @Date 2023/3/10

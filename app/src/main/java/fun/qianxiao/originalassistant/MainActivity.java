@@ -3,7 +3,6 @@ package fun.qianxiao.originalassistant;
 import android.content.Intent;
 import android.view.View;
 
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.AppUtils;
@@ -16,6 +15,7 @@ import java.util.List;
 
 import fun.qianxiao.originalassistant.adapter.MyPageAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
+import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.checkupdate.CheckUpdateManager;
 import fun.qianxiao.originalassistant.databinding.ActivityMainBinding;
 import fun.qianxiao.originalassistant.fragment.find.FindFragment;
@@ -36,8 +36,9 @@ import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements ILoadingView {
     private final String[] PAGES_TITLES = new String[]{"原创助手", "测试助手", "发现", "我的"};
     private final String[] PAGES_TAB_TEXTS = new String[]{"原创", "测试", "发现", "我的"};
-    private ArrayList<CustomTabEntity> tabEntities = new ArrayList<>();
-
+    private final ArrayList<CustomTabEntity> tabEntities = new ArrayList<>();
+    private List<BaseFragment<?, MainActivity>> fragments = new ArrayList<>();
+    private int currentPosition;
     private MyLoadingDialog loadingDialog;
 
     @Override
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
             public void onPageSelected(int position) {
                 if (binding.tabLayout.getCurrentTab() != position) {
                     binding.tabLayout.setCurrentTab(position);
+                    currentPosition = position;
                 }
                 if (position >= 0 && position < PAGES_TITLES.length) {
                     setTitle(PAGES_TITLES[position]);
@@ -101,12 +103,11 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
                 }
             });
         }
-
-        List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new OriginalFragment<MainActivity>());
-        fragments.add(new TestFragment<MainActivity>());
-        fragments.add(new FindFragment<MainActivity>());
-        fragments.add(new MeFragment<MainActivity>());
+        fragments.clear();
+        fragments.add(new OriginalFragment<>());
+        fragments.add(new TestFragment<>());
+        fragments.add(new FindFragment<>());
+        fragments.add(new MeFragment<>());
         MyPageAdapter adapter = new MyPageAdapter(getSupportFragmentManager(), fragments, PAGES_TAB_TEXTS);
         binding.viewPager.setAdapter(adapter);
         binding.viewPager.setOffscreenPageLimit(4);
@@ -131,8 +132,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
             });
         }
         binding.tabLayout.setTabData(tabEntities);
-        //startActivity(OpenSourceLicenseActivity.class);
-        //BrowserActivity.load(context, "https://www.baidu.com/");
 
         if (privacyPolicyManager.isAgreePrivacyPolicy()) {
             new CheckUpdateManager(context).check(true);
@@ -141,6 +140,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
 
     private void startActivity(Class<?> ac) {
         this.startActivity(new Intent(context, ac));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragments.get(currentPosition).onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     public void setTabNavigationHide(boolean hide) {

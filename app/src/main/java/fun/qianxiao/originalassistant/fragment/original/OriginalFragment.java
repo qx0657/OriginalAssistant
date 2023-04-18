@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
@@ -46,14 +47,15 @@ import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
-import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
 import fun.qianxiao.originalassistant.appquery.IQuery;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
@@ -76,6 +78,7 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
  */
 public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A> {
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
 
     @Override
     protected void initListener() {
@@ -236,7 +239,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         });
         binding.fabCleanContent.setOnClickListener(view -> {
             binding.famOriginal.collapse();
-            cleanAllInputContent();
+            cleanAllInputContent(true);
         });
         binding.fabCopyContent.setOnClickListener(view -> {
             binding.famOriginal.collapse();
@@ -252,15 +255,19 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         activityResultLauncher.launch(new Intent(activity, SelectAppActivity.class));
     }
 
-    private void cleanAllInputContent() {
+    private void cleanAllInputContent(boolean isCleanSpecialInstructions) {
         binding.etGameName.setText("");
         binding.etGamePackageName.setText("");
         binding.etGameSize.setText("");
         binding.etGameVersion.setText("");
         binding.etGameVersionCode.setText("");
-        binding.etSpecialInstructions.setText("");
+        if (isCleanSpecialInstructions) {
+            binding.etSpecialInstructions.setText("");
+        }
         binding.etGameIntroduction.setText("");
         binding.etDownloadUrl.setText("");
+
+        binding.rvAppPics.setAdapter(new AppPicturesAdapter(Collections.emptyList()));
     }
 
     private void copyContent() {
@@ -305,7 +312,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 Intent data = result.getData();
                 if (resultCode == SelectAppActivity.RESULT_CODE_SELECT_APP_OK) {
                     if (data != null) {
-                        cleanAllInputContent();
+                        cleanAllInputContent(false);
                         try {
                             String appName = data.getStringExtra(SelectAppActivity.KEY_APP_NAME);
                             String appPackageName = data.getStringExtra(SelectAppActivity.KEY_APP_PACKAGE_NAME);
@@ -319,8 +326,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                             } else {
                                 binding.etGameVersionCode.setText(String.valueOf(packageInfo.versionCode));
                             }
-                            // getSize auto byte2FitMemorySize
-                            binding.etGameSize.setText(FileUtils.getSize(packageInfo.applicationInfo.sourceDir));
+                            binding.etGameSize.setText(ConvertUtils.byte2FitMemorySize(
+                                    FileUtils.getFileLength(packageInfo.applicationInfo.sourceDir), 2));
 
                             queryAppInfo(appName, appPackageName);
                         } catch (PackageManager.NameNotFoundException e) {
@@ -346,11 +353,29 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         binding.rvAppPics.addItemDecoration(new RecyclerSpace(4));
     }
 
-    private void queryAppInfo(String appName, String packageName) {
-        AppQueryMannager.createQuerier(HLXAppQuerier.class).query(appName, packageName, new IQuery.OnAppQueryListener() {
+    private void autoAppQuery(String appName, String packageName, IQuery.OnAppQueryListener onAppQueryListener) {
+        isAppQuerying.set(true);
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Object>() {
+            @Override
+            public Object doInBackground() throws Throwable {
+                AppQueryMannager.getInstance().query(appName, packageName, onAppQueryListener);
+                return null;
+            }
+
+            @Override
+            public void onSuccess(Object result) {
+
+            }
+        });
+    }
+
+    private IQuery.OnAppQueryListener getOnAppQueryListener() {
+        return new IQuery.OnAppQueryListener() {
             @Override
             public void onResult(int code, String message, AppQueryResult appQueryResult) {
-                LogUtils.i(code, message, appQueryResult.getAppIntroduction(), appQueryResult.getAppPictures());
+                isAppQuerying.set(false);
+                LogUtils.i(code, message, appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
+                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppPictures());
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
                     binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
@@ -358,7 +383,23 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     }
                 }
             }
-        });
+        };
+    }
+
+    private void queryAppInfo(String appName, String packageName) {
+        if (isAppQuerying.get()) {
+            return;
+        }
+        int appQueryChannel = Integer.parseInt(SettingPreferences.getString(R.string.p_key_app_query_channel));
+        IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
+        if (appQueryChannel == -2) {
+            manualAppQQueryDialog(appName, packageName);
+        } else if (appQueryChannel == -1) {
+            autoAppQuery(appName, packageName, onAppQueryListener);
+        } else {
+            isAppQuerying.set(true);
+            AppQueryMannager.createQuerier(AppQueryMannager.AppQueryChannel.values()[appQueryChannel].getChannel()).query(appName, packageName, onAppQueryListener);
+        }
     }
 
     private void initSpecialInstructionsSpinner() {
@@ -405,40 +446,83 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         activity.getMenuInflater().inflate(R.menu.menu_original, menu);
     }
 
-    /**
-     * see {@link R.menu.menu_original}
-     *
-     * @param item
-     * @return
-     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_item_translate) {
             String text = binding.etGameIntroduction.getText().toString();
             if (!TextUtils.isEmpty(text)) {
-                int transApi = Integer.parseInt(SettingPreferences.getString(R.string.p_key_current_translate_api, "0"));
-                TranslateManager.getInstance().translate(TranslateManager.TranslateInterfaceType.values()[transApi],
-                        text, new ITranslate.OnTranslateListener() {
-                            @Override
-                            public void onTranslateResult(int code, String msg, String result) {
-                                if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
-                                    binding.etGameIntroduction.setText(result);
-                                    binding.etGameIntroduction.setSelection(binding.etGameIntroduction.getText().length());
-                                } else {
-                                    ToastUtils.showShort(msg);
-                                }
-
-                            }
-                        });
+                translateIntroduction(text);
             }
             return true;
+        } else if (item.getItemId() == R.id.menu_item_app_query) {
+            String appName = binding.etGameName.getText().toString();
+            String packageName = binding.etGamePackageName.getText().toString();
+            if (!TextUtils.isEmpty(appName) && !TextUtils.isEmpty(appName)) {
+                manualAppQQueryDialog(appName, packageName);
+            } else {
+                ToastUtils.showShort("应用名和包名不能为空");
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void manualAppQQueryDialog(String appName, String packageName) {
+        if (isAppQuerying.get()) {
+            ToastUtils.showShort("正在获取中");
+            return;
+        }
+        // TODO
+        ToastUtils.showShort("...");
+    }
+
+    private ITranslate.OnTranslateListener getOnTranslateListener() {
+        return new ITranslate.OnTranslateListener() {
+            @Override
+            public void onTranslateResult(int code, String msg, String result) {
+                if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
+                    binding.etGameIntroduction.setText(result);
+                    binding.etGameIntroduction.setSelection(binding.etGameIntroduction.getText().length());
+                } else {
+                    ToastUtils.showShort(msg);
+                }
+            }
+        };
+    }
+
+    private void translateIntroduction(String text) {
+        int transApi = Integer.parseInt(SettingPreferences.getString(R.string.p_key_current_translate_api, "0"));
+        ITranslate.OnTranslateListener onTranslateListener = getOnTranslateListener();
+        if (transApi == -1) {
+            ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Object>() {
+                @Override
+                public Object doInBackground() throws Throwable {
+                    TranslateManager.getInstance().translate(text, onTranslateListener);
+                    return null;
+                }
+
+                @Override
+                public void onSuccess(Object result) {
+
+                }
+            });
+        } else {
+            TranslateManager.createTranslater(TranslateManager.TranslateInterfaceType.values()[transApi].getChannel())
+                    .translate(text, onTranslateListener);
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (binding.famOriginal.isExpanded()) {
+            binding.famOriginal.collapse();
+            return true;
+        }
+        return super.onBackPressed();
+    }
+
     @Override
     public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(getActivity().getWindow());
+        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
         super.onDestroy();
     }
 }

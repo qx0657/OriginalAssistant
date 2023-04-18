@@ -1,6 +1,15 @@
 package fun.qianxiao.originalassistant.manager;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+
+import com.blankj.utilcode.util.ThreadUtils;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import fun.qianxiao.originalassistant.translate.BaiduTranslate;
 import fun.qianxiao.originalassistant.translate.GoogleTranslate;
@@ -16,12 +25,32 @@ import fun.qianxiao.originalassistant.translate.YoudaoTranslate;
  */
 public class TranslateManager {
     private volatile static TranslateManager instance;
+    private Lock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();
 
     public enum TranslateInterfaceType {
         /**
-         * 自动; 有道; 百度; 谷歌;
+         * 有道;
          */
-        AUTO_TRANSLATE, YOUDAO_TRANSLATE, BAIDU_TRANSLATE, GOOGLE_TRANSLATE;
+        YOUDAO_TRANSLATE(YoudaoTranslate.class),
+        /**
+         * 百度;
+         */
+        BAIDU_TRANSLATE(BaiduTranslate.class),
+        /**
+         * 谷歌;
+         */
+        GOOGLE_TRANSLATE(GoogleTranslate.class);
+
+        private Class<? extends Translate<?>> channel;
+
+        TranslateInterfaceType(Class<? extends Translate<?>> channel) {
+            this.channel = channel;
+        }
+
+        public Class<? extends Translate<?>> getChannel() {
+            return channel;
+        }
     }
 
     private TranslateManager() {
@@ -47,31 +76,49 @@ public class TranslateManager {
         }
     }
 
-    public void translate(TranslateInterfaceType type, String text, ITranslate.OnTranslateListener onTranslateListener) {
-        boolean auto = false;
-        switch (type) {
-            case AUTO_TRANSLATE:
-                createTranslater(BaiduTranslate.class).translate(text, new ITranslate.OnTranslateListener() {
-                    @Override
-                    public void onTranslateResult(int code, String msg, String result) {
-                        if (code == ITranslate.OnTranslateListener.TRANSLATE_ERROR) {
-                            createTranslater(YoudaoTranslate.class).translate(text, onTranslateListener);
-                        } else {
-                            onTranslateListener.onTranslateResult(code, msg, result);
+    /**
+     * 自动翻译
+     * Note that should call in WorkerThread
+     *
+     * @param text                text
+     * @param onTranslateListener onTranslateListener
+     */
+    @WorkerThread
+    public void translate(String text, ITranslate.OnTranslateListener onTranslateListener) {
+        final boolean[] success = {false};
+        for (TranslateInterfaceType translateInterfaceType : TranslateInterfaceType.values()) {
+            TranslateManager.createTranslater(translateInterfaceType.getChannel()).translate(
+                    text, new ITranslate.OnTranslateListener() {
+                        @Override
+                        @MainThread
+                        public void onTranslateResult(int code, String msg, String result) {
+                            try {
+                                lock.lock();
+                                condition.signal();
+                            } finally {
+                                lock.unlock();
+                            }
+                            if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
+                                success[0] = true;
+                                onTranslateListener.onTranslateResult(code, msg, result);
+                            }
                         }
-                    }
-                });
-            case YOUDAO_TRANSLATE:
-                createTranslater(YoudaoTranslate.class).translate(text, onTranslateListener);
+                    });
+            try {
+                lock.lock();
+                condition.await(5500, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+            if (success[0]) {
                 break;
-            case BAIDU_TRANSLATE:
-                createTranslater(BaiduTranslate.class).translate(text, onTranslateListener);
-                break;
-            case GOOGLE_TRANSLATE:
-                createTranslater(GoogleTranslate.class).translate(text, onTranslateListener);
-                break;
-            default:
-                break;
+            }
+        }
+        if (!success[0]) {
+            ThreadUtils.runOnUiThread(() -> onTranslateListener.onTranslateResult(ITranslate.OnTranslateListener.TRANSLATE_ERROR,
+                    "all api failed", null));
         }
     }
 

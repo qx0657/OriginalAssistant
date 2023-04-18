@@ -8,7 +8,7 @@ import fun.qianxiao.originalassistant.base.BaseRecycleViewHolder;
 import fun.qianxiao.originalassistant.databinding.ItemOpensourcelicenseBinding;
 
 /**
- * TODO
+ * OpenSourceLicenseAdapterViewHolder
  *
  * @Author QianXiao
  * @Date 2023/3/10

@@ -5,7 +5,7 @@ import com.blankj.utilcode.util.PathUtils;
 import java.io.File;
 
 /**
- * TODO
+ * AppConfig
  *
  * @Author QianXiao
  * @Date 2023/3/10

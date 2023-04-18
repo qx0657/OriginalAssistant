@@ -1,5 +1,7 @@
 package fun.qianxiao.originalassistant.translate;
 
+import androidx.annotation.MainThread;
+
 /**
  * ITranslate
  *
@@ -14,18 +16,20 @@ public interface ITranslate {
 
         /**
          * onTranslateResult
+         * Note that exec in MainThread
          *
          * @param code   code
          * @param msg    msg
          * @param result chinese result
          */
+        @MainThread
         void onTranslateResult(int code, String msg, String result);
     }
 
     /**
      * translate
      *
-     * @param text text
+     * @param text                text
      * @param onTranslateListener onTranslateListener
      */
     void translate(String text, OnTranslateListener onTranslateListener);

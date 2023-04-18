@@ -9,7 +9,7 @@ import com.blankj.utilcode.util.Utils;
 import java.util.Map;
 
 /**
- * TODO
+ * SettingPreferences
  *
  * @Author QianXiao
  * @Date 2023/4/15
