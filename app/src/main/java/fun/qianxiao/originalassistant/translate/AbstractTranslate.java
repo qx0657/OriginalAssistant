@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
-import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
+import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;

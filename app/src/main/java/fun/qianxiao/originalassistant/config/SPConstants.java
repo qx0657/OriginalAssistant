@@ -11,5 +11,6 @@ public class SPConstants {
     public static final String KEY_HLX_KEY = "hlx_key";
     public static final String KEY_HLX_USER_ID = "hlx_user_id";
     public static final String KEY_APP_MODE = "app_mode";
+    public static final String KEY_TEST_APP_MODE = "test_app_mode";
     public static final String KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON = "title_status_before_switch_post_one_key_on";
 }

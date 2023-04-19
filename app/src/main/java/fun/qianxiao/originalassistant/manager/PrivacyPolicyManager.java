@@ -1,4 +1,4 @@
-package fun.qianxiao.originalassistant.utils;
+package fun.qianxiao.originalassistant.manager;
 
 import android.content.Context;
 import android.text.Spannable;

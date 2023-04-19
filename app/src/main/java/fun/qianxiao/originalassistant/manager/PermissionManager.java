@@ -1,4 +1,4 @@
-package fun.qianxiao.originalassistant.utils;
+package fun.qianxiao.originalassistant.manager;
 
 import android.Manifest;
 import android.content.Context;
@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class PermissionManager {
     private int hasReRequestTimes = 0;
-    private final int MAX_TRY_REQUEST_TIMES = 3;
+    private final int MAX_TRY_REQUEST_TIMES = 1;
 
     private static PermissionManager instance;
 

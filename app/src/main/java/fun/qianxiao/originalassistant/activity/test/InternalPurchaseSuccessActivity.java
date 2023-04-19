@@ -7,9 +7,12 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import fun.qianxiao.originalassistant.bean.AppInfo;
+import fun.qianxiao.originalassistant.config.Constants;
+import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivityTestInternalPurchaseSuccessBinding;
 
 /**
@@ -35,16 +38,17 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
     @Override
     protected void copyContent() {
         StringBuilder sb = new StringBuilder();
-        sb.append("【游戏名称】");
+        int mode = SPUtils.getInstance().getInt(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_GAME);
+        sb.append(mode == Constants.APP_MODE_GAME ? "【游戏名称】" : "【软件名称】");
         sb.append(binding.etGameName.getText().toString());
         sb.append("\n");
-        sb.append("【游戏包名】");
+        sb.append(mode == Constants.APP_MODE_GAME ? "【游戏包名】" : "【软件包名】");
         sb.append(binding.etGamePackageName.getText().toString());
         sb.append("\n");
-        sb.append("【游戏版本】");
+        sb.append(mode == Constants.APP_MODE_GAME ? "【游戏版本】" : "【软件版本】");
         sb.append(binding.etGameVersion.getText().toString());
         sb.append("\n");
-        sb.append("【游戏版本值】");
+        sb.append(mode == Constants.APP_MODE_GAME ? "【游戏版本值】" : "【软件版本值】");
         sb.append(binding.etGameVersionCode.getText().toString());
         sb.append("\n");
         sb.append("【系统版本】");
@@ -125,5 +129,21 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
     @Override
     protected CharSequence getTestTitle() {
         return "内购成功";
+    }
+
+    @Override
+    protected void setAppMode(int mode) {
+        ToastUtils.showShort(String.valueOf(mode));
+        if (mode == Constants.APP_MODE_GAME) {
+            binding.tlGameName.setHint("游戏名称");
+            binding.tlGamePackageName.setHint("游戏包名");
+            binding.tlGameVersion.setHint("游戏版本");
+            binding.tlGameVersionCode.setHint("游戏版本值");
+        } else if (mode == Constants.APP_MODE_SOFTWARE) {
+            binding.tlGameName.setHint("软件名称");
+            binding.tlGamePackageName.setHint("软件包名");
+            binding.tlGameVersion.setHint("软件版本");
+            binding.tlGameVersionCode.setHint("软件版本值");
+        }
     }
 }

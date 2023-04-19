@@ -75,7 +75,7 @@ public class TapTapAppQuery extends AbstractAppQuerier<TapTapAppQueryApi, JSONOb
                 analysisResult.setErrorMsg(analysisResult.getApi() + ": success but description is null");
                 return;
             }
-            String descriptionText = description.optString("text");
+            String descriptionText = description.optString("text").replace("<br/>", "\n");
             analysisResult.getAppQueryResult().setAppIntroduction(descriptionText);
             analysisResult.setSuccess(true);
             List<String> pics = new ArrayList<>();

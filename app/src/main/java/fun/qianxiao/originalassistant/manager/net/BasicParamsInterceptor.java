@@ -1,4 +1,4 @@
-package fun.qianxiao.originalassistant.utils.net;
+package fun.qianxiao.originalassistant.manager.net;
 
 import android.text.TextUtils;
 

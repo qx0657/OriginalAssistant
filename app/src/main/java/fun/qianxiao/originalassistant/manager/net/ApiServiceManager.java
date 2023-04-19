@@ -1,4 +1,4 @@
-package fun.qianxiao.originalassistant.utils.net;
+package fun.qianxiao.originalassistant.manager.net;
 
 import java.util.concurrent.TimeUnit;
 

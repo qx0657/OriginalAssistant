@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import fun.qianxiao.originalassistant.R;
@@ -50,20 +49,7 @@ public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
                 BrowserActivity.load(context, "隐私政策", AppConfig.PRIVACY_POLICY_URL);
             }
         });
-    }
-
-    @Override
-    protected void initData() {
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        showBackIcon();
-        CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
-        toolBarLayout.setTitle(getTitle());
-
-        setAppVersion();
-
-        FloatingActionButton fab = binding.fab;
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "给作者发送邮件？", Snackbar.LENGTH_LONG)
@@ -75,6 +61,17 @@ public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
                         }).show();
             }
         });
+    }
+
+    @Override
+    protected void initData() {
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
+        showBackIcon();
+        CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
+        toolBarLayout.setTitle(getTitle());
+
+        setAppVersion();
     }
 
     @SuppressLint("SetTextI18n")

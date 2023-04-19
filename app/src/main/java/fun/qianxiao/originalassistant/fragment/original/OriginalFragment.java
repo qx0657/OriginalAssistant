@@ -335,9 +335,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                             }
                             binding.etGameSize.setText(ConvertUtils.byte2FitMemorySize(
                                     FileUtils.getFileLength(packageInfo.applicationInfo.sourceDir), 2));
-                            if (!SettingPreferences.getString(R.string.p_key_app_query_channel).equals(String.valueOf(APP_QUERY_NOT_AUTO))) {
-                                queryAppInfo(appName, appPackageName);
-                            }
+                            queryAppInfo(appName, appPackageName);
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -402,10 +400,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private void queryAppInfo(String appName, String packageName) {
+        int appQueryChannel = Integer.parseInt(SettingPreferences.getString(R.string.p_key_app_query_channel, String.valueOf(APP_QUERY_AUTO_ALL)));
+        if (appQueryChannel == APP_QUERY_NOT_AUTO) {
+            return;
+        }
         if (isAppQuerying.get()) {
             return;
         }
-        int appQueryChannel = Integer.parseInt(SettingPreferences.getString(R.string.p_key_app_query_channel));
         IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
         if (appQueryChannel == APP_QUERY_MANUAL) {
             manualAppQQueryDialog(appName, packageName);

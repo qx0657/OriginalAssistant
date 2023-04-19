@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_item_app_mode"
+        android:title="应用模式">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/menu_item_app_mode_game"
+                    android:title="游戏模式"
+                    android:checked="true" />
+                <item
+                    android:id="@+id/menu_item_app_mode_software"
+                    android:title="软件模式" />
+            </group>
+        </menu>
+    </item>
+</menu>

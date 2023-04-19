@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import fun.qianxiao.originalassistant.R;
-import fun.qianxiao.originalassistant.utils.net.ApiServiceManager;
+import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;

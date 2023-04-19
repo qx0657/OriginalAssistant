@@ -8,12 +8,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.viewbinding.ViewBinding;
 
 import com.blankj.utilcode.util.AppUtils;
@@ -21,6 +24,7 @@ import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -31,6 +35,8 @@ import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.bean.AppInfo;
+import fun.qianxiao.originalassistant.config.Constants;
+import fun.qianxiao.originalassistant.config.SPConstants;
 
 /**
  * BaseTestActivity
@@ -103,6 +109,7 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
     protected void initData() {
         setTitle(getTestTitle());
         showBackIcon();
+        setAppMode(SPUtils.getInstance().getInt(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_GAME));
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -208,6 +215,43 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
         }
         return SIM_NONE;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_test, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItemAppModeGame = menu.findItem(R.id.menu_item_app_mode_game);
+        MenuItem menuItemAppModeSoftware = menu.findItem(R.id.menu_item_app_mode_software);
+        int appMode = SPUtils.getInstance().getInt(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_GAME);
+        if (appMode == Constants.APP_MODE_GAME) {
+            menuItemAppModeGame.setChecked(true);
+        } else {
+            menuItemAppModeSoftware.setChecked(true);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_app_mode_game) {
+            SPUtils.getInstance().put(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_GAME);
+            item.setChecked(true);
+            setAppMode(Constants.APP_MODE_GAME);
+            return true;
+        } else if (item.getItemId() == R.id.menu_item_app_mode_software) {
+            SPUtils.getInstance().put(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_SOFTWARE);
+            item.setChecked(true);
+            setAppMode(Constants.APP_MODE_SOFTWARE);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected abstract void setAppMode(int mode);
 
     @Override
     public void onDestroy() {

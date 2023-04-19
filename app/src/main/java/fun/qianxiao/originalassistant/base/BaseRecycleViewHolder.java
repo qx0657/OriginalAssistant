@@ -2,6 +2,7 @@ package fun.qianxiao.originalassistant.base;
 
 import android.view.View;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
@@ -23,6 +24,7 @@ public abstract class BaseRecycleViewHolder<T extends ViewBinding> extends Recyc
     protected View view;
     public T binding;
 
+    @Keep
     public BaseRecycleViewHolder(@NonNull View itemView) {
         super(itemView);
         this.view = itemView;

@@ -22,8 +22,8 @@ import fun.qianxiao.originalassistant.fragment.find.FindFragment;
 import fun.qianxiao.originalassistant.fragment.me.MeFragment;
 import fun.qianxiao.originalassistant.fragment.original.OriginalFragment;
 import fun.qianxiao.originalassistant.fragment.test.TestFragment;
-import fun.qianxiao.originalassistant.utils.PermissionManager;
-import fun.qianxiao.originalassistant.utils.PrivacyPolicyManager;
+import fun.qianxiao.originalassistant.manager.PermissionManager;
+import fun.qianxiao.originalassistant.manager.PrivacyPolicyManager;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 
@@ -88,7 +88,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
             privacyPolicyManager.confrim(new PrivacyPolicyManager.OnPrivacyPolicyListener() {
                 @Override
                 public void onAgree() {
-                    requestPermission();
+                    // requestPermission();
                 }
 
                 @Override
