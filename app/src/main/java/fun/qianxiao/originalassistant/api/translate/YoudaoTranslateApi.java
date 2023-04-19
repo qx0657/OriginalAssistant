@@ -11,7 +11,8 @@ import retrofit2.http.Query;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface YoudaoTranslateApi {
+public interface YoudaoTranslateApi extends TranslateApi {
+    String API_NAME = "Youdao";
     String APP_KEY = "62b13f4b8adc66d0";
     String SECRET = "737E71BCEB51081E6F532BE2B86DC9815F1BD212800D88825BBF04C179A9AF00F72799DF6D2F41BC20C0253F6EA648F1";
 

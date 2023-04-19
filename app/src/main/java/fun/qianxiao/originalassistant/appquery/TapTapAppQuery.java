@@ -92,7 +92,7 @@ public class TapTapAppQuery extends AbstractAppQuerier<TapTapAppQueryApi, JSONOb
             if (data == null) {
                 analysisResult.setErrorMsg(analysisResult.getApi() + ": not success and data is null");
             } else {
-                analysisResult.setErrorMsg(data.optString("msg"));
+                analysisResult.setErrorMsg(analysisResult.getApi() + ": " + data.optString("msg"));
             }
         }
     }

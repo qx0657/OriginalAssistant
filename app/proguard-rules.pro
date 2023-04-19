@@ -20,6 +20,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+#-----obfuse dictionary config-----
+-obfuscationdictionary dic.txt
+-classobfuscationdictionary dic.txt
+-packageobfuscationdictionary dic.txt
+#-----obfuse dictionary config-----
+
 #-----app self-----
 #binding reflect
 -keep public class * implements androidx.viewbinding.ViewBinding {
@@ -30,7 +36,19 @@
 -keepclassmembers class * extends fun.qianxiao.originalassistant.base.BaseRecycleViewHolder{
     <init>(...);
 }
+
+-keep public interface * extends fun.qianxiao.originalassistant.api.translate.TranslateApi{
+    public java.lang.String API_NAME;
+}
+
+-keep public interface * extends fun.qianxiao.originalassistant.api.appquery.AppQueryaApi{
+    public java.lang.String API_NAME;
+}
 #-----app self-----
+
+#-----brankj-----
+#-keep class com.blankj.utilcode.util.** {*;}
+#-----brankj-----
 
 #-----umeng-----
 -keep class com.umeng.** {*;}

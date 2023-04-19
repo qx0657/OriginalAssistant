@@ -12,14 +12,18 @@ import retrofit2.http.Query;
  * @Date 2023/3/14
  */
 public interface HLXApi {
+    String MARKET_ID_HLX_3L = "floor_web";
+    String MARKET_ID_HLX = "tool_web";
+
     /**
      * Check key
      *
-     * @param key key
+     * @param key      key
+     * @param marketId marketId
      * @return {@link Observable<ResponseBody>}
      */
     @GET("http://floor.huluxia.com/account/token/check/ANDROID/2.1")
-    Observable<ResponseBody> checkKey(@Query("session_key") String key);
+    Observable<ResponseBody> checkKey(@Query("session_key") String key, @Query("market_id") String marketId);
 
     /**
      * Get user info

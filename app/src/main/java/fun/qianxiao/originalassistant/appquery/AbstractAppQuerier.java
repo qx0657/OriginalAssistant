@@ -7,9 +7,11 @@ import com.blankj.utilcode.util.ThreadUtils;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
+import fun.qianxiao.originalassistant.api.appquery.AppQueryaApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -23,33 +25,47 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
- * AbstractAppQuerier<T>
- * T is the retrofit2 api service
+ * AbstractAppQuerier<T extends AppQueryaApi, R>
+ * T is the retrofit2 api service. sub interface of {@link AppQueryaApi}
+ * R is response object class, support {@link JSONObject}、{@link ResponseBody}
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public abstract class AbstractAppQuerier<T, R> implements IQuery {
+public abstract class AbstractAppQuerier<T extends AppQueryaApi, R> implements IQuery {
     private final T apiService;
 
+    @SuppressWarnings("unchecked")
     public AbstractAppQuerier() {
-        apiService = ApiServiceManager.getInstance().create(getGenericType(0));
+        apiService = ApiServiceManager.getInstance().create((Class<T>) getGenericType(0));
     }
 
     protected T getApi() {
         return apiService;
     }
 
+    protected String getApiName() {
+        try {
+            Class<?> tClass = getGenericType(0);
+            Field field = tClass.getDeclaredField("API_NAME");
+            field.setAccessible(true);
+            return (String) field.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @SuppressWarnings("unchecked")
-    private Class<T> getGenericType(int index) {
-        return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[index];
+    private Class<?> getGenericType(int index) {
+        return (Class<?>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[index];
     }
 
     @Override
     public void query(String appName, String packageName, OnAppQueryListener onAppQueryListener) {
-        LogUtils.i("app query use " + getGenericType(0).getSimpleName(), appName, packageName);
+        LogUtils.i("app query use " + getApiName(), appName, packageName);
         AnalysisResult analysisResult = new AnalysisResult();
-        analysisResult.setApi(getGenericType(0).getSimpleName());
+        analysisResult.setApi(getApiName());
         analysisResult.getAppQueryResult().setAppName(appName);
         analysisResult.getAppQueryResult().setPackageName(packageName);
         search(appName, packageName)

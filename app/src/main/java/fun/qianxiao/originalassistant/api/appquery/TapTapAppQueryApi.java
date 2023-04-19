@@ -11,7 +11,9 @@ import retrofit2.http.Query;
  * @Author QianXiao
  * @Date 2023/4/18
  */
-public interface TapTapAppQueryApi {
+public interface TapTapAppQueryApi extends AppQueryaApi {
+    String API_NAME = "TAPTAP";
+
     /**
      * taptap search
      * 'X-UA' is required, 'V=1&PN=TapTap&VN=2.53.1-rel.100000&LANG=zh_CN' in it is required

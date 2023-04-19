@@ -11,7 +11,9 @@ import retrofit2.http.Query;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface HLXAppQueryApi {
+public interface HLXAppQueryApi extends AppQueryaApi {
+    String API_NAME = "HLX";
+
     /**
      * hlx search
      *

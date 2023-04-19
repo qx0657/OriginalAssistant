@@ -1,5 +1,25 @@
 plugins {
     id 'com.android.application'
+    id 'stringfog' apply(false)
+}
+import com.github.megatronking.stringfog.plugin.kg.RandomKeyGenerator
+
+if (plugins.hasPlugin("stringfog")) {
+    stringfog {
+        enable true
+        debug false
+        // 指定加解密的具体实现类，可以用默认实现的xor库或者aes-cbc库，也可以自己定制实现，记得配置dependencies
+        implementation 'com.github.megatronking.stringfog.xor.StringFogImpl'
+        // 指定需加密的代码包路径，可配置多个，未指定将默认全部加密
+
+        fogPackages = [android.defaultConfig.applicationId]
+        // 可选（3.0版本新增）：指定密钥生成器，默认使用长度8的随机密钥（每个字符串均有不同随机密钥）,
+        // 也可以指定一个固定的密钥：HardCodeKeyGenerator("This is a key")
+        kg new RandomKeyGenerator()
+        // 可选（4.0版本新增）：用于控制字符串加密后在字节码中的存在形式, 默认为base64，
+        // 也可以使用text或者bytes
+        mode base64
+    }
 }
 
 android {
@@ -17,11 +37,13 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -89,5 +111,8 @@ dependencies {
     // 友盟统计SDK https://mobile.umeng.com/platform/apps/list
     implementation  'com.umeng.umsdk:common:9.4.4'// 必选
     implementation  'com.umeng.umsdk:asms:1.4.1'// 必选
+
+    // xor加解密库，stringfog中的implementation需依赖此库 https://github.com/MegatronKing/StringFog-Sample1
+    implementation 'com.github.megatronking.stringfog:xor:4.0.1'
 
 }

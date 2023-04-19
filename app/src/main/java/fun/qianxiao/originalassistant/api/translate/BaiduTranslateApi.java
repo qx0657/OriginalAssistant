@@ -11,7 +11,8 @@ import retrofit2.http.Query;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface BaiduTranslateApi {
+public interface BaiduTranslateApi extends TranslateApi {
+    String API_NAME = "Baidu";
     String APP_ID = "20171229000110339";
     String SECRET = "DB70E832902436D308881BA0238B2C41E03DAC30067374AA3CC475F926997464";
 

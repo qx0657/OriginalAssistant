@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import fun.qianxiao.originalassistant.appquery.AbstractAppQuerier;
+import fun.qianxiao.originalassistant.appquery.BaifenAppQuery;
 import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
 import fun.qianxiao.originalassistant.appquery.IQuery;
 import fun.qianxiao.originalassistant.appquery.TapTapAppQuery;
@@ -59,7 +60,11 @@ public class AppQueryMannager {
         /**
          * TapTap
          */
-        TAPTAP(TapTapAppQuery.class);
+        TAPTAP(TapTapAppQuery.class),
+        /**
+         * Baifen
+         */
+        BAIFEN(BaifenAppQuery.class);
 
         private final Class<? extends AbstractAppQuerier<?, ?>> channel;
 

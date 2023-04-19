@@ -6,9 +6,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
+import fun.qianxiao.originalassistant.api.translate.TranslateApi;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -25,7 +27,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public abstract class AbstractTranslate<T> implements ITranslate {
+public abstract class AbstractTranslate<T extends TranslateApi> implements ITranslate {
     private final T apiService;
 
     public AbstractTranslate() {
@@ -36,6 +38,18 @@ public abstract class AbstractTranslate<T> implements ITranslate {
         return apiService;
     }
 
+    protected String getApiName() {
+        try {
+            Class<T> tClass = getGenericType();
+            Field field = tClass.getDeclaredField("API_NAME");
+            field.setAccessible(true);
+            return (String) field.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @SuppressWarnings("unchecked")
     private Class<T> getGenericType() {
         return (Class<T>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[0];
@@ -43,7 +57,7 @@ public abstract class AbstractTranslate<T> implements ITranslate {
 
     @Override
     public void translate(String text, OnTranslateListener onTranslateListener) {
-        LogUtils.i("translate use " + getGenericType().getSimpleName(), text);
+        LogUtils.i("translate use " + getApiName(), text);
         request(text).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {

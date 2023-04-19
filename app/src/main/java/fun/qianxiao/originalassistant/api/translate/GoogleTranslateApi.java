@@ -11,7 +11,9 @@ import retrofit2.http.Query;
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public interface GoogleTranslateApi {
+public interface GoogleTranslateApi extends TranslateApi {
+    String API_NAME = "Google";
+
     /**
      * translate to chinese
      *

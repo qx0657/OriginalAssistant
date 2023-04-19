@@ -44,16 +44,8 @@ public enum HLXApiManager {
         void onResult(boolean valid, String errMsg);
     }
 
-    /**
-     * Check whether the key is valid
-     *
-     * @param key    key
-     * @param result Callback
-     */
-    public void checkKey(final String key, OnCheckKeyResult result) {
-        ApiServiceManager.getInstance()
-                .create(HLXApi.class)
-                .checkKey(key)
+    private void checkKey(HLXApi hlxApi, final String key, final String marketId, OnCheckKeyResult result) {
+        hlxApi.checkKey(key, marketId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
@@ -88,6 +80,28 @@ public enum HLXApiManager {
 
                     }
                 });
+    }
+
+    /**
+     * Check whether the key is valid
+     *
+     * @param key    key
+     * @param result Callback
+     */
+    public void checkKey(final String key, OnCheckKeyResult result) {
+        HLXApi hlxApi = ApiServiceManager.getInstance()
+                .create(HLXApi.class);
+        checkKey(hlxApi, key, HLXApi.MARKET_ID_HLX_3L, new OnCheckKeyResult() {
+            @Override
+            public void onResult(boolean valid, String errMsg) {
+                if (!valid) {
+                    checkKey(hlxApi, key, HLXApi.MARKET_ID_HLX, result);
+                } else {
+                    result.onResult(valid, errMsg);
+                }
+            }
+        });
+
     }
 
     public interface OnGetUserInfoResult {

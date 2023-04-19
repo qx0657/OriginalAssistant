@@ -393,7 +393,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                         binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
                     }
                 } else {
-                    // ToastUtils.showShort(message);
+                    ToastUtils.showShort(message);
                 }
             }
         };
