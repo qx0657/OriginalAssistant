@@ -16,11 +16,14 @@ import androidx.preference.SwitchPreference;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.Arrays;
 
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.config.SPConstants;
+import fun.qianxiao.originalassistant.manager.HLXApiManager;
+import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
 
@@ -82,6 +85,15 @@ public class SettingsActivity extends AppCompatActivity {
             String key = preference.getKey();
             LogUtils.i(preference.getTitle() + " " + key + ": " + SettingPreferences.get(key));
             if (key.equals(getString(R.string.p_key_switch_post_one_key))) {
+                SwitchPreference switchPreferenceThis = (SwitchPreference) preference;
+                if (switchPreferenceThis.isChecked()) {
+                    String hlxKey = HlxKeyLocal.read();
+                    if (TextUtils.isEmpty(hlxKey)) {
+                        switchPreferenceThis.setChecked(false);
+                        ToastUtils.showShort("请先登录");
+                        return false;
+                    }
+                }
                 SwitchPreference switchPreference = $(R.string.p_key_switch_title);
                 if (SettingPreferences.getBoolean(key)) {
                     SPUtils.getInstance().put(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON, switchPreference.isChecked());
@@ -94,6 +106,25 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             } else if (key.equals(getString(R.string.p_key_switch_title))) {
                 SPUtils.getInstance().remove(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON);
+            } else if (key.equals(getString(R.string.p_key_switch_post_rich))) {
+                SwitchPreference switchPreferenceThis = (SwitchPreference) preference;
+                if (switchPreferenceThis.isChecked()) {
+                    String hlxKey = HlxKeyLocal.read();
+                    if (TextUtils.isEmpty(hlxKey)) {
+                        switchPreferenceThis.setChecked(false);
+                        ToastUtils.showShort("请先登录");
+                    } else {
+                        HLXApiManager.INSTANCE.hasRichPermission(hlxKey, new HLXApiManager.OnCommonBooleanResultListener() {
+                            @Override
+                            public void onResult(boolean valid, String errMsg) {
+                                if (!valid) {
+                                    switchPreferenceThis.setChecked(false);
+                                    ToastUtils.showShort("您没有图文发帖权限");
+                                }
+                            }
+                        });
+                    }
+                }
             }
             return super.onPreferenceTreeClick(preference);
         }

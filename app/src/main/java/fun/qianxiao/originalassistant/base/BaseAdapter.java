@@ -31,8 +31,9 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
 
     public interface ItemClickListener<B> {
         /**
-         * 条目点击事件
+         * item click event
          *
+         * @param v    view
          * @param bean item_data
          */
         void onItemClick(View v, B bean);
@@ -40,8 +41,9 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
 
     public interface ItemLongClickListener<B> {
         /**
-         * 条目长按事件
+         * item long-click event
          *
+         * @param v    view
          * @param bean item_data
          */
         void onItemLongClick(View v, B bean);

@@ -16,7 +16,7 @@ import fun.qianxiao.originalassistant.activity.BrowserActivity;
 import fun.qianxiao.originalassistant.config.AppConfig;
 
 /**
- * 隐私政策管理
+ * PrivacyPolicyManager
  *
  * @Author QianXiao
  * @Date 2023/3/10

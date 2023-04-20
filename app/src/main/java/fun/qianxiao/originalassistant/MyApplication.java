@@ -2,6 +2,7 @@ package fun.qianxiao.originalassistant;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
@@ -15,7 +16,7 @@ import com.umeng.commonsdk.UMConfigure;
  * @Date 2023/3/10
  */
 public class MyApplication extends Application {
-    public static final String TAG = "COMMON_APP";
+    public static final String TAG = "OriginalAssistant";
     public static final String UMENGG_APP_ID = "";
 
     @Override
@@ -33,6 +34,7 @@ public class MyApplication extends Application {
                 return BuildConfig.DEBUG;
             }
         });
+        LogUtils.getConfig().setGlobalTag(TAG);
 
         // 友盟
         UMConfigure.setLogEnabled(true);

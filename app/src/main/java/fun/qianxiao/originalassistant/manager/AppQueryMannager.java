@@ -78,7 +78,7 @@ public class AppQueryMannager {
     }
 
     /**
-     * 自动查询
+     * Query the APP and use each query in sequence until one is successful.
      * Note that should call in WorkerThread
      *
      * @param appName            appName

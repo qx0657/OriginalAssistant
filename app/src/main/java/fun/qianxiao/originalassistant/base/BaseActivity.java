@@ -19,7 +19,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 /**
- * 通用视图绑定Activity抽象基类
+ * Universal View Binding Activity Abstract Base Class
  *
  * @param <T> ViewBinding
  * @author QianXiao

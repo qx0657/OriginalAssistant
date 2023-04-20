@@ -15,9 +15,9 @@ import com.google.android.material.snackbar.Snackbar;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.opensourcelicense.OpenSourceLicenseActivity;
 import fun.qianxiao.originalassistant.base.BaseActivity;
-import fun.qianxiao.originalassistant.checkupdate.CheckUpdateManager;
 import fun.qianxiao.originalassistant.config.AppConfig;
 import fun.qianxiao.originalassistant.databinding.ActivityAboutBinding;
+import fun.qianxiao.originalassistant.manager.CheckUpdateManager;
 import fun.qianxiao.originalassistant.utils.SysBrowserUtils;
 import fun.qianxiao.originalassistant.utils.SysMailUtils;
 

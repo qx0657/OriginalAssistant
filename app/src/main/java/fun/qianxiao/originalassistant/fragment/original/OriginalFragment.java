@@ -42,6 +42,7 @@ import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -67,8 +68,10 @@ import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
 import fun.qianxiao.originalassistant.manager.AppQueryMannager;
+import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
 import fun.qianxiao.originalassistant.translate.ITranslate;
+import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
 import fun.qianxiao.originalassistant.view.RecyclerSpace;
@@ -254,8 +257,32 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         });
         binding.fabGotoApp.setOnClickListener(view -> {
             binding.famOriginal.collapse();
-            gotoApp();
+            if (SettingPreferences.getBoolean(R.string.p_key_switch_post_one_key)) {
+                onKeyPost();
+            } else {
+                gotoApp();
+            }
         });
+    }
+
+    private void onKeyPost() {
+        String key = HlxKeyLocal.read();
+        if (TextUtils.isEmpty(key)) {
+            ToastUtils.showShort("未登录");
+            return;
+        }
+        HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
+            @Override
+            public void onResult(boolean valid, String errMsg) {
+                if (valid) {
+                    // TODO
+                    ToastUtils.showShort("...");
+                } else {
+                    ToastUtils.showShort(errMsg);
+                }
+            }
+        });
+
     }
 
     private void selectApp() {
@@ -407,6 +434,10 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         if (isAppQuerying.get()) {
             return;
         }
+        if (!NetworkUtils.isAvailable()) {
+            ToastUtils.showShort("请检查网络连接");
+            return;
+        }
         IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
         if (appQueryChannel == APP_QUERY_MANUAL) {
             manualAppQQueryDialog(appName, packageName);
@@ -536,7 +567,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             return;
         }
         // TODO
-        ToastUtils.showShort("...");
+        ToastUtils.showShort("开发中");
     }
 
     private ITranslate.OnTranslateListener getOnTranslateListener() {

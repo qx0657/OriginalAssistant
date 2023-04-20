@@ -1,17 +1,22 @@
-package fun.qianxiao.originalassistant.checkupdate;
-
+package fun.qianxiao.originalassistant.api;
 
 import fun.qianxiao.originalassistant.config.AppConfig;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 import retrofit2.http.GET;
 
+/**
+ * CheckUpdateApi
+ *
+ * @Author QianXiao
+ * @Date long ago
+ */
 public interface CheckUpdateApi {
 
     /**
-     * 返回基于retrofit2的网络请求的被观察者
+     * Check for updates to get updated configuration
      *
-     * @return 基于retrofit2的网络请求的被观察者
+     * @return {@link Observable<ResponseBody>}
      */
     @GET(AppConfig.CHECKUPDATE_URL)
     Observable<ResponseBody> getUpdateConfig();

@@ -1,4 +1,4 @@
-package fun.qianxiao.originalassistant.checkupdate;
+package fun.qianxiao.originalassistant.manager;
 
 import android.Manifest;
 import android.content.Context;
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import fun.qianxiao.originalassistant.R;
+import fun.qianxiao.originalassistant.api.CheckUpdateApi;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
@@ -61,9 +62,9 @@ public final class CheckUpdateManager implements ILoadingView {
     }
 
     /**
-     * 检查更新
+     * Check for updates
      *
-     * @param issilent 是否静默
+     * @param issilent Is it silent
      */
     public void check(boolean issilent) {
         if (!issilent) {
@@ -73,9 +74,6 @@ public final class CheckUpdateManager implements ILoadingView {
                 .create(CheckUpdateApi.class)
                 .getUpdateConfig()
                 .subscribeOn(Schedulers.io())
-                //子线程访问网络
-                .subscribeOn(Schedulers.newThread())
-                //回调到主线程
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override

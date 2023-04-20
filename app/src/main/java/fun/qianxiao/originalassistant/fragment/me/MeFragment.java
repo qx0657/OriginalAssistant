@@ -176,7 +176,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             baseInputXPopViewDismiss(userIdInputConfirmPopupView);
                             displayUserInfo(hlxUserInfo);
                         } else {
-                            HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCheckKeyResult() {
+                            HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
                                 @Override
                                 public void onResult(boolean valid, String errMsg) {
                                     if (!valid) {
