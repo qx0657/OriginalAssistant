@@ -417,6 +417,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
                     binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
+                        appQueryResult.getAppPictures().add("/sdcard/Download/1.jpeg");
                         binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
                     }
                 } else {
@@ -434,19 +435,29 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         if (isAppQuerying.get()) {
             return;
         }
-        if (!NetworkUtils.isAvailable()) {
-            ToastUtils.showShort("请检查网络连接");
-            return;
-        }
-        IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
-        if (appQueryChannel == APP_QUERY_MANUAL) {
-            manualAppQQueryDialog(appName, packageName);
-        } else if (appQueryChannel == APP_QUERY_AUTO_ALL) {
-            autoAppQuery(appName, packageName, onAppQueryListener);
-        } else {
-            isAppQuerying.set(true);
-            AppQueryMannager.createQuerier(AppQueryMannager.AppQueryChannel.values()[appQueryChannel].getChannel()).query(appName, packageName, onAppQueryListener);
-        }
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
+            @Override
+            public Boolean doInBackground() throws Throwable {
+                return NetworkUtils.isAvailable();
+            }
+
+            @Override
+            public void onSuccess(Boolean result) {
+                if (!result) {
+                    ToastUtils.showShort("请检查网络连接");
+                    return;
+                }
+                IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
+                if (appQueryChannel == APP_QUERY_MANUAL) {
+                    manualAppQQueryDialog(appName, packageName);
+                } else if (appQueryChannel == APP_QUERY_AUTO_ALL) {
+                    autoAppQuery(appName, packageName, onAppQueryListener);
+                } else {
+                    isAppQuerying.set(true);
+                    AppQueryMannager.createQuerier(AppQueryMannager.AppQueryChannel.values()[appQueryChannel].getChannel()).query(appName, packageName, onAppQueryListener);
+                }
+            }
+        });
     }
 
     private void initSpecialInstructionsSpinner() {

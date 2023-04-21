@@ -5,8 +5,6 @@ import com.blankj.utilcode.util.GsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 import fun.qianxiao.originalassistant.api.appquery.BaifenAppQieryApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
 import io.reactivex.rxjava3.core.Observable;
@@ -66,7 +64,7 @@ public class BaifenAppQuery extends AbstractAppQuerier<BaifenAppQieryApi, JSONOb
             String content = data.optString("content");
             analysisResult.getAppQueryResult().setAppIntroduction(content);
             String[] pics = GsonUtils.fromJson(data.optString("gallery"), GsonUtils.getArrayType(String.class));
-            analysisResult.getAppQueryResult().setAppPictures(Arrays.asList(pics));
+            analysisResult.getAppQueryResult().setAppPictures(pics);
             analysisResult.setSuccess(true);
         }
         analysisResult.setErrorMsg(analysisResult.getApi() + ": " + detailResponseJsonObject.optString("msg", "code is " + code));

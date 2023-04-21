@@ -1,5 +1,7 @@
 package fun.qianxiao.originalassistant.bean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +52,18 @@ public class AppQueryResult {
         return appPictures;
     }
 
+    /**
+     * setAppPictures
+     *
+     * @param appPictures It's best not to use Arrays.asList(T[])
+     */
     public void setAppPictures(List<String> appPictures) {
         this.appPictures = appPictures;
+    }
+
+
+    public void setAppPictures(String[] strings) {
+        appPictures = new ArrayList<>();
+        appPictures.addAll(Arrays.asList(strings));
     }
 }

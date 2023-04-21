@@ -5,8 +5,6 @@ import com.blankj.utilcode.util.GsonUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 import fun.qianxiao.originalassistant.api.appquery.HLXAppQueryApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
 import io.reactivex.rxjava3.core.Observable;
@@ -69,7 +67,7 @@ public class HLXAppQuerier extends AbstractAppQuerier<HLXAppQueryApi, JSONObject
                 return;
             }
             String[] pics = GsonUtils.fromJson(jsonObject2.optString("imageresource"), GsonUtils.getArrayType(String.class));
-            analysisResult.getAppQueryResult().setAppPictures(Arrays.asList(pics));
+            analysisResult.getAppQueryResult().setAppPictures(pics);
             analysisResult.setSuccess(true);
         } else {
             analysisResult.setErrorMsg(analysisResult.getApi() + ": hlx api detail request success but status is not ok");

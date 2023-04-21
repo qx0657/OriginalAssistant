@@ -1,5 +1,7 @@
 package fun.qianxiao.originalassistant.fragment.original.adapter;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
@@ -31,9 +33,17 @@ public class AppPicturesAdapter extends BaseAdapter<String, AppPictureAdapterVie
 
     @Override
     protected void onBindViewHolder(@NonNull AppPictureAdapterViewHolder holder, int position, String s) {
-        Glide.with(holder.binding.ivImage).load(s).transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners(10))).into(holder.binding.ivImage);
+        Glide.with(holder.binding.ivImage).load(s).transform(new MultiTransformation<>(new CenterCrop(), new RoundedCorners(10)))
+                .into(holder.binding.ivImage);
         holder.binding.ivImage.setOnClickListener(v -> {
             ImagePreview.getInstance().setContext(v.getContext()).setIndex(position).setImageList(getDataList()).start();
+        });
+        holder.binding.ivImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                return false;
+            }
         });
     }
 }
