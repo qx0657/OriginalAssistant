@@ -34,9 +34,10 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
          * item click event
          *
          * @param v    view
+         * @param pos  pos
          * @param bean item_data
          */
-        void onItemClick(View v, B bean);
+        void onItemClick(View v, int pos, B bean);
     }
 
     public interface ItemLongClickListener<B> {
@@ -44,9 +45,10 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
          * item long-click event
          *
          * @param v    view
+         * @param pos  pos
          * @param bean item_data
          */
-        void onItemLongClick(View v, B bean);
+        boolean onItemLongClick(View v, int pos, B bean);
     }
 
     public void setItemClickListener(ItemClickListener<BEAN> itemClickListener) {
@@ -82,7 +84,7 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         BEAN bean = dataList.get(position);
-        onBindViewHolder(holder, position, bean);
+        onBindViewHolder(holder, bean);
     }
 
     /**
@@ -91,7 +93,7 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
      * @param holder
      * @param bean
      */
-    protected abstract void onBindViewHolder(@NonNull VH holder, int position, BEAN bean);
+    protected abstract void onBindViewHolder(@NonNull VH holder, BEAN bean);
 
     public List<BEAN> getDataList() {
         return dataList;

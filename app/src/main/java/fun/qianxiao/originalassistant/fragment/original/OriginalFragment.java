@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,6 +35,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
@@ -47,9 +51,12 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.UriUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +76,7 @@ import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
 import fun.qianxiao.originalassistant.manager.AppQueryMannager;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
+import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
 import fun.qianxiao.originalassistant.translate.ITranslate;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
@@ -82,9 +90,53 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A> {
+public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A>
+        implements AppPicturesAdapter.OnAppPicturesAdapterListener {
     private ActivityResultLauncher<Intent> activityResultLauncher;
+    private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
     private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
+    private AppPicturesAdapter picturesAdapter;
+    private final Map<File, String> picUploadResultMap = new HashMap<>();
+
+    private final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+        @Override
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            int dragFlags = 0;
+            if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            } else if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
+            return makeMovementFlags(dragFlags, 0);
+        }
+
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            //得到当拖拽的viewHolder的Position
+            int fromPosition = viewHolder.getAdapterPosition();
+            //拿到当前拖拽到的item的viewHolder
+            int toPosition = target.getAdapterPosition();
+            if (fromPosition == picturesAdapter.getItemCount() - 1 || toPosition == picturesAdapter.getItemCount() - 1) {
+                return false;
+            }
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(picturesAdapter.getDataList(), i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(picturesAdapter.getDataList(), i, i - 1);
+                }
+            }
+            picturesAdapter.notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+    });
 
     private final int APP_QUERY_NOT_AUTO = -3;
     private final int APP_QUERY_MANUAL = -2;
@@ -99,6 +151,12 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         setSpecialInstructionsSpinnerListener();
         setSpecialInstructionsEditTextChangeListener();
 
+        binding.ivAppPictureDelete.setOnClickListener(v -> {
+            if (picturesAdapter != null && picturesAdapter.getItemCount() > 1) {
+                setAppPicturesOptionMode(!picturesAdapter.isShowDelete());
+            }
+        });
+
         KeyboardUtils.registerSoftInputChangedListener(activity, height -> {
             if (height != 0) {
                 ((MainActivity) activity).setTabNavigationHide(true);
@@ -109,6 +167,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 ThreadUtils.runOnUiThreadDelayed(() -> binding.famOriginal.setVisibility(View.VISIBLE), 50);
             }
         });
+    }
+
+    private void clearAppPictureRecycleView() {
+        picturesAdapter = new AppPicturesAdapter(this, new ArrayList<>(Collections.singletonList(AppPicturesAdapter.PLACEHOLDER_ADD)));
+        binding.rvAppPics.setAdapter(picturesAdapter);
     }
 
     private void setSpecialInstructionsEditTextChangeListener() {
@@ -258,31 +321,77 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         binding.fabGotoApp.setOnClickListener(view -> {
             binding.famOriginal.collapse();
             if (SettingPreferences.getBoolean(R.string.p_key_switch_post_one_key)) {
-                onKeyPost();
+                oneKeyPost();
             } else {
                 gotoApp();
             }
         });
     }
 
-    private void onKeyPost() {
+    private boolean checkAllPostContent() {
+        // TODO
+        return true;
+    }
+
+    private List<File> imagesToFileList(List<String> picsData) {
+        List<File> list = new ArrayList<>();
+        for (String picsDatum : picsData) {
+            if (picsDatum.equals(AppPicturesAdapter.PLACEHOLDER_ADD)) {
+                continue;
+            }
+            if (picsDatum.startsWith("http")) {
+
+            } else {
+                list.add(new File(picsDatum));
+            }
+        }
+    }
+
+    private void oneKeyPost() {
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
             ToastUtils.showShort("未登录");
+            return;
+        }
+        if (checkAllPostContent()) {
+            ToastUtils.showShort("发帖内容不完整");
+            return;
+        }
+        if (picturesAdapter.getItemCount() - 1 == 0) {
+            ToastUtils.showShort("请选择图片");
             return;
         }
         HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
             @Override
             public void onResult(boolean valid, String errMsg) {
                 if (valid) {
-                    // TODO
-                    ToastUtils.showShort("...");
+                    List<String> picsData = picturesAdapter.getDataList();
+                    List<File> picsFiles = imagesToFileList(picsData);
+                    HLXApiManager.INSTANCE.uploadPictures(key, picsFiles, new HLXApiManager.OnUploadPicturesListener() {
+                        @Override
+                        public void onUploadPicturesResult(int code, String errMsg, Map<File, String> result) {
+                            if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
+                                ToastUtils.showShort("图片上传成功");
+                                picUploadResultMap.clear();
+                                for (File file : result.keySet()) {
+                                    picUploadResultMap.put(file, result.get(file));
+                                }
+                                oneKeyPostInner();
+                            } else {
+                                ToastUtils.showShort(errMsg);
+                            }
+                        }
+                    });
                 } else {
                     ToastUtils.showShort(errMsg);
                 }
             }
         });
 
+    }
+
+    private void oneKeyPostInner() {
+        // TODO
     }
 
     private void selectApp() {
@@ -301,7 +410,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         binding.etGameIntroduction.setText("");
         binding.etDownloadUrl.setText("");
 
-        binding.rvAppPics.setAdapter(new AppPicturesAdapter(Collections.emptyList()));
+        clearAppPictureRecycleView();
     }
 
     private void copyContent() {
@@ -370,6 +479,21 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 }
             }
         });
+        pickMultipleMediaResultLauncher = registerForActivityResult(new ActivityResultContracts.GetMultipleContents(), new ActivityResultCallback<List<Uri>>() {
+            @Override
+            public void onActivityResult(List<Uri> result) {
+                if (result != null && result.size() > 0) {
+                    for (Uri uri : result) {
+                        File file = UriUtils.uri2File(uri);
+                        LogUtils.i(file);
+                        picturesAdapter.getDataList().add(picturesAdapter.getDataList().size() - 1, file.toString());
+                        picturesAdapter.notifyItemInserted(picturesAdapter.getDataList().size() - 1);
+                        picturesAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+
         initSpecialInstructionsSpinner();
         initAppPicturesRecycleView();
         initFloatButtonData();
@@ -389,6 +513,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private void initAppPicturesRecycleView() {
         binding.rvAppPics.setLayoutManager(new GridLayoutManager(getContext(), 4));
         binding.rvAppPics.addItemDecoration(new RecyclerSpace(4));
+        clearAppPictureRecycleView();
     }
 
     private void autoAppQuery(String appName, String packageName, IQuery.OnAppQueryListener onAppQueryListener) {
@@ -417,7 +542,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
                     binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
-                        binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
+                        appQueryResult.getAppPictures().add(AppPicturesAdapter.PLACEHOLDER_ADD);
+                        picturesAdapter = new AppPicturesAdapter(OriginalFragment.this, appQueryResult.getAppPictures());
+                        binding.rvAppPics.setAdapter(picturesAdapter);
                     }
                 } else {
                     ToastUtils.showShort(message);
@@ -629,5 +756,37 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     public void onDestroy() {
         KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
         super.onDestroy();
+    }
+
+    @Override
+    public void onAddClick(View view) {
+        if (!PermissionManager.getInstance().hasRequestReadWritePermission()) {
+            PermissionManager.getInstance().requestReadWritePermission();
+            return;
+        }
+        setAppPicturesOptionMode(false);
+        pickMultipleMediaResultLauncher.launch("image/*");
+    }
+
+    private void setAppPicturesOptionMode(boolean mode) {
+        if (mode) {
+            binding.ivAppPictureDelete.setImageResource(R.drawable.ic_complate);
+        } else {
+            binding.ivAppPictureDelete.setImageResource(R.drawable.ic_edit);
+        }
+        picturesAdapter.setShowDelete(mode);
+        picturesAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDataChange(boolean empty) {
+        if (empty) {
+            setAppPicturesOptionMode(false);
+            binding.ivAppPictureDelete.setVisibility(View.GONE);
+            itemTouchHelper.attachToRecyclerView(null);
+        } else {
+            binding.ivAppPictureDelete.setVisibility(View.VISIBLE);
+            itemTouchHelper.attachToRecyclerView(binding.rvAppPics);
+        }
     }
 }

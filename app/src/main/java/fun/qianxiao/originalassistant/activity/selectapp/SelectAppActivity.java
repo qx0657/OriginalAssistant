@@ -65,7 +65,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private float touchX;
     private float touchY;
 
-    private final BaseAdapter.ItemClickListener<AppInfo> itemClickListener = (v, bean) -> {
+    private final BaseAdapter.ItemClickListener<AppInfo> itemClickListener = (v, pos, bean) -> {
         Intent data = new Intent();
         data.putExtra(KEY_APP_NAME, bean.getAppName());
         data.putExtra(KEY_APP_PACKAGE_NAME, bean.getPackageName());
@@ -73,7 +73,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         SelectAppActivity.this.finish();
     };
 
-    private final BaseAdapter.ItemLongClickListener<AppInfo> itemLongClickListener = (v, bean) -> {
+    private final BaseAdapter.ItemLongClickListener<AppInfo> itemLongClickListener = (v, pos, bean) -> {
         v.getParent().requestDisallowInterceptTouchEvent(true);
         AttachListPopupView attachListPopupView = new XPopup.Builder(context)
                 .asAttachList(new String[]{bean.getAppName().toString(), "提取安装包"}, null,
@@ -87,6 +87,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                         });
         attachListPopupView.popupInfo.touchPoint = new PointF(touchX, touchY);
         attachListPopupView.show();
+        return true;
     };
 
     private void exportApkInner(AppInfo bean) {

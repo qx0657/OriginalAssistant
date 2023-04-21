@@ -32,20 +32,20 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull AppInfoAdapterViewHolder holder, int position, AppInfo appInfo) {
+    protected void onBindViewHolder(@NonNull AppInfoAdapterViewHolder holder, AppInfo appInfo) {
         holder.binding.tvAppName.setText(appInfo.getAppName());
         holder.binding.tvAppPackageName.setText(appInfo.getPackageName());
         Glide.with(holder.binding.ivAppIcon).load(appInfo.getIcon()).into(holder.binding.ivAppIcon);
         holder.binding.cardView.setOnClickListener(view -> {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, appInfo);
+                itemClickListener.onItemClick(view, holder.getAdapterPosition(), appInfo);
             }
         });
         holder.binding.cardView.setOnLongClickListener(view -> {
             if (itemLongClickListener != null) {
-                itemLongClickListener.onItemLongClick(view, appInfo);
+                return itemLongClickListener.onItemLongClick(view, holder.getAdapterPosition(), appInfo);
             }
-            return true;
+            return false;
         });
     }
 }

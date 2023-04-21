@@ -58,6 +58,13 @@ public class PermissionManager {
         }).request();
     }
 
+    public boolean hasRequestReadWritePermission() {
+        return PermissionUtils.isGranted(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        );
+    }
+
     public void requestManageExternalStoragePermission(Context context) {
         Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
         intent.setData(Uri.parse("package:" + context.getPackageName()));

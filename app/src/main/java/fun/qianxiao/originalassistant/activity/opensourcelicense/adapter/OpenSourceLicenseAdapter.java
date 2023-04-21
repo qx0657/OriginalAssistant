@@ -29,7 +29,7 @@ public class OpenSourceLicenseAdapter extends BaseAdapter<OpenSourceLicense, Ope
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull OpenSourceLicenseAdapterViewHolder holder, int position, OpenSourceLicense openSourceLicense) {
+    protected void onBindViewHolder(@NonNull OpenSourceLicenseAdapterViewHolder holder, OpenSourceLicense openSourceLicense) {
         holder.binding.tvNameItemOsl.setText(openSourceLicense.getName());
         holder.binding.tvAuthorItemOsl.setText(openSourceLicense.getAnthor());
         holder.binding.tvDescribeItemOsl.setText(openSourceLicense.getDescribe());
