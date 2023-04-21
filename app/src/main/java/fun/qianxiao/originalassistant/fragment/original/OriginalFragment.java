@@ -417,7 +417,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
                     binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
-                        appQueryResult.getAppPictures().add("/sdcard/Download/1.jpeg");
                         binding.rvAppPics.setAdapter(new AppPicturesAdapter(appQueryResult.getAppPictures()));
                     }
                 } else {
