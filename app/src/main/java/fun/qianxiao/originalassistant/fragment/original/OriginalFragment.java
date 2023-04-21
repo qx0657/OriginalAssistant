@@ -340,11 +340,12 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 continue;
             }
             if (picsDatum.startsWith("http")) {
-
+                // TODO
             } else {
                 list.add(new File(picsDatum));
             }
         }
+        return list;
     }
 
     private void oneKeyPost() {
