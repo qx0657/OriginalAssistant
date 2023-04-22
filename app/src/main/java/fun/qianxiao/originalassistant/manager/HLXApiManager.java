@@ -197,16 +197,6 @@ public enum HLXApiManager {
                 });
     }
 
-    public interface OnSignInResult {
-        /**
-         * OnSignInResult onResult
-         *
-         * @param success success
-         * @param errMsg  errMsg
-         */
-        void onResult(boolean success, String errMsg);
-    }
-
     private String sign(Map<String, String> map) {
         String[] strArr = (String[]) map.keySet().toArray(new String[0]);
         Arrays.sort(strArr);
@@ -220,13 +210,62 @@ public enum HLXApiManager {
     }
 
     /**
+     * signInCheck
+     *
+     * @param key    key
+     * @param catId  catId
+     * @param result result true if has not sign in
+     */
+    public void signInCheck(String key, int catId, OnCommonBooleanResultListener result) {
+        hlxApi.signInCheck(key, catId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.optInt("status") == 1) {
+                                if (jsonObject.optInt("signin") == 1) {
+                                    result.onResult(false, "今日已签到");
+                                } else {
+                                    result.onResult(true, "今日未签到");
+                                }
+                            } else {
+                                result.onResult(false, jsonObject.optString("msg"));
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                            result.onResult(false, e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        result.onResult(false, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    /**
      * Sign in
      *
      * @param key    key
      * @param catId  cat_id
      * @param result Callback
      */
-    public void signIn(String key, int catId, OnSignInResult result) {
+    public void signIn(String key, int catId, OnCommonBooleanResultListener result) {
         long tsp = TimeUtils.getNowMills();
         Map<String, String> map = new HashMap<>();
         map.put("cat_id", String.valueOf(catId));

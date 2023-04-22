@@ -558,6 +558,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private void initFloatButtonData() {
         if (SettingPreferences.getBoolean(R.string.p_key_switch_post_one_key)) {
             binding.fabGotoApp.setTitle("发帖");
+        } else {
+            binding.fabGotoApp.setTitle("跳转");
         }
     }
 
@@ -709,7 +711,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         } else if (item.getItemId() == R.id.menu_item_app_query) {
             String appName = binding.etGameName.getText().toString();
             String packageName = binding.etGamePackageName.getText().toString();
-            if (!TextUtils.isEmpty(appName) && !TextUtils.isEmpty(appName)) {
+            if (!TextUtils.isEmpty(appName) && !TextUtils.isEmpty(packageName)) {
                 manualAppQQueryDialog(appName, packageName);
                 return true;
             } else {

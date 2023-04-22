@@ -23,6 +23,7 @@ public interface HLXApi {
     String SIGN_SALT = "fa1c28a5b62e79c3e63d9030b6142e4b";
     String MARKET_ID_HLX_3L = "floor_web";
     String MARKET_ID_HLX = "tool_web";
+    int CAT_ID_ORIGINAL = 45;
 
     /**
      * Check key
@@ -43,6 +44,16 @@ public interface HLXApi {
      */
     @GET("http://floor.huluxia.com/user/info/ANDROID/4.1.8")
     Observable<ResponseBody> userInfo(@Query("_key") String key, @Query("user_id") long userId);
+
+    /**
+     * signInCheck
+     *
+     * @param key   key
+     * @param catId catId
+     * @return {@link Observable<ResponseBody>}
+     */
+    @GET("http://floor.huluxia.com/user/signin/check/ANDROID/2.0")
+    Observable<ResponseBody> signInCheck(@Query("_key") String key, @Query("cat_id") int catId);
 
     /**
      * Sign in

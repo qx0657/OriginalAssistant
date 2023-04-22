@@ -20,7 +20,7 @@ public class SysMailUtils {
      */
     public static void send(Context context, String email, String subject) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
+        intent.setData(Uri.parse("mailto:" + email));
         intent.putExtra(Intent.EXTRA_EMAIL, email);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         if (intent.resolveActivity(context.getPackageManager()) != null) {

@@ -26,6 +26,7 @@ import fun.qianxiao.originalassistant.activity.AboutActivity;
 import fun.qianxiao.originalassistant.activity.BrowserActivity;
 import fun.qianxiao.originalassistant.activity.SettingsActivity;
 import fun.qianxiao.originalassistant.activity.SupportActivity;
+import fun.qianxiao.originalassistant.api.hlx.HLXApi;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
@@ -46,6 +47,7 @@ import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentMeBinding, A> implements ILoadingView {
     private InputConfirmPopupView keyInputConfirmPopupView;
     private InputConfirmPopupView userIdInputConfirmPopupView;
+    private boolean hasSignIn;
 
     @Override
     protected void initListener() {
@@ -173,6 +175,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                             if (!isSilent) {
                                 ToastUtils.showShort("登录成功");
                             }
+                            signInCheck(key);
                             baseInputXPopViewDismiss(userIdInputConfirmPopupView);
                             displayUserInfo(hlxUserInfo);
                         } else {
@@ -200,12 +203,13 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
 
     private void signInInner(String key) {
         openLoadingDialog("签到中");
-        HLXApiManager.INSTANCE.signIn(key, 45, new HLXApiManager.OnSignInResult() {
+        HLXApiManager.INSTANCE.signIn(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnCommonBooleanResultListener() {
             @Override
             public void onResult(boolean success, String errMsg) {
                 closeLoadingDialog();
                 if (success) {
                     ToastUtils.showShort("签到成功");
+                    setHasSignIn();
                 } else {
                     ToastUtils.showShort(errMsg);
                 }
@@ -217,9 +221,13 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
             ToastUtils.showShort("未登录");
-        } else {
-            signInInner(key);
+            return;
         }
+        if (hasSignIn) {
+            ToastUtils.showShort("今日已签到");
+            return;
+        }
+        signInInner(key);
     }
 
     private void setUserId() {
@@ -292,6 +300,24 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(userId)) {
             loginHLX(key, userId, true);
         }
+    }
+
+    private void setHasSignIn() {
+        hasSignIn = true;
+        binding.tvSignin.setText("已签到");
+    }
+
+    private void signInCheck(String key) {
+        HLXApiManager.INSTANCE.signInCheck(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnCommonBooleanResultListener() {
+            @Override
+            public void onResult(boolean valid, String errMsg) {
+                if (valid) {
+                    // has not sign in, auto sign in in future
+                } else if ("今日已签到".equals(errMsg)) {
+                    setHasSignIn();
+                }
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
