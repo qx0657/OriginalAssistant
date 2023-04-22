@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
                 @Override
                 public void onAgree() {
                     // requestPermission();
+                    MyApplication.uengInit();
                 }
 
                 @Override

@@ -109,7 +109,7 @@ dependencies {
     //implementation 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 
     // 友盟统计SDK https://mobile.umeng.com/platform/apps/list
-    implementation  'com.umeng.umsdk:common:9.4.4'// 必选
+    implementation  'com.umeng.umsdk:common:9.5.0'// 必选
     implementation  'com.umeng.umsdk:asms:1.4.1'// 必选
 
     // xor加解密库，stringfog中的implementation需依赖此库 https://github.com/MegatronKing/StringFog-Sample1

@@ -17,11 +17,13 @@ import com.umeng.commonsdk.UMConfigure;
  */
 public class MyApplication extends Application {
     public static final String TAG = "OriginalAssistant";
-    public static final String UMENGG_APP_ID = "";
+    public static final String UMENGG_APP_ID = "6443937f4c2b215d8040d98b";
+    public static MyApplication myApplication;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        myApplication = this;
 
         //logger
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
@@ -38,8 +40,13 @@ public class MyApplication extends Application {
 
         // 友盟
         UMConfigure.setLogEnabled(true);
-        UMConfigure.preInit(this, UMENGG_APP_ID, "android");
-        UMConfigure.init(this, UMENGG_APP_ID, "android", UMConfigure.DEVICE_TYPE_PHONE, "");
+    }
 
+    /**
+     * 应监管要求，延迟初始化配置
+     */
+    public static void uengInit() {
+        UMConfigure.preInit(myApplication, UMENGG_APP_ID, "android");
+        UMConfigure.init(myApplication, UMENGG_APP_ID, "android", UMConfigure.DEVICE_TYPE_PHONE, "");
     }
 }
