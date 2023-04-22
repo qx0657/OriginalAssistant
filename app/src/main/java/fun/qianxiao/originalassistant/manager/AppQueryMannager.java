@@ -11,6 +11,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.appquery.AbstractAppQuerier;
 import fun.qianxiao.originalassistant.appquery.BaifenAppQuery;
 import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
@@ -54,26 +55,38 @@ public class AppQueryMannager {
 
     public enum AppQueryChannel {
         /**
-         * 葫芦侠;
+         * 葫芦侠
          */
-        HLX(HLXAppQuerier.class),
+        HLX(HLXAppQuerier.class, "葫芦侠", R.drawable.logo_huluxia),
         /**
          * TapTap
          */
-        TAPTAP(TapTapAppQuery.class),
+        TAPTAP(TapTapAppQuery.class, "TapTap", R.drawable.logo_taptap),
         /**
-         * Baifen
+         * 百分网
          */
-        BAIFEN(BaifenAppQuery.class);
+        BAIFEN(BaifenAppQuery.class, "百分网", R.drawable.logo_baifen);
 
         private final Class<? extends AbstractAppQuerier<?, ?>> channel;
+        private final String commonName;
+        private final int iconRes;
 
-        AppQueryChannel(Class<? extends AbstractAppQuerier<?, ?>> aClass) {
+        AppQueryChannel(Class<? extends AbstractAppQuerier<?, ?>> aClass, String commonName, int iconRes) {
             this.channel = aClass;
+            this.commonName = commonName;
+            this.iconRes = iconRes;
         }
 
         public Class<? extends AbstractAppQuerier<?, ?>> getChannel() {
             return channel;
+        }
+
+        public String getCommonName() {
+            return commonName;
+        }
+
+        public int getIconRes() {
+            return iconRes;
         }
     }
 

@@ -14,7 +14,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
+import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
@@ -125,6 +127,9 @@ public class SettingsActivity extends AppCompatActivity {
                         });
                     }
                 }
+            } else if (key.equals(getString(R.string.p_key_clear_cache))) {
+                FileUtils.deleteAllInDir(PathUtils.getInternalAppCachePath());
+                ToastUtils.showShort("缓存已清理");
             }
             return super.onPreferenceTreeClick(preference);
         }

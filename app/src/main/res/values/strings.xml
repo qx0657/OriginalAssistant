@@ -15,4 +15,5 @@
     <string name="p_key_get_introduction_length_max">p_key_get_introduction_length_max</string>
     <string name="p_key_current_translate_api">p_key_current_translate_api</string>
     <string name="p_key_app_query_channel">p_key_app_query_channel</string>
+    <string name="p_key_clear_cache">p_key_clear_cache</string>
 </resources>
