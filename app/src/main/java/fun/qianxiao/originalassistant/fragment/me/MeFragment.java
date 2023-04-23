@@ -299,6 +299,19 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         }
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(userId)) {
             loginHLX(key, userId, true);
+        } else if (!TextUtils.isEmpty(key)) {
+            HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
+                @Override
+                public void onResult(boolean valid, String errMsg) {
+                    if (valid) {
+                        signInCheck(key);
+                    } else {
+                        ToastUtils.showShort("Key已失效, 请重新登录");
+                        SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                        displayUserInfo(null);
+                    }
+                }
+            });
         }
     }
 
