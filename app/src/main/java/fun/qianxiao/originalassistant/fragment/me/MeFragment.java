@@ -154,6 +154,7 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
         String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
         if (TextUtils.isEmpty(userId)) {
             ToastUtils.showShort("设置Key成功，如需获取用户信息请设置userId");
+            signInCheck(HlxKeyLocal.read());
         } else {
             loginHLX(HlxKeyLocal.read(), userId, false);
         }

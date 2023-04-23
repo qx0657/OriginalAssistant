@@ -63,6 +63,13 @@
             android:paddingHorizontal="6dp"
             android:text="Author: 浅笑" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="6dp"
+            android:text="贡献: 伟少" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
