@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 import fun.qianxiao.originalassistant.api.hlx.HLXApi;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
+import fun.qianxiao.originalassistant.bean.PostResultInfo;
+import fun.qianxiao.originalassistant.bean.UploadPictureResult;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import fun.qianxiao.originalassistant.other.SimpleObserver;
@@ -360,7 +362,7 @@ public enum HLXApiManager {
         int UPLOAD_ALL_SUCCESS = 0;
         int UPLOAD_ERROR = -1;
 
-        void onUploadPicturesResult(int code, String errMsg, Map<File, String> result);
+        void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result);
     }
 
     private Observable<ResponseBody> getUploadObservable(String key, File file) {
@@ -388,12 +390,12 @@ public enum HLXApiManager {
      */
     public void uploadPictures(String key, List<File> fileList, OnUploadPicturesListener onUploadPicturesListener) {
         ConditionVariable conditionVariable = new ConditionVariable(false);
-        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<String>>() {
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<UploadPictureResult>>() {
             private String errMsg = null;
 
             @Override
-            public List<String> doInBackground() throws Throwable {
-                List<String> list = new ArrayList<>();
+            public List<UploadPictureResult> doInBackground() throws Throwable {
+                List<UploadPictureResult> list = new ArrayList<>();
                 Observable.interval(0, 10, TimeUnit.MILLISECONDS)
                         .map(aLong -> fileList.get(aLong.intValue()))
                         .take(fileList.size())
@@ -404,7 +406,10 @@ public enum HLXApiManager {
                             @Override
                             public void onNext(@NonNull JSONObject jsonObject) {
                                 if (jsonObject.optInt("status") == 1) {
-                                    list.add(jsonObject.optString("url"));
+                                    UploadPictureResult uploadPictureResult = new UploadPictureResult();
+                                    uploadPictureResult.setFid(jsonObject.optString("fid"));
+                                    uploadPictureResult.setUrl(jsonObject.optString("fid"));
+                                    list.add(uploadPictureResult);
                                 } else {
                                     onError(new Throwable(jsonObject.optString("msg")));
                                 }
@@ -422,9 +427,9 @@ public enum HLXApiManager {
 
             @MainThread
             @Override
-            public void onSuccess(List<String> result) {
+            public void onSuccess(List<UploadPictureResult> result) {
                 if (result.size() == fileList.size()) {
-                    Map<File, String> map = new LinkedHashMap<>();
+                    Map<File, UploadPictureResult> map = new LinkedHashMap<>();
                     for (int i = 0; i < result.size(); i++) {
                         map.put(fileList.get(i), result.get(i));
                     }
@@ -434,5 +439,80 @@ public enum HLXApiManager {
                 }
             }
         });
+    }
+
+    public interface OnPostListener {
+        void onSuccess(PostResultInfo postResultInfo);
+
+        void onError(int code, String errMsg);
+    }
+
+    /**
+     * post
+     *
+     * @param key    hlx_key
+     * @param title  post title
+     * @param detail post detail
+     * @param images images, for no rich it's split by ',', such as 'g4/M01/81/5C/rBAAdmREwDyAEC3NAAHdrncekLc863.jpg,g4/M01/81/5C/rBAAdmREwDyAZSQAAADSG9V436g35.jpeg,'
+     * @param result resultListener
+     */
+    public void post(String key, String title, String detail, String images, boolean isRich, OnPostListener result) {
+        Map<String, String> postMap = new HashMap<>();
+        postMap.put("title", title);
+        postMap.put("detail", detail);
+        postMap.put("images", images);
+        postMap.put("device_code", HLXUtils.getDeviceCode());
+        postMap.put("_key", key);
+        postMap.put("voice", "");
+        postMap.put("sign", sign(postMap));
+        postMap.put("cat_id", String.valueOf(HLXApi.CAT_ID_ORIGINAL));
+        postMap.put("tag_id", String.valueOf(HLXApi.TAG_ID_ORIGINAL));
+        postMap.put("type", "0");
+        postMap.put("patcha", "");
+        postMap.put("lng", "0.0");
+        postMap.put("lat", "0.0");
+        postMap.put("user_ids", "");
+        postMap.put("recommendTopics", "");
+        postMap.put("is_app_link", isRich ? "4" : "3");
+
+        hlxApi.post(key, postMap)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.optInt("status", 0) == 1) {
+                                PostResultInfo postResultInfo = new PostResultInfo();
+                                postResultInfo.setPostId(jsonObject.optLong("postID"));
+                                postResultInfo.setCode(jsonObject.optInt("code"));
+                                postResultInfo.setMsg(jsonObject.optString("msg"));
+                                result.onSuccess(postResultInfo);
+                            } else {
+                                result.onError(-1, jsonObject.optString("msg"));
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                            result.onError(-1, e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        result.onError(-1, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 }

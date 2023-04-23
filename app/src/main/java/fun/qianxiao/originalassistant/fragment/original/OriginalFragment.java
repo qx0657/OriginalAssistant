@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,6 +55,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.bumptech.glide.Glide;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnCancelListener;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
@@ -62,6 +65,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -73,6 +77,8 @@ import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 import fun.qianxiao.originalassistant.bean.PostInfo;
+import fun.qianxiao.originalassistant.bean.PostResultInfo;
+import fun.qianxiao.originalassistant.bean.UploadPictureResult;
 import fun.qianxiao.originalassistant.config.Constants;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
@@ -83,6 +89,7 @@ import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
 import fun.qianxiao.originalassistant.translate.ITranslate;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
+import fun.qianxiao.originalassistant.utils.PictureFileUtils;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
 import fun.qianxiao.originalassistant.utils.SettingPreferences;
 import fun.qianxiao.originalassistant.view.RecyclerSpace;
@@ -389,10 +396,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private void oneKeyPost() {
-        if (true) {
-            ToastUtils.showShort("开发中");
-            return;
-        }
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
             ToastUtils.showShort("未登录");
@@ -410,6 +413,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             @Override
             public void onResult(boolean valid, String errMsg) {
                 if (valid) {
+                    ((MainActivity) activity).openLoadingDialog("发帖中");
                     ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<File>>() {
                         @Override
                         public List<File> doInBackground() throws Throwable {
@@ -421,11 +425,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                         public void onSuccess(List<File> picsFiles) {
                             HLXApiManager.INSTANCE.uploadPictures(key, picsFiles, new HLXApiManager.OnUploadPicturesListener() {
                                 @Override
-                                public void onUploadPicturesResult(int code, String errMsg, Map<File, String> result) {
+                                public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
                                     if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
-                                        ToastUtils.showShort("图片上传成功");
                                         oneKeyPostInner(key, result);
                                     } else {
+                                        ((MainActivity) activity).closeLoadingDialog();
                                         ToastUtils.showShort(errMsg);
                                     }
                                 }
@@ -437,12 +441,78 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 }
             }
         });
-
     }
 
-    private void oneKeyPostInner(String key, Map<File, String> picUploadResultMap) {
-        // TODO
+    private void oneKeyPostInner(String key, Map<File, UploadPictureResult> picUploadResultMap) {
+        boolean isRich = SettingPreferences.getBoolean(R.string.p_key_switch_post_rich);
+        PostInfo postInfo = getPostInfo();
+        String title = PostContentFormatUtils.getFormatTitle(postInfo);
+        StringBuilder detail = new StringBuilder(PostContentFormatUtils.getFormatDetail(postInfo));
+        String images = "";
         LogUtils.i(picUploadResultMap);
+        if (isRich) {
+            images = "";
+            detail = new StringBuilder("<text>" + detail + "</text>");
+            String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+            if (!TextUtils.isEmpty(postPrefix)) {
+                detail.insert(0, postPrefix + "<text></text>");
+            }
+            detail.append("<text></text>");
+            for (File file : picUploadResultMap.keySet()) {
+                Pair<Integer, Integer> wh = PictureFileUtils.getWidthAndHeight(file.toString());
+                detail.append("<image>").append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid()).append(",").append(wh.first).append(",").append(wh.second).append("</image>");
+                detail.append("<text></text>");
+            }
+            String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+            if (!TextUtils.isEmpty(postSuffix)) {
+                detail.append("<text></text>").append(postSuffix);
+            }
+        } else {
+            detail = new StringBuilder("<text>" + detail + "</text>");
+            String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+            if (!TextUtils.isEmpty(postPrefix)) {
+                detail.insert(0, postPrefix + "<text></text>");
+            }
+            String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+            if (!TextUtils.isEmpty(postSuffix)) {
+                detail.append("<text></text>").append(postSuffix);
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            for (File file : picUploadResultMap.keySet()) {
+                stringBuilder.append(picUploadResultMap.get(file));
+                stringBuilder.append(",");
+            }
+            images = stringBuilder.toString();
+        }
+        HLXApiManager.INSTANCE.post(key, title, detail.toString(), images, isRich, new HLXApiManager.OnPostListener() {
+            @Override
+            public void onSuccess(PostResultInfo postResultInfo) {
+                ((MainActivity) activity).closeLoadingDialog();
+                new XPopup.Builder(getContext())
+                        .dismissOnBackPressed(true)
+                        .dismissOnTouchOutside(false)
+                        .asConfirm("发帖结果", postResultInfo.getMsg()
+                                , new OnConfirmListener() {
+                                    @Override
+                                    public void onConfirm() {
+                                        gotoApp();
+                                    }
+                                }, new OnCancelListener() {
+                                    @Override
+                                    public void onCancel() {
+
+                                    }
+                                })
+                        .setConfirmText("跳转葫芦侠")
+                        .setCancelText("确定").show();
+            }
+
+            @Override
+            public void onError(int code, String errMsg) {
+                ((MainActivity) activity).closeLoadingDialog();
+                ToastUtils.showShort(errMsg);
+            }
+        });
     }
 
     private void selectApp() {
@@ -464,7 +534,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         clearAppPictureRecycleView();
     }
 
-    private void copyContent() {
+    private PostInfo getPostInfo() {
         PostInfo postInfo = new PostInfo();
         postInfo.setAppName(binding.etGameName.getText());
         postInfo.setAppPackageName(binding.etGamePackageName.getText());
@@ -477,8 +547,29 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         postInfo.setAppIntroduction(binding.etGameIntroduction.getText());
         postInfo.setAppDownloadUrl(binding.etDownloadUrl.getText());
 
-        ClipboardUtils.copyText(PostContentFormatUtils.format(postInfo));
+        return postInfo;
+    }
 
+    private void copyContent() {
+        PostInfo postInfo = getPostInfo();
+
+        StringBuilder stringBuilder = new StringBuilder();
+        CharSequence title = PostContentFormatUtils.getFormatTitle(postInfo);
+        if (!TextUtils.isEmpty(title)) {
+            stringBuilder.append(title).append(PostContentFormatUtils.FIELD_SEPARATOR);
+        }
+        String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+        if (!TextUtils.isEmpty(postPrefix)) {
+            stringBuilder.append(postPrefix).append(PostContentFormatUtils.FIELD_SEPARATOR);
+        }
+        CharSequence detail = PostContentFormatUtils.getFormatDetail(postInfo);
+        stringBuilder.append(detail);
+        String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+        if (!TextUtils.isEmpty(postSuffix)) {
+            stringBuilder.append(PostContentFormatUtils.FIELD_SEPARATOR).append(postSuffix);
+        }
+
+        ClipboardUtils.copyText(stringBuilder.toString());
         ToastUtils.showShort("已复制到剪贴板");
     }
 

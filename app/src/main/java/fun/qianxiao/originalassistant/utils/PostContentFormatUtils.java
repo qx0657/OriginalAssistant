@@ -1,7 +1,6 @@
 package fun.qianxiao.originalassistant.utils;
 
 import android.os.Build;
-import android.text.TextUtils;
 
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.Utils;
@@ -45,7 +44,17 @@ public class PostContentFormatUtils {
 
     public static final String TITLE_FORMAT_DEFAULT = Utils.getApp().getString(R.string.post_title_format_default);
 
-    public static CharSequence format(PostInfo postInfo) {
+    public static String getFormatTitle(PostInfo postInfo) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_title)) {
+            String teamName = SettingPreferences.getString(R.string.p_key_team_name, "");
+            String titleFormat = SettingPreferences.getString(R.string.p_key_title_format, TITLE_FORMAT_DEFAULT);
+            stringBuilder.append(String.format(titleFormat, teamName, postInfo.getAppName(), postInfo.getAppVersionName()));
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String getFormatDetail(PostInfo postInfo) {
         String fieldNameAppName = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_NAME, FIELD_NAME_APP_NAME);
         String fieldNameAppLanguage = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_LANGUAGE, FIELD_NAME_APP_LANGUAGE);
         String fieldNameAppSize = SPUtils.getInstance().getString(KEY_FIELD_NAME_APP_SIZE, FIELD_NAME_APP_SIZE);
@@ -70,15 +79,6 @@ public class PostContentFormatUtils {
             fieldNameAppDownloadUrl = fieldNameAppDownloadUrl.replace("游戏", "软件");
         }
         StringBuilder stringBuilder = new StringBuilder();
-        if (SettingPreferences.getBoolean(R.string.p_key_switch_title)) {
-            String teamName = SettingPreferences.getString(R.string.p_key_team_name, "");
-            String titleFormat = SettingPreferences.getString(R.string.p_key_title_format, TITLE_FORMAT_DEFAULT);
-            stringBuilder.append(String.format(titleFormat, teamName, postInfo.getAppName(), postInfo.getAppVersionName())).append(FIELD_SEPARATOR);
-        }
-        String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
-        if (!TextUtils.isEmpty(postPrefix)) {
-            stringBuilder.append(postPrefix).append(FIELD_SEPARATOR);
-        }
         stringBuilder.append(fieldNameAppName).append(postInfo.getAppName()).append(FIELD_SEPARATOR_DOUBLE);
         stringBuilder.append(fieldNameAppLanguage).append(postInfo.getAppLanguage()).append(FIELD_SEPARATOR_DOUBLE);
         stringBuilder.append(fieldNameAppSize).append(postInfo.getAppSize()).append(FIELD_SEPARATOR_DOUBLE);
@@ -89,11 +89,7 @@ public class PostContentFormatUtils {
         stringBuilder.append(fieldNameAppSpecialInstructions).append(postInfo.getAppSpecialInstructions()).append(FIELD_SEPARATOR_DOUBLE);
         stringBuilder.append(fieldNameAppIntroduction).append(postInfo.getAppIntroduction()).append(FIELD_SEPARATOR_DOUBLE);
         stringBuilder.append(fieldNameAppDownloadUrl).append(postInfo.getAppDownloadUrl());
-        ;
-        String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
-        if (!TextUtils.isEmpty(postSuffix)) {
-            stringBuilder.append(FIELD_SEPARATOR).append(postSuffix);
-        }
+
         return stringBuilder.toString();
     }
 }

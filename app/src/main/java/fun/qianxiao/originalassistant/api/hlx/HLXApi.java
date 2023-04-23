@@ -6,6 +6,8 @@ import java.util.Map;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -24,6 +26,7 @@ public interface HLXApi {
     String MARKET_ID_HLX_3L = "floor_web";
     String MARKET_ID_HLX = "tool_web";
     int CAT_ID_ORIGINAL = 45;
+    int TAG_ID_ORIGINAL = 4501;
 
     /**
      * Check key
@@ -76,10 +79,25 @@ public interface HLXApi {
     @GET("http://floor.huluxia.com/create/power/ANDROID/2.3?cat_id=45&type_id=1")
     Observable<ResponseBody> hasRichPermission(@Query("_key") String key);
 
-    @GET("http://floor.huluxia.com/post/create/ANDROID/4.2.2")
-    Observable<ResponseBody> post(@Query("_key") String key);
-
+    /**
+     * hlx upload picture
+     *
+     * @param getParams query params
+     * @param file      file
+     * @return {@link Observable<ResponseBody>}
+     */
     @Multipart
     @POST("http://upload.huluxia.com/upload/v3/image")
-    Observable<ResponseBody> uploadPicture(@QueryMap Map<String, String> params, @Part List<MultipartBody.Part> file);
+    Observable<ResponseBody> uploadPicture(@QueryMap Map<String, String> getParams, @Part List<MultipartBody.Part> file);
+
+    /**
+     * post
+     *
+     * @param key        key
+     * @param postParams post params
+     * @return {@link Observable<ResponseBody>}
+     */
+    @FormUrlEncoded
+    @POST("http://floor.huluxia.com/post/create/ANDROID/4.2")
+    Observable<ResponseBody> post(@Query("_key") String key, @FieldMap Map<String, String> postParams);
 }

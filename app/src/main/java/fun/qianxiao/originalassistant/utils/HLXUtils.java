@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * HLXUtils
@@ -47,5 +48,10 @@ public class HLXUtils {
         }
         sb.append("secret=").append(SECRET);
         return EncryptUtils.encryptMD5ToString(sb.toString()).toUpperCase(Locale.ROOT);
+    }
+
+    public static String getDeviceCode() {
+        return "[d]" +
+                UUID.randomUUID().toString();
     }
 }
