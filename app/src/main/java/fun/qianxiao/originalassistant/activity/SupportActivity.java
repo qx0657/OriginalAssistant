@@ -15,13 +15,13 @@ import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.databinding.ActivitySupportBinding;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
+import fun.qianxiao.originalassistant.utils.PictureFileUtils;
 
 /**
  * SupportActivity
@@ -59,24 +59,13 @@ public class SupportActivity extends BaseActivity<ActivitySupportBinding> {
                     AssetManager assetManager = getAssets();
                     InputStream inputStream = assetManager.open("wx.jpg");
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    File file = new File(PathUtils.getExternalDcimPath() + File.separator + "原创助手赞助码_" + System.currentTimeMillis() + ".jpg");
-                    if (!FileUtils.isFileExists(file)) {
-                        if (file.createNewFile()) {
-                            FileOutputStream fos = new FileOutputStream(file);
-                            if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
-                                fos.flush();
-                                fos.close();
-                            } else {
-                                ToastUtils.showShort("出错了");
-                            }
-                        } else {
-                            ToastUtils.showShort("请给予App读写权限");
-                            PermissionManager.getInstance().requestReadWritePermission();
+                    String fileName = PathUtils.getExternalDcimPath() + File.separator + "原创助手赞助码_" + System.currentTimeMillis() + ".jpg";
+                    if (!FileUtils.isFileExists(fileName)) {
+                        if (!PictureFileUtils.savePictureToPublic(context, bitmap, fileName)) {
+                            ToastUtils.showShort("出错了");
                             return;
                         }
                     }
-                    Uri uri = Uri.fromFile(file);
-                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
                     ToastUtils.showShort("收款二维码已保存至相册，请微信扫码转账");
 
                     Intent intent = new Intent();
