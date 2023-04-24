@@ -471,11 +471,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             detail = new StringBuilder("<text>" + detail + "</text>");
             String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
             if (!TextUtils.isEmpty(postPrefix)) {
-                detail.insert(0, postPrefix + "<text></text>");
+                detail.insert(0, "<text>" + postPrefix + "</text>" + "<text></text>");
             }
             String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
             if (!TextUtils.isEmpty(postSuffix)) {
-                detail.append("<text></text>").append(postSuffix);
+                detail.append("<text></text>").append("<text>").append(postSuffix).append("</text>");
             }
             StringBuilder stringBuilder = new StringBuilder();
             for (File file : picUploadResultMap.keySet()) {
@@ -684,8 +684,20 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 LogUtils.i(code, message, appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
                         appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppPictures());
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
-                    binding.etGameIntroduction.setText(appQueryResult.getAppIntroduction());
+                    if (appQueryResult == null) {
+                        return;
+                    }
+                    String introduction = appQueryResult.getAppIntroduction();
+                    int introductionLengthMax = Integer.parseInt(SettingPreferences.getString(R.string.p_key_get_introduction_length_max, "1200"));
+                    if (introduction.length() > introductionLengthMax) {
+                        introduction = introduction.substring(0, introductionLengthMax);
+                    }
+                    binding.etGameIntroduction.setText(introduction);
                     if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
+                        int downloadPictureNum = Integer.parseInt(SettingPreferences.getString(R.string.p_key_download_picture_num, "5"));
+                        if (appQueryResult.getAppPictures().size() > downloadPictureNum) {
+                            appQueryResult.setAppPictures(appQueryResult.getAppPictures().subList(0, downloadPictureNum));
+                        }
                         appQueryResult.getAppPictures().add(AppPicturesAdapter.PLACEHOLDER_ADD);
                         picturesAdapter = new AppPicturesAdapter(OriginalFragment.this, appQueryResult.getAppPictures());
                         binding.rvAppPics.setAdapter(picturesAdapter);
