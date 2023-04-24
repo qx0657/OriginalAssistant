@@ -156,7 +156,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         setScrollEditTextListener();
         setRadioButtonChangeLister();
         setFloatingActionButtonListener();
-        setEdiTextActionLitener();
         setSpecialInstructionsSpinnerListener();
         setSpecialInstructionsEditTextChangeListener();
 
@@ -257,25 +256,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 binding.etSpecialInstructions.setTag(null);
             }
         });
-    }
-
-    private void setEdiTextActionLitener() {
-        TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    KeyboardUtils.hideSoftInput(v);
-                    return true;
-                }
-                return false;
-            }
-        };
-        binding.etGameName.setOnEditorActionListener(onEditorActionListener);
-        binding.etGamePackageName.setOnEditorActionListener(onEditorActionListener);
-        binding.etGameSize.setOnEditorActionListener(onEditorActionListener);
-        binding.etGameVersion.setOnEditorActionListener(onEditorActionListener);
-        binding.etGameVersionCode.setOnEditorActionListener(onEditorActionListener);
-        binding.etDownloadUrl.setOnEditorActionListener(onEditorActionListener);
     }
 
     @SuppressLint("ClickableViewAccessibility")

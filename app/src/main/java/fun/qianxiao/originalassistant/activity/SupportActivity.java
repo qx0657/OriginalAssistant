@@ -51,10 +51,10 @@ public class SupportActivity extends BaseActivity<ActivitySupportBinding> {
             @SuppressLint("WrongConstant")
             @Override
             public void onClick(View v) {
-                /*if (!PermissionManager.getInstance().hasRequestReadWritePermission()) {
+                if (!PermissionManager.getInstance().hasRequestReadWritePermission()) {
                     PermissionManager.getInstance().requestReadWritePermission();
                     return;
-                }*/
+                }
                 try {
                     AssetManager assetManager = getAssets();
                     InputStream inputStream = assetManager.open("wx.jpg");
