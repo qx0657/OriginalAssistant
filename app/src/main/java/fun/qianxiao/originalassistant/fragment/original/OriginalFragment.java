@@ -13,7 +13,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Pair;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,12 +20,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -34,7 +30,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -154,7 +149,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     @Override
     protected void initListener() {
         setScrollEditTextListener();
-        setRadioButtonChangeLister();
         setFloatingActionButtonListener();
         setSpecialInstructionsSpinnerListener();
         setSpecialInstructionsEditTextChangeListener();
@@ -274,25 +268,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         };
         binding.etSpecialInstructions.setOnTouchListener(editTextScrollListener);
         binding.etGameIntroduction.setOnTouchListener(editTextScrollListener);
-    }
-
-    private void setRadioButtonChangeLister() {
-        CompoundButton.OnCheckedChangeListener rbGameLanguageCheckedChangeListener = (buttonView, isChecked) -> {
-            ViewGroup viewGroup = (ViewGroup) buttonView.getParent();
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                AppCompatRadioButton radioButton = (AppCompatRadioButton) viewGroup.getChildAt(i);
-                if (radioButton.getId() != buttonView.getId() && isChecked) {
-                    /*
-                    Use tag of view to save index and them use PostInfo.AppLanguage.values()[i] to convert to enum.
-                     */
-                    binding.llCategoryRadioButtonGroup.setTag(i);
-                    radioButton.setChecked(false);
-                }
-            }
-        };
-        binding.rbGameLanguageChineseGame.setOnCheckedChangeListener(rbGameLanguageCheckedChangeListener);
-        binding.rbGameLanguageEnglishGame.setOnCheckedChangeListener(rbGameLanguageCheckedChangeListener);
-        binding.rbGameLanguageOtherGame.setOnCheckedChangeListener(rbGameLanguageCheckedChangeListener);
+        binding.etDownloadUrl.setOnTouchListener(editTextScrollListener);
     }
 
     private void setFloatingActionButtonListener() {
@@ -435,7 +411,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             detail = new StringBuilder("<text>" + detail + "</text>");
             String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
             if (!TextUtils.isEmpty(postPrefix)) {
-                detail.insert(0, postPrefix + "<text></text>");
+                if (postPrefix.startsWith("<text>")) {
+                    detail.insert(0, postPrefix + "<text>\n</text>");
+                } else {
+                    detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
+                }
             }
             detail.append("<text></text>");
             for (File file : picUploadResultMap.keySet()) {
@@ -445,21 +425,25 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             }
             String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
             if (!TextUtils.isEmpty(postSuffix)) {
-                detail.append("<text></text>").append(postSuffix);
+                if (postSuffix.startsWith("<text>")) {
+                    detail.append("<text>\n</text>").append(postSuffix);
+                } else {
+                    detail.append("<text>\n</text>").append("<text>").append(postSuffix).append("</text>");
+                }
             }
         } else {
             detail = new StringBuilder("<text>" + detail + "</text>");
             String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
             if (!TextUtils.isEmpty(postPrefix)) {
-                detail.insert(0, "<text>" + postPrefix + "</text>" + "<text></text>");
+                detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
             }
             String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
             if (!TextUtils.isEmpty(postSuffix)) {
-                detail.append("<text></text>").append("<text>").append(postSuffix).append("</text>");
+                detail.append("<text>\n</text>").append("<text>").append(postSuffix).append("</text>");
             }
             StringBuilder stringBuilder = new StringBuilder();
             for (File file : picUploadResultMap.keySet()) {
-                stringBuilder.append(picUploadResultMap.get(file));
+                stringBuilder.append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid());
                 stringBuilder.append(",");
             }
             images = stringBuilder.toString();
@@ -514,6 +498,16 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         clearAppPictureRecycleView();
     }
 
+    private int getLanguageIndex() {
+        int checkedId = binding.rgLanguageRadioButtonGroup.getCheckedRadioButtonId();
+        if (checkedId == R.id.rb_game_language_chinese_game) {
+            return PostInfo.AppLanguage.CHINESE.ordinal();
+        } else if (checkedId == R.id.rb_game_language_english_game) {
+            return PostInfo.AppLanguage.ENGLISH.ordinal();
+        }
+        return PostInfo.AppLanguage.OTHER.ordinal();
+    }
+
     private PostInfo getPostInfo() {
         PostInfo postInfo = new PostInfo();
         postInfo.setAppName(binding.etGameName.getText());
@@ -521,8 +515,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         postInfo.setAppSize(binding.etGameSize.getText());
         postInfo.setAppVersionName(binding.etGameVersion.getText());
         postInfo.setAppVersionCode(binding.etGameVersionCode.getText());
-        LogUtils.i(binding.llCategoryRadioButtonGroup.getTag());
-        postInfo.setAppLanguage(PostInfo.AppLanguage.values()[Integer.parseInt(String.valueOf(binding.llCategoryRadioButtonGroup.getTag()))]);
+        postInfo.setAppLanguage(PostInfo.AppLanguage.values()[getLanguageIndex()]);
         postInfo.setAppSpecialInstructions(binding.etSpecialInstructions.getText());
         postInfo.setAppIntroduction(binding.etGameIntroduction.getText());
         postInfo.setAppDownloadUrl(binding.etDownloadUrl.getText());
