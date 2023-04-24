@@ -13,10 +13,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.appquery.AbstractAppQuerier;
-import fun.qianxiao.originalassistant.appquery.BaifenAppQuery;
+import fun.qianxiao.originalassistant.appquery.BaifenAppQuerier;
 import fun.qianxiao.originalassistant.appquery.HLXAppQuerier;
 import fun.qianxiao.originalassistant.appquery.IQuery;
-import fun.qianxiao.originalassistant.appquery.TapTapAppQuery;
+import fun.qianxiao.originalassistant.appquery.TapTapAppQuerier;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 
 /**
@@ -61,11 +61,11 @@ public class AppQueryMannager {
         /**
          * TapTap
          */
-        TAPTAP(TapTapAppQuery.class, "TapTap", R.drawable.logo_taptap),
+        TAPTAP(TapTapAppQuerier.class, "TapTap", R.drawable.logo_taptap),
         /**
          * 百分网
          */
-        BAIFEN(BaifenAppQuery.class, "百分网", R.drawable.logo_baifen);
+        BAIFEN(BaifenAppQuerier.class, "百分网", R.drawable.logo_baifen);
 
         private final Class<? extends AbstractAppQuerier<?, ?>> channel;
         private final String commonName;

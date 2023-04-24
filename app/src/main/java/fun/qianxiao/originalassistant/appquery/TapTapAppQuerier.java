@@ -17,7 +17,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/18
  */
-public class TapTapAppQuery extends AbstractAppQuerier<TapTapAppQueryApi, JSONObject> {
+public class TapTapAppQuerier extends AbstractAppQuerier<TapTapAppQueryApi, JSONObject> {
     @Override
     protected Observable<ResponseBody> search(String appName, String packageName) {
         return getApi().query(appName);

@@ -16,7 +16,7 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/4/19
  */
-public class BaifenAppQuery extends AbstractAppQuerier<BaifenAppQieryApi, JSONObject> {
+public class BaifenAppQuerier extends AbstractAppQuerier<BaifenAppQieryApi, JSONObject> {
     @Override
     protected Observable<ResponseBody> search(String appName, String packageName) {
         return getApi().query(appName);

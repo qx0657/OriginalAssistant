@@ -27,6 +27,20 @@ android {
     }
 
     buildTypes {
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                def outputFile = output.outputFile
+                def fileName
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    if (variant.buildType.name == 'release') {
+                        fileName = "OriginalAssistant.v.${defaultConfig.versionName}.apk"
+                    } else if (variant.buildType.name == 'debug') {
+                        fileName = "OriginalAssistant.v.${defaultConfig.versionName}_debug.apk"
+                    }
+                    outputFileName = fileName
+                }
+            }
+        }
         debug {
             minifyEnabled false
             shrinkResources false

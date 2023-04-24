@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import fun.qianxiao.originalassistant.translate.AbstractTranslate;
 import fun.qianxiao.originalassistant.translate.BaiduTranslate;
-import fun.qianxiao.originalassistant.translate.GoogleTranslate;
 import fun.qianxiao.originalassistant.translate.ITranslate;
 import fun.qianxiao.originalassistant.translate.YoudaoTranslate;
 
@@ -36,11 +35,11 @@ public class TranslateManager {
         /**
          * 百度;
          */
-        BAIDU_TRANSLATE(BaiduTranslate.class),
+        BAIDU_TRANSLATE(BaiduTranslate.class);
         /**
          * 谷歌;
          */
-        GOOGLE_TRANSLATE(GoogleTranslate.class);
+        // GOOGLE_TRANSLATE(GoogleTranslate.class);
 
         private Class<? extends AbstractTranslate<?>> channel;
 
