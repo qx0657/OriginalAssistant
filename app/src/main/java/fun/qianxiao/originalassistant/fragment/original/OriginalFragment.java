@@ -412,9 +412,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
             if (!TextUtils.isEmpty(postPrefix)) {
                 if (postPrefix.startsWith("<text>")) {
-                    detail.insert(0, postPrefix + "<text>\n</text>");
+                    detail.insert(0, postPrefix);
                 } else {
-                    detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
+                    detail.insert(0, "<text>" + postPrefix + "</text>");
                 }
             }
             detail.append("<text></text>");
@@ -426,9 +426,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
             if (!TextUtils.isEmpty(postSuffix)) {
                 if (postSuffix.startsWith("<text>")) {
-                    detail.append("<text>\n</text>").append(postSuffix);
+                    detail.append(postSuffix);
                 } else {
-                    detail.append("<text>\n</text>").append("<text>").append(postSuffix).append("</text>");
+                    detail.append("<text>").append(postSuffix).append("</text>");
                 }
             }
         } else {
