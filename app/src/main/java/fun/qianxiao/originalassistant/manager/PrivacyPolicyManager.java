@@ -1,5 +1,6 @@
 package fun.qianxiao.originalassistant.manager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -22,11 +23,25 @@ import fun.qianxiao.originalassistant.config.AppConfig;
  * @Date 2023/3/10
  */
 public class PrivacyPolicyManager {
-    private final String KEY_AGREE_Privacy_POLICY = "agreePrivacyPolicy";
-    private Context context;
+    @SuppressLint("StaticFieldLeak")
+    private static PrivacyPolicyManager instance;
 
-    public PrivacyPolicyManager(Context context) {
+    private final String KEY_AGREE_Privacy_POLICY = "agreePrivacyPolicy";
+    private final Context context;
+
+    private PrivacyPolicyManager(Context context) {
         this.context = context;
+    }
+
+    public static PrivacyPolicyManager getInstance(Context context) {
+        if (instance == null) {
+            synchronized (PrivacyPolicyManager.class) {
+                if (instance == null) {
+                    instance = new PrivacyPolicyManager(context);
+                }
+            }
+        }
+        return instance;
     }
 
     public boolean isAgreePrivacyPolicy() {

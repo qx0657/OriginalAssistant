@@ -99,7 +99,7 @@ public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
             return true;
         }
         if (id == R.id.action_check_update) {
-            new CheckUpdateManager(context).check(false);
+            CheckUpdateManager.getInstance().check(context, false);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -35,7 +35,6 @@ import java.lang.reflect.Field;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.api.CheckUpdateApi;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
-import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -51,16 +50,27 @@ import okhttp3.ResponseBody;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public final class CheckUpdateManager implements ILoadingView {
-    private Context context;
+public final class CheckUpdateManager {
+    private static CheckUpdateManager instance;
+
     private MyLoadingDialog loadingDialog;
 
     private boolean isBrowserDownload = false;
     private boolean isUpdating = false;
     private boolean isApkFullyDownloaded = false;
 
-    public CheckUpdateManager(Context context) {
-        this.context = context;
+    private CheckUpdateManager() {
+    }
+
+    public static CheckUpdateManager getInstance() {
+        if (instance == null) {
+            synchronized (CheckUpdateManager.class) {
+                if (instance == null) {
+                    instance = new CheckUpdateManager();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
@@ -68,9 +78,9 @@ public final class CheckUpdateManager implements ILoadingView {
      *
      * @param issilent Is it silent
      */
-    public void check(boolean issilent) {
+    public void check(Context context, boolean issilent) {
         if (!issilent) {
-            openLoadingDialog("正在检查更新");
+            openLoadingDialog(context, "正在检查更新");
         }
         ApiServiceManager.getInstance()
                 .create(CheckUpdateApi.class)
@@ -188,7 +198,7 @@ public final class CheckUpdateManager implements ILoadingView {
                                                             isUpdating = false;
                                                             isApkFullyDownloaded = true;
                                                             //AppUtils.installApp(finalFile);
-                                                            installApp(file);
+                                                            installApp(context, file);
                                                         }
 
                                                         @Override
@@ -255,7 +265,7 @@ public final class CheckUpdateManager implements ILoadingView {
         }
     }
 
-    private void installApp(File mApkFile) {
+    private void installApp(Context context, File mApkFile) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         Uri uri;
@@ -271,8 +281,7 @@ public final class CheckUpdateManager implements ILoadingView {
         context.startActivity(intent);
     }
 
-    @Override
-    public void openLoadingDialog(String msg) {
+    public void openLoadingDialog(Context context, String msg) {
         if (loadingDialog == null) {
             loadingDialog = new MyLoadingDialog(context);
         }
@@ -282,7 +291,6 @@ public final class CheckUpdateManager implements ILoadingView {
         }
     }
 
-    @Override
     public void closeLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();

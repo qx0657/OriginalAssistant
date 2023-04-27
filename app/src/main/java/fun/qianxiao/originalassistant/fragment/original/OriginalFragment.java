@@ -74,7 +74,7 @@ import fun.qianxiao.originalassistant.config.Constants;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentOriginalBinding;
 import fun.qianxiao.originalassistant.fragment.original.adapter.AppPicturesAdapter;
-import fun.qianxiao.originalassistant.manager.AppQueryMannager;
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
@@ -622,7 +622,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Object>() {
             @Override
             public Object doInBackground() throws Throwable {
-                AppQueryMannager.getInstance().query(appName, packageName, onAppQueryListener);
+                AppQueryManager.getInstance().query(appName, packageName, onAppQueryListener);
                 return null;
             }
 
@@ -694,7 +694,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     autoAppQuery(appName, packageName, onAppQueryListener);
                 } else {
                     isAppQuerying.set(true);
-                    AppQueryMannager.createQuerier(AppQueryMannager.AppQueryChannel.values()[appQueryChannel].getChannel())
+                    AppQueryManager.createQuerier(AppQueryManager.AppQueryChannel.values()[appQueryChannel].getChannel())
                             .query(appName, packageName, onAppQueryListener);
                 }
             }
@@ -818,7 +818,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             ToastUtils.showShort("正在获取中");
             return;
         }
-        AppQueryMannager.AppQueryChannel[] appQueryChannels = AppQueryMannager.AppQueryChannel.values();
+        AppQueryManager.AppQueryChannel[] appQueryChannels = AppQueryManager.AppQueryChannel.values();
         String[] strings = new String[appQueryChannels.length];
         int[] icons = new int[appQueryChannels.length];
         for (int i = 0; i < appQueryChannels.length; i++) {
@@ -829,7 +829,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 .asCenterList("获取应用信息", strings, icons, new OnSelectListener() {
                     @Override
                     public void onSelect(int position, String text) {
-                        AppQueryMannager.createQuerier(appQueryChannels[position].getChannel())
+                        AppQueryManager.createQuerier(appQueryChannels[position].getChannel())
                                 .query(appName, packageName, getOnAppQueryListener());
                     }
                 })

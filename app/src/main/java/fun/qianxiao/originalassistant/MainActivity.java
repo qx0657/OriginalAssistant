@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
 
     @Override
     protected void initData() {
-        PrivacyPolicyManager privacyPolicyManager = new PrivacyPolicyManager(context);
+        PrivacyPolicyManager privacyPolicyManager = PrivacyPolicyManager.getInstance(context.getApplicationContext());
         if (!privacyPolicyManager.isAgreePrivacyPolicy()) {
             privacyPolicyManager.confrim(new PrivacyPolicyManager.OnPrivacyPolicyListener() {
                 @Override
@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
         binding.tabLayout.setTabData(tabEntities);
 
         if (privacyPolicyManager.isAgreePrivacyPolicy()) {
-            new CheckUpdateManager(context).check(true);
+            CheckUpdateManager.getInstance().check(context, true);
         }
     }
 

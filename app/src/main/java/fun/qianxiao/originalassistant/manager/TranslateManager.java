@@ -24,8 +24,8 @@ import fun.qianxiao.originalassistant.translate.YoudaoTranslate;
  */
 public class TranslateManager {
     private volatile static TranslateManager instance;
-    private Lock lock = new ReentrantLock();
-    private Condition condition = lock.newCondition();
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
 
     public enum TranslateInterfaceType {
         /**

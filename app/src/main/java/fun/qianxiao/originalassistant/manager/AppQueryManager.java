@@ -20,24 +20,24 @@ import fun.qianxiao.originalassistant.appquery.TapTapAppQuerier;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 
 /**
- * AppQueryMannager
+ * AppQueryManager
  *
  * @Author QianXiao
  * @Date 2023/4/16
  */
-public class AppQueryMannager {
-    private volatile static AppQueryMannager instance;
-    private Lock lock = new ReentrantLock();
-    private Condition condition = lock.newCondition();
+public class AppQueryManager {
+    private volatile static AppQueryManager instance;
+    private final Lock lock = new ReentrantLock();
+    private final Condition condition = lock.newCondition();
 
-    private AppQueryMannager() {
+    private AppQueryManager() {
     }
 
-    public static AppQueryMannager getInstance() {
+    public static AppQueryManager getInstance() {
         if (instance == null) {
-            synchronized (AppQueryMannager.class) {
+            synchronized (AppQueryManager.class) {
                 if (instance == null) {
-                    instance = new AppQueryMannager();
+                    instance = new AppQueryManager();
                 }
             }
         }
@@ -102,7 +102,7 @@ public class AppQueryMannager {
     public synchronized void query(String appName, String packageName, AbstractAppQuerier.OnAppQueryListener onAppQueryListener) {
         final boolean[] success = {false};
         for (AppQueryChannel appQueryChannel : AppQueryChannel.values()) {
-            AppQueryMannager.createQuerier(appQueryChannel.getChannel()).query(appName, packageName, new IQuery.OnAppQueryListener() {
+            AppQueryManager.createQuerier(appQueryChannel.getChannel()).query(appName, packageName, new IQuery.OnAppQueryListener() {
                 @Override
                 @MainThread
                 public void onResult(int code, String message, AppQueryResult appQueryResult) {
