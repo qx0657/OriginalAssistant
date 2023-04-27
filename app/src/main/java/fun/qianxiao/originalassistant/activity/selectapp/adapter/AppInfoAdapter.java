@@ -1,11 +1,14 @@
 package fun.qianxiao.originalassistant.activity.selectapp.adapter;
 
 import android.content.Context;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.R;
@@ -18,12 +21,14 @@ import fun.qianxiao.originalassistant.bean.AppInfo;
  * @Author QianXiao
  * @Date 2023/3/12
  */
-public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolder> {
+public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolder> implements Filterable {
     private Context context;
+    private List<AppInfo> beforeSearchAppInfoList = new ArrayList<>();
 
     public AppInfoAdapter(Context context, List<AppInfo> dataList) {
         super(dataList);
         this.context = context;
+        beforeSearchAppInfoList.addAll(dataList);
     }
 
     @Override
@@ -47,5 +52,36 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
             }
             return false;
         });
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charString = constraint.toString();
+                if (charString.isEmpty()) {
+                    dataList = beforeSearchAppInfoList;
+                } else {
+                    List<AppInfo> filteredList = new ArrayList<>();
+                    for (AppInfo data : beforeSearchAppInfoList) {
+                        if (data.getAppName().toString().contains(charString) ||
+                                data.getPackageName().toString().contains(charString)) {
+                            filteredList.add(data);
+                        }
+                    }
+                    dataList = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = dataList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                notifyDataSetChanged();
+            }
+        };
     }
 }

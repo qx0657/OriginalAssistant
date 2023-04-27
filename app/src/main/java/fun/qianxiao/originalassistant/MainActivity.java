@@ -1,12 +1,14 @@
 package fun.qianxiao.originalassistant;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.ThreadUtils;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 
@@ -16,6 +18,7 @@ import java.util.List;
 import fun.qianxiao.originalassistant.adapter.MyPageAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
+import fun.qianxiao.originalassistant.bean.AppInfo;
 import fun.qianxiao.originalassistant.databinding.ActivityMainBinding;
 import fun.qianxiao.originalassistant.fragment.find.FindFragment;
 import fun.qianxiao.originalassistant.fragment.me.MeFragment;
@@ -24,6 +27,7 @@ import fun.qianxiao.originalassistant.fragment.test.TestFragment;
 import fun.qianxiao.originalassistant.manager.CheckUpdateManager;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.PrivacyPolicyManager;
+import fun.qianxiao.originalassistant.utils.AppListTool;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 
@@ -134,9 +138,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
         }
         binding.tabLayout.setTabData(tabEntities);
 
+        preLoadAppList();
         if (privacyPolicyManager.isAgreePrivacyPolicy()) {
             CheckUpdateManager.getInstance().check(context, true);
         }
+    }
+
+    private void preLoadAppList() {
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AppInfo>>() {
+            @Override
+            public List<AppInfo> doInBackground() throws Throwable {
+                return AppListTool.getAppList(context);
+            }
+
+            @Override
+            public void onSuccess(List<AppInfo> result) {
+
+            }
+        });
     }
 
     private void startActivity(Class<?> ac) {

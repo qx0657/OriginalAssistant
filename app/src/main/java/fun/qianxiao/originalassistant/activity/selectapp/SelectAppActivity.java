@@ -7,11 +7,17 @@ import android.graphics.PointF;
 import android.os.Build;
 import android.os.Environment;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.EditText;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +33,7 @@ import com.lxj.xpopup.impl.AttachListPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.R;
@@ -60,6 +67,8 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     public static final String KEY_APP_NAME = "KEY_APP_NAME";
     public static final String KEY_APP_PACKAGE_NAME = "KEY_APP_PACKAGE_NAME";
 
+    private AppInfoAdapter adapter;
+    private SearchView searchView;
     private MyLoadingDialog loadingDialog;
 
     private float touchX;
@@ -196,7 +205,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     }
 
     private void showAppList(List<AppInfo> appInfoList) {
-        AppInfoAdapter adapter = new AppInfoAdapter(context, appInfoList);
+        adapter = new AppInfoAdapter(context, appInfoList);
         adapter.setItemClickListener(itemClickListener);
         adapter.setItemLongClickListener(itemLongClickListener);
         binding.rvAppList.setAdapter(adapter);
@@ -204,8 +213,43 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_select_app, menu);
+        initSearchView(menu);
+        return true;
+    }
+
+    private void initSearchView(Menu menu) {
+        MenuItem menuItem = menu.findItem(R.id.menu_item_search);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                doSearch(newText);
+                return true;
+            }
+        });
+    }
+
+    private void doSearch(String newText) {
+        if (adapter == null) {
+            return;
+        }
+        adapter.getFilter().filter(newText);
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (searchView != null && !searchView.isIconified()) {
+                searchView.setIconified(true);
+                return false;
+            }
             setResult(RESULT_CODE_SELECT_APP_NONE);
             finish();
             return true;
