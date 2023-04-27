@@ -85,10 +85,10 @@ public class MovingBricksActivity extends BaseTestActivity<ActivityTestMovingBri
             binding.tlGameVersion.setHint("游戏版本");
             binding.tlGameVersionCode.setHint("游戏版本值");
         } else if (mode == Constants.APP_MODE_SOFTWARE) {
-            binding.tlGameName.setHint("游戏名称");
-            binding.tlGamePackageName.setHint("游戏包名");
-            binding.tlGameVersion.setHint("游戏版本");
-            binding.tlGameVersionCode.setHint("游戏版本值");
+            binding.tlGameName.setHint("软件名称");
+            binding.tlGamePackageName.setHint("软件包名");
+            binding.tlGameVersion.setHint("软件版本");
+            binding.tlGameVersionCode.setHint("软件版本值");
         }
     }
 }
