@@ -10,12 +10,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.EditText;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
@@ -33,7 +30,6 @@ import com.lxj.xpopup.impl.AttachListPopupView;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.R;

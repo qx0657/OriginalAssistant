@@ -1,7 +1,6 @@
 package fun.qianxiao.originalassistant;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;

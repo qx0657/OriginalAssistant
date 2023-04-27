@@ -2,8 +2,12 @@ package fun.qianxiao.originalassistant.fragment.me;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ClickableSpan;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -111,10 +115,24 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
 
     private void showLogin() {
         if (TextUtils.isEmpty(HlxKeyLocal.read())) {
+            SpannableStringBuilder style = new SpannableStringBuilder();
+            String s = "key获取请查看帮助中心";
+            style.append(s);
+            int start = s.indexOf("帮助中心");
+            if (start != -1) {
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        BrowserActivity.load(getContext(), "帮助中心", AppConfig.HELP_URL);
+                    }
+                };
+                int end = start + "帮助中心".length();
+                style.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
             keyInputConfirmPopupView = new XPopup.Builder(activity)
                     .dismissOnTouchOutside(false)
                     .asInputConfirm(
-                            "Key登录", "可使用抓包软件抓包获取，见请求字段'_key'，长度112位", "", "请输入Key",
+                            "葫芦侠Key登录", style, "", "请输入Key",
                             text -> {
                                 final int KEY_VALID_LENGTH = 112;
                                 if (TextUtils.isEmpty(text)) {
