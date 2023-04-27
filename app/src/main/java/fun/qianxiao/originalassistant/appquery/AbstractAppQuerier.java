@@ -5,8 +5,10 @@ import android.text.TextUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
@@ -61,6 +63,19 @@ public abstract class AbstractAppQuerier<T extends AppQueryaApi, R> implements I
         return (Class<?>) ((ParameterizedType) Objects.requireNonNull(getClass().getGenericSuperclass())).getActualTypeArguments()[index];
     }
 
+    @SuppressWarnings("unchecked")
+    private R responseTypeConvert(ResponseBody responseBody) throws IOException, JSONException {
+        R r;
+        if (getGenericType(1) == JSONObject.class) {
+            String data = responseBody.string();
+            JSONObject jsonObject = new JSONObject(data);
+            r = (R) jsonObject;
+        } else {
+            r = (R) responseBody;
+        }
+        return r;
+    }
+
     @Override
     public void query(String appName, String packageName, OnAppQueryListener onAppQueryListener) {
         LogUtils.i("app query use " + getApiName(), appName, packageName);
@@ -72,33 +87,19 @@ public abstract class AbstractAppQuerier<T extends AppQueryaApi, R> implements I
                 .flatMap(new Function<ResponseBody, ObservableSource<ResponseBody>>() {
                     @Override
                     public ObservableSource<ResponseBody> apply(ResponseBody responseBody) throws Throwable {
-                        R r;
-                        if (getGenericType(1) == JSONObject.class) {
-                            String data = responseBody.string();
-                            JSONObject jsonObject = new JSONObject(data);
-                            r = (R) jsonObject;
-                        } else {
-                            r = (R) responseBody;
-                        }
+                        R r = responseTypeConvert(responseBody);
                         return searchResponseAnalysisAndDetail(r, analysisResult);
                     }
                 })
                 .map(new Function<ResponseBody, AnalysisResult>() {
                     @Override
                     public AnalysisResult apply(ResponseBody responseBody) throws Throwable {
-                        R r;
-                        if (getGenericType(1) == JSONObject.class) {
-                            String data = responseBody.string();
-                            JSONObject jsonObject = new JSONObject(data);
-                            r = (R) jsonObject;
-                        } else {
-                            r = (R) responseBody;
-                        }
+                        R r = responseTypeConvert(responseBody);
                         detailResponseAnalysis(r, analysisResult);
                         return analysisResult;
                     }
                 })
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<AnalysisResult>() {
                     @Override

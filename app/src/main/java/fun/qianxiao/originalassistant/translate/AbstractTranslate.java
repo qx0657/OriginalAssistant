@@ -58,7 +58,7 @@ public abstract class AbstractTranslate<T extends TranslateApi> implements ITran
     @Override
     public void translate(String text, OnTranslateListener onTranslateListener) {
         LogUtils.i("translate use " + getApiName(), text);
-        request(text).subscribeOn(Schedulers.newThread())
+        request(text).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override

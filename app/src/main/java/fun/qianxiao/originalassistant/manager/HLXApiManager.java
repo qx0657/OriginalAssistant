@@ -75,7 +75,7 @@ public enum HLXApiManager {
 
     private void checkKey(final String key, final String marketId, OnCommonBooleanResultListener result) {
         hlxApi.checkKey(key, marketId)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -157,7 +157,7 @@ public enum HLXApiManager {
             return;
         }
         hlxApi.userInfo(key, Long.parseLong(userId))
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -220,7 +220,7 @@ public enum HLXApiManager {
      */
     public void signInCheck(String key, int catId, OnCommonBooleanResultListener result) {
         hlxApi.signInCheck(key, catId)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -274,7 +274,7 @@ public enum HLXApiManager {
         map.put("time", String.valueOf(tsp));
         String sign = sign(map);
         hlxApi.signIn(key, catId, tsp, sign)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -318,7 +318,7 @@ public enum HLXApiManager {
      */
     public void hasRichPermission(@NonNull String key, OnCommonBooleanResultListener result) {
         hlxApi.hasRichPermission(key)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override
@@ -414,7 +414,7 @@ public enum HLXApiManager {
                                 if (jsonObject.optInt("status") == 1) {
                                     UploadPictureResult uploadPictureResult = new UploadPictureResult();
                                     uploadPictureResult.setFid(jsonObject.optString("fid"));
-                                    uploadPictureResult.setUrl(jsonObject.optString("fid"));
+                                    uploadPictureResult.setUrl(jsonObject.optString("url"));
                                     list.add(uploadPictureResult);
                                 } else {
                                     onError(new Throwable(jsonObject.optString("msg")));
@@ -494,7 +494,7 @@ public enum HLXApiManager {
         postMap.put("is_app_link", isRich ? "4" : "3");
 
         hlxApi.post(key, postMap)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {
                     @Override

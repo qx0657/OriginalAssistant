@@ -161,7 +161,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
             List<AppInfo> appInfoList = AppListTool.getAppList(context);
             emitter.onNext(appInfoList);
             emitter.onComplete();
-        }).subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<AppInfo>>() {
                     @Override
