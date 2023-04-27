@@ -20,8 +20,11 @@ public interface YoudaoTranslateApi extends TranslateApi {
      * translate to chinese
      *
      * @param text text
-     * @return
+     * @param salt salt
+     * @param sign sign
+     * @param tsp  tsp
+     * @return {@link Observable<ResponseBody>}
      */
     @GET("https://openapi.youdao.com/api?from=from&to=zh-CHS&appKey=" + APP_KEY + "&signType=v3")
-    Observable<ResponseBody> translate(@Query("q") String text, @Query("salt") String salt, @Query("sign") String sign, @Query("curtime") String curtime_s);
+    Observable<ResponseBody> translate(@Query("q") String text, @Query("salt") String salt, @Query("sign") String sign, @Query("curtime") String tsp);
 }

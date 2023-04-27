@@ -26,9 +26,9 @@ public interface HLXAppQueryApi extends AppQueryaApi {
     /**
      * hlx app info detail
      *
-     * @param app_id app_id
+     * @param appId app_id
      * @return
      */
     @GET("http://tools.huluxia.com/game/detail/ANDROID/4.1.5")
-    Observable<ResponseBody> detail(@Query("app_id") long app_id);
+    Observable<ResponseBody> detail(@Query("app_id") long appId);
 }

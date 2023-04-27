@@ -63,8 +63,18 @@ public class AppPicturesAdapter extends BaseAdapter<String, AppPictureAdapterVie
     }
 
     public interface OnAppPicturesAdapterListener {
+        /**
+         * on 'Add' item click
+         *
+         * @param view view
+         */
         void onAddClick(View view);
 
+        /**
+         * on data change by DataObserver
+         *
+         * @param empty is empty
+         */
         void onDataChange(boolean empty);
     }
 
@@ -108,7 +118,7 @@ public class AppPicturesAdapter extends BaseAdapter<String, AppPictureAdapterVie
                 @Override
                 public boolean onLongClick(View v) {
                     if (itemLongClickListener != null) {
-                        return itemLongClickListener.onItemLongClick(v, holder.getAdapterPosition(), s);
+                        return itemLongClickListener.onItemLongClick(v, holder.getBindingAdapterPosition(), s);
                     }
                     return false;
                 }
@@ -116,15 +126,15 @@ public class AppPicturesAdapter extends BaseAdapter<String, AppPictureAdapterVie
             if (showDelete) {
                 holder.binding.ivDelete.setVisibility(View.VISIBLE);
                 holder.binding.ivDelete.setOnClickListener(v -> {
-                    getDataList().remove(holder.getAdapterPosition());
-                    notifyItemRemoved(holder.getAdapterPosition());
+                    getDataList().remove(holder.getBindingAdapterPosition());
+                    notifyItemRemoved(holder.getBindingAdapterPosition());
                     notifyDataSetChanged();
                 });
             }
         }
         holder.binding.ivImage.setOnClickListener(v -> {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(holder.binding.ivImage, holder.getAdapterPosition(), s);
+                itemClickListener.onItemClick(holder.binding.ivImage, holder.getBindingAdapterPosition(), s);
             }
         });
     }

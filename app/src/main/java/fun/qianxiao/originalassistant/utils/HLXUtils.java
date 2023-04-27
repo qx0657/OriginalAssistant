@@ -1,6 +1,13 @@
 package fun.qianxiao.originalassistant.utils;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.text.TextUtils;
+
+import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.EncryptUtils;
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -9,6 +16,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+
+import fun.qianxiao.originalassistant.config.AppConfig;
 
 /**
  * HLXUtils
@@ -19,6 +28,8 @@ import java.util.UUID;
 public class HLXUtils {
     private static final String SECRET = "my_sign@huluxia.com";
     private static final Random RANDOM = new SecureRandom();
+    private static final String SCHEME_FLOOR = "hlx.floor";
+    private static final String SCHEME_TOOL = "hlx";
 
     public static String getNonceStr() {
         char[] nonceChars = new char[32];
@@ -53,5 +64,59 @@ public class HLXUtils {
     public static String getDeviceCode() {
         return "[d]" +
                 UUID.randomUUID().toString();
+    }
+
+    /**
+     * Jump to the homepage of hlx app.
+     * Starting with a non package name, use ComponentName to jump to HomeActivity and accelerate the jump speed
+     * HomeActivity currently has an external attribute of true (android: exported='true'), so it can be used. Otherwise, there is no permission
+     */
+    public static void gotoHLX() {
+        String appPackageNameInstalled = null;
+        for (String s : AppConfig.HULUXIA_APP_PACKAGE_NAME) {
+            if (AppUtils.isAppInstalled(s)) {
+                appPackageNameInstalled = s;
+                break;
+            }
+        }
+        if (!TextUtils.isEmpty(appPackageNameInstalled)) {
+            try {
+                Intent intent = new Intent();
+                ComponentName componentName = null;
+                if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[0])) {
+                    componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[0], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[0]);
+                } else if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[1])) {
+                    componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[1], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[1]);
+                }
+                intent.setComponent(componentName);
+                ActivityUtils.startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ToastUtils.showShort("跳转失败");
+            }
+        } else {
+            ToastUtils.showShort("没有安装3楼");
+        }
+    }
+
+    /**
+     * Get hlx app scheme
+     *
+     * @return hlx app scheme
+     */
+    public static String getHlxScheme() {
+        String appPackageNameInstalled = null;
+        for (String s : AppConfig.HULUXIA_APP_PACKAGE_NAME) {
+            if (AppUtils.isAppInstalled(s)) {
+                appPackageNameInstalled = s;
+                break;
+            }
+        }
+        if (!TextUtils.isEmpty(appPackageNameInstalled)) {
+            if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[0])) {
+                return SCHEME_FLOOR;
+            }
+        }
+        return SCHEME_TOOL;
     }
 }

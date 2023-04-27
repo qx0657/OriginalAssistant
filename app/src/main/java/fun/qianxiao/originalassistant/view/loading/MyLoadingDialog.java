@@ -16,7 +16,10 @@ import fun.qianxiao.originalassistant.databinding.DialogLoadingBinding;
 
 
 /**
+ * Simple loading dialog
+ *
  * @author QianXiao
+ * @since 2023/3/10
  */
 public class MyLoadingDialog extends BaseAlertDialog<DialogLoadingBinding> {
     private String message = "加载中";

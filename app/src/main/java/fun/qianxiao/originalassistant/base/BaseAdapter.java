@@ -47,6 +47,7 @@ public abstract class BaseAdapter<BEAN, VH extends BaseRecycleViewHolder<?>> ext
          * @param v    view
          * @param pos  pos
          * @param bean item_data
+         * @return true if the callback consumed the long click, false otherwise.
          */
         boolean onItemLongClick(View v, int pos, B bean);
     }

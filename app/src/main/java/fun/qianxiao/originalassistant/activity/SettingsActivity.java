@@ -63,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             if (TextUtils.isEmpty(SettingPreferences.getString(R.string.p_key_special_instructions))) {
-                EditTextPreference etpSpecialInstructions = $(R.string.p_key_special_instructions);
+                EditTextPreference etpSpecialInstructions = find(R.string.p_key_special_instructions);
                 String[] specialInstructionsDefault = getResources().getStringArray(R.array.special_instructions);
                 etpSpecialInstructions.setText(MyStringUtils.join(
                         Arrays.copyOfRange(specialInstructionsDefault, 1, specialInstructionsDefault.length),
@@ -73,12 +73,12 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         @SuppressWarnings("unchecked")
-        private <T> T $(int key) {
-            return $(getString(key));
+        private <T> T find(int key) {
+            return find(getString(key));
         }
 
         @SuppressWarnings("unchecked")
-        private <T> T $(CharSequence key) {
+        private <T> T find(CharSequence key) {
             return (T) findPreference(key);
         }
 
@@ -96,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
                         return false;
                     }
                 }
-                SwitchPreference switchPreference = $(R.string.p_key_switch_title);
+                SwitchPreference switchPreference = find(R.string.p_key_switch_title);
                 if (SettingPreferences.getBoolean(key)) {
                     SPUtils.getInstance().put(SPConstants.KEY_TITLE_STATUS_BEFORE_SWITCH_POST_ONE_KEY_ON, switchPreference.isChecked());
                     if (!switchPreference.isChecked()) {

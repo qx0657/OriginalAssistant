@@ -27,7 +27,10 @@ public class HLXAppQuerier extends AbstractAppQuerier<HLXAppQueryApi, JSONObject
         if (jsonObject == null) {
             return Observable.error(new Exception(analysisResult.getApi() + ": search targetJsonObject is null"));
         }
-        String appDesc = jsonObject.optString("appdesc").replace("<br />", "\n");
+        String appDesc = jsonObject.optString("appdesc")
+                .replace("<br />", "\n")
+                .replace("<br/>", "\n")
+                .replace("<br>", "\n");
         analysisResult.getAppQueryResult().setAppIntroduction(appDesc);
 
         long appId = jsonObject.optLong("appid");

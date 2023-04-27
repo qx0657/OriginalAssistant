@@ -91,8 +91,8 @@ public class TranslateManager {
                         @Override
                         @MainThread
                         public void onTranslateResult(int code, String msg, String result) {
+                            lock.lock();
                             try {
-                                lock.lock();
                                 condition.signal();
                             } finally {
                                 lock.unlock();
@@ -103,8 +103,8 @@ public class TranslateManager {
                             }
                         }
                     });
+            lock.lock();
             try {
-                lock.lock();
                 condition.await(5500, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -29,7 +29,7 @@ import fun.qianxiao.originalassistant.bean.PostResultInfo;
 import fun.qianxiao.originalassistant.bean.UploadPictureResult;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
-import fun.qianxiao.originalassistant.other.SimpleObserver;
+import fun.qianxiao.originalassistant.other.AbstractSimpleObserver;
 import fun.qianxiao.originalassistant.utils.HLXUtils;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -362,6 +362,13 @@ public enum HLXApiManager {
         int UPLOAD_ALL_SUCCESS = 0;
         int UPLOAD_ERROR = -1;
 
+        /**
+         * onUploadPicturesResult
+         *
+         * @param code   code {@link OnUploadPicturesListener#UPLOAD_ALL_SUCCESS} if success
+         * @param errMsg errMsg
+         * @param result map of file and {@link UploadPictureResult}
+         */
         void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result);
     }
 
@@ -370,7 +377,6 @@ public enum HLXApiManager {
         map.put("key", key);
         map.put("timestamp", String.valueOf(System.currentTimeMillis()));
         map.put("sign", HLXUtils.sign(map));
-
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody multipartBody = new MultipartBody.Builder().addFormDataPart("_key", "key_10")
                 .addFormDataPart("file", file.getName(), requestBody)
@@ -402,7 +408,7 @@ public enum HLXApiManager {
                         .flatMap((Function<File, ObservableSource<ResponseBody>>) file -> getUploadObservable(key, file))
                         .map(responseBody -> new JSONObject(responseBody.string()))
                         .doOnTerminate(conditionVariable::open)
-                        .subscribe(new SimpleObserver<JSONObject>() {
+                        .subscribe(new AbstractSimpleObserver<JSONObject>() {
                             @Override
                             public void onNext(@NonNull JSONObject jsonObject) {
                                 if (jsonObject.optInt("status") == 1) {
@@ -442,8 +448,19 @@ public enum HLXApiManager {
     }
 
     public interface OnPostListener {
+        /**
+         * post onSuccess
+         *
+         * @param postResultInfo {@link PostResultInfo}
+         */
         void onSuccess(PostResultInfo postResultInfo);
 
+        /**
+         * post onError
+         *
+         * @param code   code
+         * @param errMsg errMsg
+         */
         void onError(int code, String errMsg);
     }
 

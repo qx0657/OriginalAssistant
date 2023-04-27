@@ -46,8 +46,10 @@ import okhttp3.ResponseBody;
 
 
 /**
- * Create by QianXiao
- * On 2023/3/10
+ * CheckUpdateManager
+ *
+ * @Author QianXiao
+ * @Date 2023/3/10
  */
 public final class CheckUpdateManager implements ILoadingView {
     private Context context;
@@ -129,8 +131,8 @@ public final class CheckUpdateManager implements ILoadingView {
                                             intent.setAction("android.intent.action.VIEW");
                                             intent.addCategory("android.intent.category.BROWSABLE");
                                             intent.addCategory("android.intent.category.DEFAULT");
-                                            Uri content_url = Uri.parse(downloadurl);
-                                            intent.setData(content_url);
+                                            Uri contentUrl = Uri.parse(downloadurl);
+                                            intent.setData(contentUrl);
                                             context.startActivity(intent);
                                         } else {
                                             if (isApkFullyDownloaded) {

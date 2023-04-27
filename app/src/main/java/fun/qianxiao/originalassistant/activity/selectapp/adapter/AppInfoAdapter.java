@@ -38,12 +38,12 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
         Glide.with(holder.binding.ivAppIcon).load(appInfo.getIcon()).into(holder.binding.ivAppIcon);
         holder.binding.cardView.setOnClickListener(view -> {
             if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, holder.getAdapterPosition(), appInfo);
+                itemClickListener.onItemClick(view, holder.getBindingAdapterPosition(), appInfo);
             }
         });
         holder.binding.cardView.setOnLongClickListener(view -> {
             if (itemLongClickListener != null) {
-                return itemLongClickListener.onItemLongClick(view, holder.getAdapterPosition(), appInfo);
+                return itemLongClickListener.onItemLongClick(view, holder.getBindingAdapterPosition(), appInfo);
             }
             return false;
         });

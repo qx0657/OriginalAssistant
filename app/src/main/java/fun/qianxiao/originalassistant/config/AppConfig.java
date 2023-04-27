@@ -50,4 +50,11 @@ public class AppConfig {
             "com.huati",
             "com.huluxia.gametools"
     };
+    /**
+     * 3楼App主Activity名，用于免启动页跳转
+     */
+    public static final String[] HULUXIA_APP_HOME_ACTIVITY_NAME = new String[]{
+            "com.huluxia.ui.home.HomeActivity",
+            "com.huluxia.ui.home.ToolHomeActivity"
+    };
 }

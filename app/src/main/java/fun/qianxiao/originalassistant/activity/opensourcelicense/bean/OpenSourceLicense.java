@@ -1,5 +1,11 @@
 package fun.qianxiao.originalassistant.activity.opensourcelicense.bean;
 
+/**
+ * OpenSourceLicense
+ *
+ * @Author QianXiao
+ * @Date 2023/3/10
+ */
 public class OpenSourceLicense {
     private String name;
     private String anthor;

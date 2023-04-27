@@ -106,8 +106,8 @@ public class AppQueryMannager {
                 @Override
                 @MainThread
                 public void onResult(int code, String message, AppQueryResult appQueryResult) {
+                    lock.lock();
                     try {
-                        lock.lock();
                         condition.signal();
                     } finally {
                         lock.unlock();
@@ -118,8 +118,8 @@ public class AppQueryMannager {
                     }
                 }
             });
+            lock.lock();
             try {
-                lock.lock();
                 condition.await(5500, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();

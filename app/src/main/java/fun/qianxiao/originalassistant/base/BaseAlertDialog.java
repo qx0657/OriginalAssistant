@@ -19,8 +19,11 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Objects;
 
 /**
- * Create by QianXiao
- * On 2023/3/10
+ * BaseAlertDialog
+ * T is layout ViewBinding
+ *
+ * @Author QianXiao
+ * @Date 2023/3/10
  */
 public abstract class BaseAlertDialog<T extends ViewBinding> extends AlertDialog {
     protected Context context;

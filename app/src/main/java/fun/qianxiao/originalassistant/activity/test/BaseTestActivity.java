@@ -1,7 +1,5 @@
 package fun.qianxiao.originalassistant.activity.test;
 
-import static fun.qianxiao.originalassistant.config.AppConfig.HULUXIA_APP_PACKAGE_NAME;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -19,14 +17,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.viewbinding.ViewBinding;
 
-import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.PhoneUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.List;
@@ -37,6 +32,7 @@ import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.bean.AppInfo;
 import fun.qianxiao.originalassistant.config.Constants;
 import fun.qianxiao.originalassistant.config.SPConstants;
+import fun.qianxiao.originalassistant.utils.HLXUtils;
 
 /**
  * BaseTestActivity
@@ -161,18 +157,7 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
     }
 
     protected void gotoApp() {
-        String appPackageNameInstalled = null;
-        for (String s : HULUXIA_APP_PACKAGE_NAME) {
-            if (AppUtils.isAppInstalled(s)) {
-                appPackageNameInstalled = s;
-                break;
-            }
-        }
-        if (!TextUtils.isEmpty(appPackageNameInstalled)) {
-            startActivity(IntentUtils.getLaunchAppIntent(appPackageNameInstalled));
-        } else {
-            ToastUtils.showShort("没有安装3楼");
-        }
+        HLXUtils.gotoHLX();
     }
 
     protected int isRemoveSmsPermission(String packetName) {
@@ -251,6 +236,11 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * setAppMode
+     *
+     * @param mode mode {@link Constants#APP_MODE_GAME} or {@link Constants#APP_MODE_SOFTWARE}
+     */
     protected abstract void setAppMode(int mode);
 
     @Override

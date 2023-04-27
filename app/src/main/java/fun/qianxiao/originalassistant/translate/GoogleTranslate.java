@@ -31,7 +31,7 @@ public class GoogleTranslate extends AbstractTranslate<GoogleTranslateApi> {
 
     private String getTk(String input) {
         int b = 406644;
-        long b1 = 3293161072l;
+        long b1 = 3293161072L;
         String jd = ".";
         String sb = "+-a^+6";
         String Zb = "+-3^+b+-f";
@@ -76,7 +76,7 @@ public class GoogleTranslate extends AbstractTranslate<GoogleTranslateApi> {
         a = RL(a, Zb);
         a ^= b1;
         if (a < 0) {
-            a = (a & 2147483647) + 2147483648l;
+            a = (a & 2147483647) + 2147483648L;
         }
         a %= 1000000;
         return a + jd + (a ^ b1);
@@ -89,7 +89,7 @@ public class GoogleTranslate extends AbstractTranslate<GoogleTranslateApi> {
             long d = b.charAt(c + 2);
             d = d >= t ? d - 87 : Character.getNumericValue((char) d);
             d = b.charAt(c + 1) == Yb ? a >>> d : a << d;
-            a = b.charAt(c) == Yb ? a + d & 4294967295l : a ^ d;
+            a = b.charAt(c) == Yb ? a + d & 4294967295L : a ^ d;
         }
         return a;
     }

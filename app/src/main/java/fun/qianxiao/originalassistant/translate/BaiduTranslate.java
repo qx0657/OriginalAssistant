@@ -21,7 +21,7 @@ import okhttp3.ResponseBody;
 public class BaiduTranslate extends AbstractTranslate<BaiduTranslateApi> {
     @Override
     protected void response(JSONObject jsonObject, OnTranslateListener onTranslateListener) {
-        if (!jsonObject.optString("error_code", "0").equals("0")) {
+        if (!"0".equals(jsonObject.optString("error_code", "0"))) {
             onTranslateListener.onTranslateResult(OnTranslateListener.TRANSLATE_ERROR, jsonObject.optString("error_msg", "error_code is not 0"), null);
             return;
         }

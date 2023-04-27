@@ -34,8 +34,14 @@ public class PrivacyPolicyManager {
     }
 
     public interface OnPrivacyPolicyListener {
+        /**
+         * onAgree
+         */
         void onAgree();
 
+        /**
+         * onRefuse
+         */
         void onRefuse();
     }
 

@@ -5,12 +5,12 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
- * SimpleObserver
+ * AbstractSimpleObserver
  *
  * @Author QianXiao
  * @Date 2023/4/21
  */
-public abstract class SimpleObserver<T> implements Observer<T> {
+public abstract class AbstractSimpleObserver<T> implements Observer<T> {
     @Override
     public void onSubscribe(@NonNull Disposable d) {
 

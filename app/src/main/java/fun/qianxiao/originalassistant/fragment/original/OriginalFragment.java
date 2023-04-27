@@ -1,7 +1,5 @@
 package fun.qianxiao.originalassistant.fragment.original;
 
-import static fun.qianxiao.originalassistant.config.AppConfig.HULUXIA_APP_PACKAGE_NAME;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -35,11 +33,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.IntentUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.NetworkUtils;
@@ -83,6 +79,7 @@ import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
 import fun.qianxiao.originalassistant.translate.ITranslate;
+import fun.qianxiao.originalassistant.utils.HLXUtils;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.PictureFileUtils;
 import fun.qianxiao.originalassistant.utils.PostContentFormatUtils;
@@ -117,9 +114,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             //得到当拖拽的viewHolder的Position
-            int fromPosition = viewHolder.getAdapterPosition();
+            int fromPosition = viewHolder.getBindingAdapterPosition();
             //拿到当前拖拽到的item的viewHolder
-            int toPosition = target.getAdapterPosition();
+            int toPosition = target.getBindingAdapterPosition();
             if (fromPosition == picturesAdapter.getItemCount() - 1 || toPosition == picturesAdapter.getItemCount() - 1) {
                 return false;
             }
@@ -209,10 +206,10 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     Use tag of view to save the added to prevent repeated addition
                      */
                     Object tag = binding.etSpecialInstructions.getTag();
-                    String tag_s = "";
+                    String tagStr = "";
                     if (tag != null) {
-                        tag_s = (String) tag;
-                        String[] hasAdded = tag_s.split("#");
+                        tagStr = (String) tag;
+                        String[] hasAdded = tagStr.split("#");
                         for (String s1 : hasAdded) {
                             if (Integer.parseInt(s1) == position) {
                                 binding.spinnerSpecialInstructionsSelect.setSelection(0);
@@ -227,12 +224,12 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     } else {
                         binding.etSpecialInstructions.setText(textOriginal + "、" + s[position]);
                     }
-                    if (TextUtils.isEmpty(tag_s)) {
-                        tag_s = String.valueOf(position);
+                    if (TextUtils.isEmpty(tagStr)) {
+                        tagStr = String.valueOf(position);
                     } else {
-                        tag_s = tag_s + "#" + position;
+                        tagStr = tagStr + "#" + position;
                     }
-                    binding.etSpecialInstructions.setTag(tag_s);
+                    binding.etSpecialInstructions.setTag(tagStr);
                     binding.etSpecialInstructions.setSelection(binding.etSpecialInstructions.getText().length());
                     binding.spinnerSpecialInstructionsSelect.setSelection(0);
                 }
@@ -547,18 +544,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private void gotoApp() {
-        String appPackageNameInstalled = null;
-        for (String s : HULUXIA_APP_PACKAGE_NAME) {
-            if (AppUtils.isAppInstalled(s)) {
-                appPackageNameInstalled = s;
-                break;
-            }
-        }
-        if (!TextUtils.isEmpty(appPackageNameInstalled)) {
-            startActivity(IntentUtils.getLaunchAppIntent(appPackageNameInstalled));
-        } else {
-            ToastUtils.showShort("没有安装3楼");
-        }
+        HLXUtils.gotoHLX();
     }
 
     @Override
@@ -609,9 +595,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             }
         });
 
-        initSpecialInstructionsSpinner();
         initAppPicturesRecycleView();
-        initFloatButtonData();
         initAppMode();
     }
 
@@ -940,6 +924,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     @Override
     public void onResume() {
         super.onResume();
+        initSpecialInstructionsSpinner();
         initFloatButtonData();
     }
 }
