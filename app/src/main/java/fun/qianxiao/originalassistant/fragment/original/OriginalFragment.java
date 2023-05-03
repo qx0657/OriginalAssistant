@@ -338,7 +338,10 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 File file;
                 try {
                     file = Glide.with(activity).asFile().load(picsDatum).submit().get();
-                    list.add(file);
+                    File newFile = new File(file.getParent() + File.separator + file.getName() + ".jpg");
+                    if (FileUtils.isFileExists(newFile) || FileUtils.rename(file, newFile.getName())) {
+                        list.add(newFile);
+                    }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -384,10 +387,21 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
 
                         @Override
                         public void onSuccess(List<File> picsFiles) {
+                            LogUtils.i(picsFiles);
+                            if (picsFiles.size() == 0) {
+                                ((MainActivity) activity).closeLoadingDialog();
+                                ToastUtils.showShort("待上传图片列表为空");
+                                return;
+                            }
                             HLXApiManager.INSTANCE.uploadPictures(key, picsFiles, new HLXApiManager.OnUploadPicturesListener() {
                                 @Override
                                 public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
                                     if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
+                                        if (result.size() == 0) {
+                                            ((MainActivity) activity).closeLoadingDialog();
+                                            ToastUtils.showShort("图片上传结果列表为空");
+                                            return;
+                                        }
                                         oneKeyPostInner(postInfo, key, result);
                                     } else {
                                         ((MainActivity) activity).closeLoadingDialog();
@@ -404,60 +418,74 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         });
     }
 
+    private String getNoRichDetailText(PostInfo postInfo) {
+        StringBuilder detail = new StringBuilder("<text>" + PostContentFormatUtils.getFormatDetail(postInfo) + "</text>");
+        String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+        if (!TextUtils.isEmpty(postPrefix)) {
+            detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
+        }
+        String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+        if (!TextUtils.isEmpty(postSuffix)) {
+            detail.append("<text>\n</text>").append("<text>").append(postSuffix).append("</text>");
+        }
+        return detail.toString();
+    }
+
+    private String getNoRichImagesText(Map<File, UploadPictureResult> picUploadResultMap) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (File file : picUploadResultMap.keySet()) {
+            stringBuilder.append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid());
+            stringBuilder.append(",");
+        }
+        return stringBuilder.toString();
+    }
+
+    private String getRichDetailText(PostInfo postInfo, Map<File, UploadPictureResult> picUploadResultMap) {
+        StringBuilder detail = new StringBuilder("<text>" + PostContentFormatUtils.getFormatDetail(postInfo) + "</text>");
+        String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
+        if (!TextUtils.isEmpty(postPrefix)) {
+            if (postPrefix.startsWith("<text>")) {
+                detail.insert(0, postPrefix);
+            } else {
+                detail.insert(0, "<text>" + postPrefix + "</text>");
+            }
+        }
+        detail.append("<text></text>");
+        for (File file : picUploadResultMap.keySet()) {
+            Pair<Integer, Integer> wh = PictureFileUtils.getWidthAndHeight(file.toString());
+            detail.append("<image>").append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid()).append(",").append(wh.first).append(",").append(wh.second).append("</image>");
+            detail.append("<text></text>");
+        }
+        String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
+        if (!TextUtils.isEmpty(postSuffix)) {
+            if (postSuffix.startsWith("<text>")) {
+                detail.append(postSuffix);
+            } else {
+                detail.append("<text>").append(postSuffix).append("</text>");
+            }
+        }
+        return detail.toString();
+    }
+
     private void oneKeyPostInner(PostInfo postInfo, String key, Map<File, UploadPictureResult> picUploadResultMap) {
         boolean isRich = SettingPreferences.getBoolean(R.string.p_key_switch_post_rich);
         String title = PostContentFormatUtils.getFormatTitle(postInfo);
-        StringBuilder detail = new StringBuilder(PostContentFormatUtils.getFormatDetail(postInfo));
+        String detail = "";
         String images = "";
         LogUtils.i(picUploadResultMap);
         if (isRich) {
+            detail = getRichDetailText(postInfo, picUploadResultMap);
             images = "";
-            detail = new StringBuilder("<text>" + detail + "</text>");
-            String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
-            if (!TextUtils.isEmpty(postPrefix)) {
-                if (postPrefix.startsWith("<text>")) {
-                    detail.insert(0, postPrefix);
-                } else {
-                    detail.insert(0, "<text>" + postPrefix + "</text>");
-                }
-            }
-            detail.append("<text></text>");
-            for (File file : picUploadResultMap.keySet()) {
-                Pair<Integer, Integer> wh = PictureFileUtils.getWidthAndHeight(file.toString());
-                detail.append("<image>").append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid()).append(",").append(wh.first).append(",").append(wh.second).append("</image>");
-                detail.append("<text></text>");
-            }
-            String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
-            if (!TextUtils.isEmpty(postSuffix)) {
-                if (postSuffix.startsWith("<text>")) {
-                    detail.append(postSuffix);
-                } else {
-                    detail.append("<text>").append(postSuffix).append("</text>");
-                }
-            }
         } else {
-            detail = new StringBuilder("<text>" + detail + "</text>");
-            String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
-            if (!TextUtils.isEmpty(postPrefix)) {
-                detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
-            }
-            String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
-            if (!TextUtils.isEmpty(postSuffix)) {
-                detail.append("<text>\n</text>").append("<text>").append(postSuffix).append("</text>");
-            }
-            StringBuilder stringBuilder = new StringBuilder();
-            for (File file : picUploadResultMap.keySet()) {
-                stringBuilder.append(Objects.requireNonNull(picUploadResultMap.get(file)).getFid());
-                stringBuilder.append(",");
-            }
-            images = stringBuilder.toString();
+            detail = getNoRichDetailText(postInfo);
+            images = getNoRichImagesText(picUploadResultMap);
         }
         HLXApiManager.INSTANCE.post(key, title, detail.toString(), images, isRich, new HLXApiManager.OnPostListener() {
             @Override
             public void onSuccess(PostResultInfo postResultInfo) {
                 ((MainActivity) activity).closeLoadingDialog();
                 new XPopup.Builder(getContext())
-                        .dismissOnBackPressed(true)
+                        .dismissOnBackPressed(false)
                         .dismissOnTouchOutside(false)
                         .asConfirm("发帖结果", postResultInfo.getMsg()
                                 , new OnConfirmListener() {
@@ -472,7 +500,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                                     }
                                 })
                         .setConfirmText("跳转葫芦侠")
-                        .setCancelText("确定").show();
+                        .setCancelText("确定")
+                        .show();
             }
 
             @Override
