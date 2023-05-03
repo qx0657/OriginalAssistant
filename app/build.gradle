@@ -122,5 +122,5 @@ dependencies {
     implementation 'com.github.megatronking.stringfog:xor:4.0.1'
 
     // commons-text utils. Such as StringEscapeUtils etc. https://github.com/apache/commons-text
-    implementation 'org.apache.commons:commons-text:1.10'
+    implementation 'org.apache.commons:commons-text:1.10.0'
 }
