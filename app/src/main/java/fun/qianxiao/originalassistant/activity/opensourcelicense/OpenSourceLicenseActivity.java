@@ -51,7 +51,8 @@ public class OpenSourceLicenseActivity extends BaseActivity<ActivityOpensourceli
                 new OpenSourceLicense("Logger", "orhanobut", "Simple, pretty and powerful logger for android", "Apache 2.0", "https://github.com/orhanobut/logger"),
                 new OpenSourceLicense("FlycoTabLayout", "H07000223", "An Android TabLayout Lib has 3 kinds of TabLayout at present.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
                 new OpenSourceLicense("FloatingActionButton", "zendesk", "Yet another library for drawing Material Design promoted actions.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
-                new OpenSourceLicense("EasyHttp", "轮子哥", "简单易用的网络框架", "Apache 2.0", "https://github.com/getActivity/EasyHttp")
+                new OpenSourceLicense("EasyHttp", "轮子哥", "简单易用的网络框架", "Apache 2.0", "https://github.com/getActivity/EasyHttp"),
+                new OpenSourceLicense("ApacheCommonsTextUtils", "apache", "Apache Commons Text is a library focused on algorithms working on strings.", "Apache 2.0", "https://github.com/apache/commons-text")
         )));
     }
 
