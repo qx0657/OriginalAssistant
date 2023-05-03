@@ -94,6 +94,7 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
  */
 public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A>
         implements AppPicturesAdapter.OnAppPicturesAdapterListener {
+    private final int MAX_TITLE_LENGTH = 32;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
     private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
@@ -358,6 +359,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             ToastUtils.showShort("发帖内容不完整");
             return;
         }
+        PostInfo postInfo = getPostInfo();
+        String title = PostContentFormatUtils.getFormatTitle(postInfo);
+        if (title.length() > MAX_TITLE_LENGTH) {
+            ToastUtils.showShort("标题过长（" + title.length() + "/" + MAX_TITLE_LENGTH + "）\n" +
+                    "\"" + title + "\"");
+            return;
+        }
         if (picturesAdapter.getItemCount() - 1 == 0) {
             ToastUtils.showShort("请选择图片");
             return;
@@ -380,7 +388,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                                 @Override
                                 public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
                                     if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
-                                        oneKeyPostInner(key, result);
+                                        oneKeyPostInner(postInfo, key, result);
                                     } else {
                                         ((MainActivity) activity).closeLoadingDialog();
                                         ToastUtils.showShort(errMsg);
@@ -396,9 +404,8 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         });
     }
 
-    private void oneKeyPostInner(String key, Map<File, UploadPictureResult> picUploadResultMap) {
+    private void oneKeyPostInner(PostInfo postInfo, String key, Map<File, UploadPictureResult> picUploadResultMap) {
         boolean isRich = SettingPreferences.getBoolean(R.string.p_key_switch_post_rich);
-        PostInfo postInfo = getPostInfo();
         String title = PostContentFormatUtils.getFormatTitle(postInfo);
         StringBuilder detail = new StringBuilder(PostContentFormatUtils.getFormatDetail(postInfo));
         String images = "";
