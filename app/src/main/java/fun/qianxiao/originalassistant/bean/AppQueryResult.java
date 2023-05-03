@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
+
 /**
  * AppQueryResult
  *
@@ -13,6 +15,7 @@ import java.util.List;
 public class AppQueryResult {
     private String packageName;
     private String appName;
+    private AppQueryManager.AppQueryChannel fromChannel;
     private String appIntroduction;
     private List<String> appPictures;
 
@@ -38,6 +41,14 @@ public class AppQueryResult {
 
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    public AppQueryManager.AppQueryChannel getFromChannel() {
+        return fromChannel;
+    }
+
+    public void setFromChannel(AppQueryManager.AppQueryChannel fromChannel) {
+        this.fromChannel = fromChannel;
     }
 
     public String getAppIntroduction() {

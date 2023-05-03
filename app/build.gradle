@@ -120,4 +120,9 @@ dependencies {
     // xor加解密库，stringfog中的implementation需依赖此库 https://github.com/MegatronKing/StringFog-Sample1
     implementation 'com.github.megatronking.stringfog:xor:4.0.1'
 
+    // SwipeRefreshLayout
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    // StringEscapeUtils etc.
+    implementation 'org.apache.commons:commons-text:1.9'
 }

@@ -15,6 +15,7 @@ import java.util.Objects;
 
 import fun.qianxiao.originalassistant.api.appquery.AppQueryaApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -83,6 +84,7 @@ public abstract class AbstractAppQuerier<T extends AppQueryaApi, R> implements I
         analysisResult.setApi(getApiName());
         analysisResult.getAppQueryResult().setAppName(appName);
         analysisResult.getAppQueryResult().setPackageName(packageName);
+        analysisResult.getAppQueryResult().setFromChannel(getFromChannel());
         search(appName, packageName)
                 .flatMap(new Function<ResponseBody, ObservableSource<ResponseBody>>() {
                     @Override
@@ -135,6 +137,13 @@ public abstract class AbstractAppQuerier<T extends AppQueryaApi, R> implements I
                     }
                 });
     }
+
+    /**
+     * getFromChannel
+     *
+     * @return {@link AppQueryManager.AppQueryChannel}
+     */
+    protected abstract AppQueryManager.AppQueryChannel getFromChannel();
 
     /**
      * search

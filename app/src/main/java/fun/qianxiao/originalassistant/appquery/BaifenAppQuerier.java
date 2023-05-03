@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import fun.qianxiao.originalassistant.api.appquery.BaifenAppQieryApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -17,6 +18,11 @@ import okhttp3.ResponseBody;
  * @Date 2023/4/19
  */
 public class BaifenAppQuerier extends AbstractAppQuerier<BaifenAppQieryApi, JSONObject> {
+    @Override
+    protected AppQueryManager.AppQueryChannel getFromChannel() {
+        return AppQueryManager.AppQueryChannel.BAIFEN;
+    }
+
     @Override
     protected Observable<ResponseBody> search(String appName, String packageName) {
         return getApi().query(appName);

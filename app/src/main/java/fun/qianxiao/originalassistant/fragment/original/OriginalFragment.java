@@ -638,7 +638,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             @Override
             public void onResult(int code, String message, AppQueryResult appQueryResult) {
                 isAppQuerying.set(false);
-                LogUtils.i(code, message, appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
+                LogUtils.i(code, message,
+                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getFromChannel(),
+                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
                         appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppPictures());
                 if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
                     if (appQueryResult == null) {

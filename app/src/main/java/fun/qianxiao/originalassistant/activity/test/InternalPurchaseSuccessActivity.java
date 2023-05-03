@@ -133,7 +133,6 @@ public class InternalPurchaseSuccessActivity extends BaseTestActivity<ActivityTe
 
     @Override
     protected void setAppMode(int mode) {
-        ToastUtils.showShort(String.valueOf(mode));
         if (mode == Constants.APP_MODE_GAME) {
             binding.tlGameName.setHint("游戏名称");
             binding.tlGamePackageName.setHint("游戏包名");

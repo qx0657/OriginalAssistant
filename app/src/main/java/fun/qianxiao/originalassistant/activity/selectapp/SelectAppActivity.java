@@ -18,6 +18,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.FileUtils;
@@ -132,15 +133,20 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
 
     @Override
     protected void initListener() {
-
+        binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAppList(false);
+            }
+        });
     }
 
     @Override
     protected void initData() {
-        setTitle("选择游戏");
+        setTitle("选择应用");
         showBackIcon();
         binding.rvAppList.setLayoutManager(new LinearLayoutManager(context));
-        getAppList();
+        getAppList(true);
     }
 
     @Override
@@ -160,7 +166,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         binding.rvAppList.setLayoutAnimation(layoutAnimationController);
     }
 
-    private void getAppList() {
+    private void getAppList(boolean isShowLoadingDialog) {
         final long startTime = TimeUtils.getNowMills();
         Observable.create((ObservableOnSubscribe<List<AppInfo>>) emitter -> {
             List<AppInfo> appInfoList = AppListTool.getAppList(context);
@@ -171,7 +177,9 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                 .subscribe(new Observer<List<AppInfo>>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                        openLoadingDialog("加载中");
+                        if (isShowLoadingDialog) {
+                            openLoadingDialog("加载中");
+                        }
                     }
 
                     @Override
@@ -195,7 +203,12 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
 
                     @Override
                     public void onComplete() {
-                        closeLoadingDialog();
+                        if (isShowLoadingDialog) {
+                            closeLoadingDialog();
+                        }
+                        if (binding.swipeRefreshLayout.isRefreshing()) {
+                            binding.swipeRefreshLayout.setRefreshing(false);
+                        }
                     }
                 });
     }

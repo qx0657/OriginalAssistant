@@ -88,6 +88,12 @@ public class AppQueryManager {
         public int getIconRes() {
             return iconRes;
         }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return commonName;
+        }
     }
 
     /**

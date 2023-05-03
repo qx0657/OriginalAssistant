@@ -2,11 +2,13 @@ package fun.qianxiao.originalassistant.appquery;
 
 import com.blankj.utilcode.util.GsonUtils;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fun.qianxiao.originalassistant.api.appquery.HLXAppQueryApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -17,6 +19,10 @@ import okhttp3.ResponseBody;
  * @Date 2023/4/16
  */
 public class HLXAppQuerier extends AbstractAppQuerier<HLXAppQueryApi, JSONObject> {
+    @Override
+    protected AppQueryManager.AppQueryChannel getFromChannel() {
+        return AppQueryManager.AppQueryChannel.HLX;
+    }
 
     @Override
     protected Observable<ResponseBody> search(String appName, String packageName) {
@@ -27,7 +33,7 @@ public class HLXAppQuerier extends AbstractAppQuerier<HLXAppQueryApi, JSONObject
         if (jsonObject == null) {
             return Observable.error(new Exception(analysisResult.getApi() + ": search targetJsonObject is null"));
         }
-        String appDesc = jsonObject.optString("appdesc")
+        String appDesc = StringEscapeUtils.unescapeHtml4(jsonObject.optString("appdesc"))
                 .replace("<br />", "\n")
                 .replace("<br/>", "\n")
                 .replace("<br>", "\n");

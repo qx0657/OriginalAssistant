@@ -83,12 +83,14 @@ public class HLXUtils {
             try {
                 Intent intent = new Intent();
                 ComponentName componentName = null;
+                assert appPackageNameInstalled != null;
                 if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[0])) {
                     componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[0], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[0]);
                 } else if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[1])) {
                     componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[1], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[1]);
                 }
                 intent.setComponent(componentName);
+                intent.putExtra("tab_index", 3);
                 ActivityUtils.startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();

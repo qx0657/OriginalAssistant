@@ -8,6 +8,7 @@ import java.util.List;
 
 import fun.qianxiao.originalassistant.api.appquery.TapTapAppQueryApi;
 import fun.qianxiao.originalassistant.bean.AnalysisResult;
+import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.ResponseBody;
 
@@ -18,6 +19,11 @@ import okhttp3.ResponseBody;
  * @Date 2023/4/18
  */
 public class TapTapAppQuerier extends AbstractAppQuerier<TapTapAppQueryApi, JSONObject> {
+    @Override
+    protected AppQueryManager.AppQueryChannel getFromChannel() {
+        return AppQueryManager.AppQueryChannel.TAPTAP;
+    }
+
     @Override
     protected Observable<ResponseBody> search(String appName, String packageName) {
         return getApi().query(appName);
