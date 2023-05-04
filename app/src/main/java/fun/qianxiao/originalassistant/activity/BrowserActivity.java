@@ -104,6 +104,9 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 binding.progressBar.setVisibility(View.VISIBLE);
+
+                binding.llErrorBrowser.setVisibility(View.GONE);
+                binding.webView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -118,10 +121,10 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
                 Logger.e("onReceivedError:\n" +
                         "code: %d\n" +
                         "description: %s", error.getErrorCode(), error.getDescription());
-                /*binding.llErrorBrowser.setVisibility(View.VISIBLE);
+                binding.llErrorBrowser.setVisibility(View.VISIBLE);
                 binding.tvErrorCodeBrowser.setText(String.valueOf(error.getErrorCode()));
                 binding.tvErrorDescriptionBrowser.setText(error.getDescription());
-                binding.webView.setVisibility(View.GONE);*/
+                binding.webView.setVisibility(View.GONE);
             }
         });
     }
