@@ -46,8 +46,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.bumptech.glide.Glide;
 import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.interfaces.OnCancelListener;
-import com.lxj.xpopup.interfaces.OnConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;

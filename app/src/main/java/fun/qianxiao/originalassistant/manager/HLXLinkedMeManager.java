@@ -8,6 +8,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +21,11 @@ import fun.qianxiao.originalassistant.api.hlx.LinkedMeApi;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
 import fun.qianxiao.originalassistant.utils.HLXUtils;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -140,6 +144,44 @@ public enum HLXLinkedMeManager {
         return jsonObjectRes;
     }
 
+    private void linkedMeJump(JSONObject jsonObject) {
+        String params = getParamsJsonObject(jsonObject).toString();
+        // step 1: init
+        api.init(KEY_FLOOR)
+                // step 2: getUrl
+                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) responseBody -> getUrl(responseBody, params))
+                // step 3: clickUrl
+                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) this::clickUrl)
+                // step 4: parseSchemeUrl and close
+                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) this::parseSchemeUrl)
+                .map(responseBody -> schemeUrl)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull String s) {
+                        LogUtils.i(s);
+                        ActivityUtils.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(s)));
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                        ToastUtils.showShort("出错了");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     /**
      * Jump to hlx app post detail page
      *
@@ -154,23 +196,29 @@ public enum HLXLinkedMeManager {
             jsonObject.put("isVideo", isVideo ? "1" : "0");
         } catch (JSONException e) {
             e.printStackTrace();
+            ToastUtils.showShort("出错了");
             return;
         }
-        String params = getParamsJsonObject(jsonObject).toString();
-        // step 1: init
-        api.init(KEY_FLOOR)
-                // step 2: getUrl
-                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) responseBody -> getUrl(responseBody, params))
-                // step 3: clickUrl
-                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) this::clickUrl)
-                // step 4: parseSchemeUrl and close
-                .flatMap((Function<ResponseBody, ObservableSource<ResponseBody>>) this::parseSchemeUrl)
-                .map(responseBody -> schemeUrl)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    LogUtils.i(s);
-                    ActivityUtils.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(s)));
-                });
+        linkedMeJump(jsonObject);
+    }
+
+    /**
+     * Jump to hlx app activity detail page
+     *
+     * @param actionId  action id
+     * @param extraInfo extra info
+     */
+    public void gotoActionDetail(long actionId, String extraInfo) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("JumpActivity", "ActionDetailActivity");
+            jsonObject.put("ActionID", String.valueOf(actionId));
+            jsonObject.put("extraInfo", extraInfo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ToastUtils.showShort("出错了");
+            return;
+        }
+        linkedMeJump(jsonObject);
     }
 }
