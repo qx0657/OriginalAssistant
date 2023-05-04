@@ -94,7 +94,9 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
  */
 public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A>
         implements AppPicturesAdapter.OnAppPicturesAdapterListener {
+    private final int MIN_TITLE_LENGTH = 5;
     private final int MAX_TITLE_LENGTH = 32;
+    private final int MAX_DETAIL_LENGTH = 10000;
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
     private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
@@ -352,6 +354,20 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         return list;
     }
 
+    private boolean checkTitle(PostInfo postInfo) {
+        String title = PostContentFormatUtils.getFormatTitle(postInfo);
+        if (title.length() < MIN_TITLE_LENGTH) {
+            ToastUtils.showShort("标题过短（" + title.length() + "/" + MIN_TITLE_LENGTH + "）\n" +
+                    "\"" + title + "\"");
+        }
+        if (title.length() > MAX_TITLE_LENGTH) {
+            ToastUtils.showShort("标题过长（" + title.length() + "/" + MAX_TITLE_LENGTH + "）\n" +
+                    "\"" + title + "\"");
+            return false;
+        }
+        return true;
+    }
+
     private void oneKeyPost() {
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
@@ -363,10 +379,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             return;
         }
         PostInfo postInfo = getPostInfo();
-        String title = PostContentFormatUtils.getFormatTitle(postInfo);
-        if (title.length() > MAX_TITLE_LENGTH) {
-            ToastUtils.showShort("标题过长（" + title.length() + "/" + MAX_TITLE_LENGTH + "）\n" +
-                    "\"" + title + "\"");
+        if (!checkTitle(postInfo)) {
             return;
         }
         if (picturesAdapter.getItemCount() - 1 == 0) {
@@ -467,6 +480,17 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         return detail.toString();
     }
 
+    private boolean checkDetail(String detail) {
+        String s = detail.replaceAll("<text>", "")
+                .replaceAll("</text>", "")
+                .replaceAll("<image>(.*)<image>", "");
+        if (s.length() > MAX_DETAIL_LENGTH) {
+            ToastUtils.showShort("发帖内容过长（" + s.length() + "/" + MAX_DETAIL_LENGTH + "）");
+            return false;
+        }
+        return true;
+    }
+
     private void oneKeyPostInner(PostInfo postInfo, String key, Map<File, UploadPictureResult> picUploadResultMap) {
         boolean isRich = SettingPreferences.getBoolean(R.string.p_key_switch_post_rich);
         String title = PostContentFormatUtils.getFormatTitle(postInfo);
@@ -480,7 +504,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             detail = getNoRichDetailText(postInfo);
             images = getNoRichImagesText(picUploadResultMap);
         }
-        HLXApiManager.INSTANCE.post(key, title, detail.toString(), images, isRich, new HLXApiManager.OnPostListener() {
+        if (!checkDetail(detail)) {
+            ((MainActivity) activity).closeLoadingDialog();
+            return;
+        }
+        HLXApiManager.INSTANCE.post(key, title, detail, images, isRich, new HLXApiManager.OnPostListener() {
             @Override
             public void onSuccess(PostResultInfo postResultInfo) {
                 ((MainActivity) activity).closeLoadingDialog();
@@ -488,17 +516,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                         .dismissOnBackPressed(false)
                         .dismissOnTouchOutside(false)
                         .asConfirm("发帖结果", postResultInfo.getMsg()
-                                , new OnConfirmListener() {
-                                    @Override
-                                    public void onConfirm() {
-                                        gotoApp();
-                                    }
-                                }, new OnCancelListener() {
-                                    @Override
-                                    public void onCancel() {
-
-                                    }
-                                })
+                                , () -> gotoApp())
                         .setConfirmText("跳转葫芦侠")
                         .setCancelText("确定")
                         .show();
