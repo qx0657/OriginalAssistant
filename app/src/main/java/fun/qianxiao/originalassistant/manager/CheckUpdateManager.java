@@ -91,7 +91,9 @@ public final class CheckUpdateManager {
             @Override
             public void onSuccess(Boolean result) {
                 if (!result) {
-                    ToastUtils.showShort("请检查网络连接");
+                    if (!isSilent) {
+                        ToastUtils.showShort("请检查网络连接");
+                    }
                     return;
                 }
                 if (!isSilent) {
