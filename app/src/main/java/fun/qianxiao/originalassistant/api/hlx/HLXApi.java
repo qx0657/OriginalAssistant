@@ -100,4 +100,12 @@ public interface HLXApi {
     @FormUrlEncoded
     @POST("http://floor.huluxia.com/post/create/ANDROID/4.2")
     Observable<ResponseBody> post(@Query("_key") String key, @FieldMap Map<String, String> postParams);
+
+    /**
+     * activityList
+     *
+     * @return {@link Observable<ResponseBody>}
+     */
+    @GET("http://floor.huluxia.com/activity/list/ANDROID/2.1")
+    Observable<ResponseBody> activityList();
 }

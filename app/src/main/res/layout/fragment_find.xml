@@ -30,6 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="当前暂未活动"
+            android:textColor="?attr/DayDefaultTextViewNightWhite"
+            android:background="@drawable/ic_blank"
             android:gravity="center"
             android:visibility="gone" />
     </RelativeLayout>

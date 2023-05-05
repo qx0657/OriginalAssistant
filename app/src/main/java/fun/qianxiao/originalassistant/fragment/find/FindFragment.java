@@ -10,13 +10,13 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.stx.xhb.androidx.XBanner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.FindBannerInfo;
 import fun.qianxiao.originalassistant.databinding.FragmentFindBinding;
+import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.HLXLinkedMeManager;
 import fun.qianxiao.originalassistant.utils.HLXUtils;
 import fun.qianxiao.originalassistant.utils.ShortCutUtils;
@@ -63,7 +63,16 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
                 Glide.with(view).load(((FindBannerInfo) model).getImageUrl()).into((ImageView) view);
             }
         });
-        setActivityData(getTestData());
+        HLXApiManager.INSTANCE.getActivityList(new HLXApiManager.OnGetActivityListListener() {
+            @Override
+            public void onGetActivityList(int code, String errMsg, List<FindBannerInfo> list) {
+                if (code == HLXApiManager.OnGetActivityListListener.SUCCESS) {
+                    setActivityData(list);
+                } else {
+                    ToastUtils.showShort(errMsg);
+                }
+            }
+        });
     }
 
     private void setActivityData(List<FindBannerInfo> data) {
@@ -73,16 +82,6 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
             binding.tvNoActivities.setVisibility(View.GONE);
             binding.xbanner.setBannerData(data);
         }
-    }
-
-    private List<FindBannerInfo> getTestData() {
-        List<FindBannerInfo> list = new ArrayList<>();
-        list.add(new FindBannerInfo(415, "http://cdn.u1.huluxia.com/g4/M03/8A/63/rBAAdmRUYSOAMpuDAAEPPeGyuKA551.jpg", "【活动】和平精英五月份水友赛")
-                .setMode(FindBannerInfo.MODE.POST)
-                .setPostId(52410732));
-        list.add(new FindBannerInfo(414, "http://cdn.u1.huluxia.com/g4/M01/85/56/rBAAdmRLbcuABnmLAALh2GyLpoA220.png", "【活动】五一飞行棋"));
-        list.add(new FindBannerInfo(413, "http://cdn.u1.huluxia.com/g4/M01/84/81/rBAAdmRKN9OAVCmOAAdZfWClGfI995.png", "【活动】五一劳动节-劳动最光荣"));
-        return list;
     }
 
     private void createHLXFastStartShortCut(int tabIndex) {

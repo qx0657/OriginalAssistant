@@ -9,6 +9,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.TimeUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import fun.qianxiao.originalassistant.api.hlx.HLXApi;
+import fun.qianxiao.originalassistant.bean.FindBannerInfo;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
 import fun.qianxiao.originalassistant.bean.PostResultInfo;
 import fun.qianxiao.originalassistant.bean.UploadPictureResult;
@@ -525,6 +527,88 @@ public enum HLXApiManager {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         result.onError(-1, e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public interface OnGetActivityListListener {
+        int SUCCESS = 0;
+        int FAILED = -1;
+
+        /**
+         * onGetActivityList
+         *
+         * @param code   code {@link OnGetActivityListListener#SUCCESS} or {@link OnGetActivityListListener#FAILED}
+         * @param errMsg error message
+         * @param list   {@link List<FindBannerInfo>}
+         */
+        void onGetActivityList(int code, String errMsg, List<FindBannerInfo> list);
+    }
+
+    /**
+     * Get activity list of ongoing states from hlx.
+     *
+     * @param listListener {@link OnGetActivityListListener}
+     */
+    public void getActivityList(OnGetActivityListListener listListener) {
+        hlxApi.activityList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.optInt("status", 0) == 1) {
+                                JSONArray jsonArray = jsonObject.optJSONArray("list");
+                                if (jsonArray != null) {
+                                    List<FindBannerInfo> list = new ArrayList<>();
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        JSONObject jsonObject1 = jsonArray.optJSONObject(i);
+                                        if (jsonObject1.optInt("activityStatus") == 1) {
+                                            FindBannerInfo findBannerInfo = new FindBannerInfo(
+                                                    jsonObject1.optLong("id"),
+                                                    jsonObject1.optString("picture_url"),
+                                                    jsonObject1.optString("title")
+                                            );
+                                            String jump_mode = jsonObject1.optString("jump_mode");
+                                            if (jump_mode.startsWith("http")) {
+                                                findBannerInfo.setMode(FindBannerInfo.MODE.URL);
+                                                findBannerInfo.setUrl(jump_mode);
+                                            } else if (MyStringUtils.isNumeric(jump_mode)) {
+                                                findBannerInfo.setMode(FindBannerInfo.MODE.POST);
+                                                findBannerInfo.setPostId(Long.parseLong(jump_mode));
+                                            }
+                                            list.add(findBannerInfo);
+                                        }
+                                    }
+                                    listListener.onGetActivityList(OnGetActivityListListener.SUCCESS, null, list);
+                                } else {
+                                    listListener.onGetActivityList(OnGetActivityListListener.FAILED, "activityList success but list jsonArray is null", null);
+                                }
+                            } else {
+                                listListener.onGetActivityList(OnGetActivityListListener.FAILED, jsonObject.optString("msg"), null);
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                            listListener.onGetActivityList(OnGetActivityListListener.FAILED, e.getMessage(), null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        listListener.onGetActivityList(OnGetActivityListListener.FAILED, e.getMessage(), null);
                     }
 
                     @Override
