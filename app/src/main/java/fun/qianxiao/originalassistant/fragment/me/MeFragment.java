@@ -200,10 +200,14 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                         } else {
                             HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
                                 @Override
-                                public void onResult(boolean valid, String errMsg) {
+                                public void onResult(boolean valid, String errMsg2) {
                                     if (!valid) {
-                                        ToastUtils.showShort("Key已失效, 请重新登录");
-                                        SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                                        if ("key无效".equals(errMsg2)) {
+                                            ToastUtils.showShort("Key已失效, 请重新登录");
+                                            SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                                        } else {
+                                            ToastUtils.showShort(errMsg);
+                                        }
                                         displayUserInfo(null);
                                     } else {
                                         setUserId(null);
@@ -325,8 +329,12 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
                     if (valid) {
                         signInCheck(key);
                     } else {
-                        ToastUtils.showShort("Key已失效, 请重新登录");
-                        SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                        if ("key无效".equals(errMsg)) {
+                            ToastUtils.showShort("Key已失效, 请重新登录");
+                            SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
+                        } else {
+                            ToastUtils.showShort(errMsg);
+                        }
                         displayUserInfo(null);
                     }
                 }

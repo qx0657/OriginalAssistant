@@ -27,17 +27,16 @@ public class PrivacyPolicyManager {
     private static PrivacyPolicyManager instance;
 
     private final String KEY_AGREE_Privacy_POLICY = "agreePrivacyPolicy";
-    private final Context context;
+    //private final Context context;
 
-    private PrivacyPolicyManager(Context context) {
-        this.context = context;
+    private PrivacyPolicyManager() {
     }
 
-    public static PrivacyPolicyManager getInstance(Context context) {
+    public static PrivacyPolicyManager getInstance() {
         if (instance == null) {
             synchronized (PrivacyPolicyManager.class) {
                 if (instance == null) {
-                    instance = new PrivacyPolicyManager(context);
+                    instance = new PrivacyPolicyManager();
                 }
             }
         }
@@ -60,7 +59,7 @@ public class PrivacyPolicyManager {
         void onRefuse();
     }
 
-    public void confrim(OnPrivacyPolicyListener onPrivacyPolicyListener) {
+    public void confrim(Context context, OnPrivacyPolicyListener onPrivacyPolicyListener) {
         SpannableStringBuilder style = new SpannableStringBuilder();
         String privacyPolicy = "本应用非常重视用户隐私政策并严格遵守相关的法律规定。" +
                 "本App尊重并保护所有使用服务用户的个人隐私权。" +
@@ -79,7 +78,7 @@ public class PrivacyPolicyManager {
             style.setSpan(clickableSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        ConfirmPopupView confirmPopupView = new XPopup.Builder(getContext())
+        ConfirmPopupView confirmPopupView = new XPopup.Builder(context)
                 .dismissOnBackPressed(false)
                 .dismissOnTouchOutside(false)
                 .asConfirm(
@@ -105,9 +104,5 @@ public class PrivacyPolicyManager {
         confirmPopupView.setConfirmText("同意")
                 .setCancelText("拒绝")
                 .show();
-    }
-
-    private Context getContext() {
-        return context;
     }
 }

@@ -86,9 +86,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
 
     @Override
     protected void initData() {
-        PrivacyPolicyManager privacyPolicyManager = PrivacyPolicyManager.getInstance(context.getApplicationContext());
+        PrivacyPolicyManager privacyPolicyManager = PrivacyPolicyManager.getInstance();
         if (!privacyPolicyManager.isAgreePrivacyPolicy()) {
-            privacyPolicyManager.confrim(new PrivacyPolicyManager.OnPrivacyPolicyListener() {
+            privacyPolicyManager.confrim(context, new PrivacyPolicyManager.OnPrivacyPolicyListener() {
                 @Override
                 public void onAgree() {
                     // requestPermission();
