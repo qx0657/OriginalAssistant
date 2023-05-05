@@ -66,6 +66,33 @@ public class HLXUtils {
                 UUID.randomUUID().toString();
     }
 
+    public static Intent getHlxHomeActivityIntent() {
+        String appPackageNameInstalled = null;
+        for (String s : AppConfig.HULUXIA_APP_PACKAGE_NAME) {
+            if (AppUtils.isAppInstalled(s)) {
+                appPackageNameInstalled = s;
+                break;
+            }
+        }
+        if (!TextUtils.isEmpty(appPackageNameInstalled)) {
+            try {
+                Intent intent = new Intent();
+                ComponentName componentName = null;
+                assert appPackageNameInstalled != null;
+                if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[0])) {
+                    componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[0], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[0]);
+                } else if (appPackageNameInstalled.equals(AppConfig.HULUXIA_APP_PACKAGE_NAME[1])) {
+                    componentName = new ComponentName(AppConfig.HULUXIA_APP_PACKAGE_NAME[1], AppConfig.HULUXIA_APP_HOME_ACTIVITY_NAME[1]);
+                }
+                intent.setComponent(componentName);
+                return intent;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     /**
      * Jump to the homepage of hlx app.
      * Starting with a non package name, use ComponentName to jump to HomeActivity and accelerate the jump speed
