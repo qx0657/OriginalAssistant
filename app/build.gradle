@@ -123,4 +123,7 @@ dependencies {
 
     // commons-text utils. Such as StringEscapeUtils etc. https://github.com/apache/commons-text
     implementation 'org.apache.commons:commons-text:1.10.0'
+
+    // XBanner https://github.com/xiaohaibin/XBanner
+    implementation 'com.github.xiaohaibin:XBanner:androidx_v1.2.6'
 }

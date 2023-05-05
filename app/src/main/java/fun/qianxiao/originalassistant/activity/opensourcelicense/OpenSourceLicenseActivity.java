@@ -52,7 +52,9 @@ public class OpenSourceLicenseActivity extends BaseActivity<ActivityOpensourceli
                 new OpenSourceLicense("FlycoTabLayout", "H07000223", "An Android TabLayout Lib has 3 kinds of TabLayout at present.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
                 new OpenSourceLicense("FloatingActionButton", "zendesk", "Yet another library for drawing Material Design promoted actions.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
                 new OpenSourceLicense("EasyHttp", "轮子哥", "简单易用的网络框架", "Apache 2.0", "https://github.com/getActivity/EasyHttp"),
-                new OpenSourceLicense("ApacheCommonsTextUtils", "apache", "Apache Commons Text is a library focused on algorithms working on strings.", "Apache 2.0", "https://github.com/apache/commons-text")
+                new OpenSourceLicense("ApacheCommonsTextUtils", "apache", "Apache Commons Text is a library focused on algorithms working on strings.", "Apache 2.0", "https://github.com/apache/commons-text"),
+                new OpenSourceLicense("ApacheCommonsTextUtils", "apache", "Apache Commons Text is a library focused on algorithms working on strings.", "Apache 2.0", "https://github.com/apache/commons-text"),
+                new OpenSourceLicense("XBanner", "xiaohaibin", "\uD83D\uDD25【图片轮播】支持图片无限轮播，支持AndroidX、自定义指示点、显示提示文字、切换动画、自定义布局，一屏多显、视频图片混合轮播等功能", "Apache 2.0", "https://github.com/xiaohaibin/XBanner")
         )));
     }
 

@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp">
+
+        <com.stx.xhb.androidx.XBanner
+            android:id="@+id/xbanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:AutoPlayTime="3000"
+            app:pointsContainerBackground="?attr/DayWhiteNightBlack"
+            app:pointsPosition="RIGHT"
+            app:tipTextSize="12sp"
+            app:isShowTips="true"
+            app:tipTextColor="?attr/DayDefaultTextViewNightWhite"
+            app:isClipChildrenMode="true"
+            app:isShowNumberIndicator="true"
+            app:isShowIndicatorOnlyOne="true"
+            app:isClipChildrenModeLessThree="true"
+            app:pageChangeDuration="800" />
+
+        <TextView
+            android:id="@+id/tv_no_activities"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="当前暂未活动"
+            android:gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingHorizontal="16dp"
-        android:layout_marginTop="15dp">
+        android:paddingTop="15dp">
 
         <LinearLayout
             android:id="@+id/ll_hlx_fast_start_short_cut"
