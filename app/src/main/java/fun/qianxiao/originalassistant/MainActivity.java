@@ -106,6 +106,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
                     }
                 }
             });
+        } else {
+            MyApplication.uengInit();
         }
         fragments.clear();
         fragments.add(new OriginalFragment<>());
