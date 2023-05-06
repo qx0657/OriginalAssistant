@@ -16,4 +16,5 @@
     <string name="p_key_current_translate_api">p_key_current_translate_api</string>
     <string name="p_key_app_query_channel">p_key_app_query_channel</string>
     <string name="p_key_clear_cache">p_key_clear_cache</string>
+    <string name="p_key_switch_auto_test_tab_when_enter_app">p_key_switch_auto_test_tab_when_enter_app</string>
 </resources>

@@ -28,6 +28,7 @@ import fun.qianxiao.originalassistant.manager.CheckUpdateManager;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.PrivacyPolicyManager;
 import fun.qianxiao.originalassistant.utils.AppListTool;
+import fun.qianxiao.originalassistant.utils.SettingPreferences;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 
@@ -167,6 +168,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
             });
         }
         binding.tabLayout.setTabData(tabEntities);
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_auto_test_tab_when_enter_app)) {
+            binding.viewPager.setCurrentItem(1, false);
+        }
     }
 
     private void preLoadAppList() {

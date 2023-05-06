@@ -100,6 +100,11 @@
         app:title="功能选择"
         app:iconSpaceReserved="false">
 
+        <SwitchPreference
+            app:key="@string/p_key_switch_auto_test_tab_when_enter_app"
+            app:title="进入软件直达测试页面"
+            app:iconSpaceReserved="false" />
+
         <ListPreference
             app:key="@string/p_key_current_translate_api"
             app:isPreferenceVisible="true"
@@ -120,6 +125,12 @@
             app:dialogTitle="应用信息获取设置(用于选择应用后的自动触发行为)"
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        app:title="其他"
+        app:iconSpaceReserved="false">
 
         <Preference
             app:key="@string/p_key_clear_cache"
