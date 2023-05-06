@@ -44,7 +44,9 @@
             app:key="@string/p_key_post_prefix"
             app:title="帖子前补充信息"
             app:iconSpaceReserved="false"
-            app:useSimpleSummaryProvider="true"
+            app:summary="可用以设置图文混排团队图做为首图"
+            android:dialogMessage="@string/setting_post_prefix_dialog_message"
+            app:useSimpleSummaryProvider="false"
             app:summarySingleLine="true"
             app:summaryEllipsize="middle" />
 
