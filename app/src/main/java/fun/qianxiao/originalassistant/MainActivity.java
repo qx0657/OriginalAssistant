@@ -1,6 +1,5 @@
 package fun.qianxiao.originalassistant;
 
-import android.content.Intent;
 import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
@@ -184,16 +183,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
         });
     }
 
-    private void startActivity(Class<?> ac) {
-        this.startActivity(new Intent(context, ac));
-    }
-
     @Override
     public void onBackPressed() {
         if (fragments.get(currentPosition).onBackPressed()) {
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NetworkUtils.unregisterNetworkStatusChangedListener(this);
     }
 
     public void setTabNavigationHide(boolean hide) {

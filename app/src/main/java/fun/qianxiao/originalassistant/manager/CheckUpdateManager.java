@@ -234,7 +234,7 @@ public final class CheckUpdateManager {
                     public void onError(@NonNull Throwable e) {
                         if (!isSilent) {
                             closeLoadingDialog();
-                            ToastUtils.showShort("检查更新出错:" + e.toString());
+                            ToastUtils.showShort("检查更新出错:" + e.getMessage());
                         }
                     }
 
