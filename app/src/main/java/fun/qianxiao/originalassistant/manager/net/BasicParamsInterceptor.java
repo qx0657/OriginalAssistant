@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import fun.qianxiao.originalassistant.config.AppConfig;
 import okhttp3.CacheControl;
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -44,9 +45,17 @@ public class BasicParamsInterceptor implements Interceptor {
     private BasicParamsInterceptor() {
     }
 
+    public static class NoNetWorkException extends IOException {
+        public NoNetWorkException() {
+            super("请检查网络连接");
+        }
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
-
+        if (!AppConfig.isNetAvailable) {
+            throw new NoNetWorkException();
+        }
         Request request = chain.request();
         Request.Builder requestBuilder = request.newBuilder();
 

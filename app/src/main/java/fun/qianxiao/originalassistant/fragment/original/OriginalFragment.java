@@ -38,7 +38,6 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
@@ -729,30 +728,16 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         if (isAppQuerying.get()) {
             return;
         }
-        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
-            @Override
-            public Boolean doInBackground() throws Throwable {
-                return NetworkUtils.isAvailable();
-            }
-
-            @Override
-            public void onSuccess(Boolean result) {
-                if (!result) {
-                    ToastUtils.showShort("请检查网络连接");
-                    return;
-                }
-                IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
-                if (appQueryChannel == APP_QUERY_MANUAL) {
-                    manualAppQQueryDialog(appName, packageName);
-                } else if (appQueryChannel == APP_QUERY_AUTO_ALL) {
-                    autoAppQuery(appName, packageName, onAppQueryListener);
-                } else {
-                    isAppQuerying.set(true);
-                    AppQueryManager.createQuerier(AppQueryManager.AppQueryChannel.values()[appQueryChannel].getChannel())
-                            .query(appName, packageName, onAppQueryListener);
-                }
-            }
-        });
+        IQuery.OnAppQueryListener onAppQueryListener = getOnAppQueryListener();
+        if (appQueryChannel == APP_QUERY_MANUAL) {
+            manualAppQQueryDialog(appName, packageName);
+        } else if (appQueryChannel == APP_QUERY_AUTO_ALL) {
+            autoAppQuery(appName, packageName, onAppQueryListener);
+        } else {
+            isAppQuerying.set(true);
+            AppQueryManager.createQuerier(AppQueryManager.AppQueryChannel.values()[appQueryChannel].getChannel())
+                    .query(appName, packageName, onAppQueryListener);
+        }
     }
 
     private void initSpecialInstructionsSpinner() {

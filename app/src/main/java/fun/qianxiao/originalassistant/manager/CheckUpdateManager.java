@@ -18,10 +18,8 @@ import androidx.core.content.FileProvider;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
-import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.PermissionUtils;
-import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.OnDownloadListener;
@@ -82,187 +80,171 @@ public final class CheckUpdateManager {
      * @param isSilent Is it silent
      */
     public void check(Context context, boolean isSilent) {
-        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
-            @Override
-            public Boolean doInBackground() throws Throwable {
-                return NetworkUtils.isAvailable();
-            }
+        if (!isSilent) {
+            openLoadingDialog(context, "正在检查更新");
+        }
+        ApiServiceManager.getInstance()
+                .create(CheckUpdateApi.class)
+                .getUpdateConfig()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-            @Override
-            public void onSuccess(Boolean result) {
-                if (!result) {
-                    if (!isSilent) {
-                        ToastUtils.showShort("请检查网络连接");
                     }
-                    return;
-                }
-                if (!isSilent) {
-                    openLoadingDialog(context, "正在检查更新");
-                }
-                ApiServiceManager.getInstance()
-                        .create(CheckUpdateApi.class)
-                        .getUpdateConfig()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<ResponseBody>() {
-                            @Override
-                            public void onSubscribe(@NonNull Disposable d) {
 
-                            }
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.getInt("newversioncode") > context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode) {
+                                //发现新版本
+                                String newversionname = jsonObject.optString("newversionname");
+                                String newapkmd5 = jsonObject.optString("newapkmd5");
+                                String downloadurl = jsonObject.optString("downloadurl");
+                                boolean isforceupdate = jsonObject.getInt("isforceupdate") == 1;
 
-                            @Override
-                            public void onNext(@NonNull ResponseBody responseBody) {
-                                try {
-                                    String data = responseBody.string();
-                                    JSONObject jsonObject = new JSONObject(data);
-                                    if (jsonObject.getInt("newversioncode") > context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode) {
-                                        //发现新版本
-                                        String newversionname = jsonObject.optString("newversionname");
-                                        String newapkmd5 = jsonObject.optString("newapkmd5");
-                                        String downloadurl = jsonObject.optString("downloadurl");
-                                        boolean isforceupdate = jsonObject.getInt("isforceupdate") == 1;
-
-                                        File mApkFile = new File(PathUtils.getExternalAppDownloadPath(), AppUtils.getAppName() + ".v." + newversionname + ".apk");
-                                        if (FileUtils.isFileExists(mApkFile) && FileUtils.getFileMD5ToString(mApkFile).equalsIgnoreCase(newapkmd5)) {
-                                            isApkFullyDownloaded = true;
-                                        }
-                                        if (isBrowserDownload) {
-                                            isApkFullyDownloaded = false;
-                                        }
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.LightAlertDialog)
-                                                .setTitle("发现新版本(V." + newversionname + ")")
-                                                .setMessage(jsonObject.optString("updatacontent"))
-                                                .setCancelable(false)
-                                                //点击事件在下面设置 防止点击后dialog消失
-                                                .setPositiveButton(isApkFullyDownloaded ? "立即安装" : "立即更新", null);
-                                        if (!isforceupdate) {
-                                            builder = builder.setNegativeButton(isApkFullyDownloaded ? "暂不安装" : "暂不更新", null);
-                                        }
-                                        if (isBrowserDownload) {
-                                            builder = builder.setNeutralButton("复制下载链接", null);
-                                        }
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
-                                        reflectChangeTitleColor(dialog);
-                                        Button neutralBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-                                        neutralBtn.setOnClickListener(v -> {
-                                            ClipboardUtils.copyText(downloadurl);
-                                            ToastUtils.showShort("下载链接已复制至剪贴板");
-                                        });
-                                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                if (isBrowserDownload || Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                                    //从其他浏览器打开
-                                                    Intent intent = new Intent();
-                                                    intent.setAction("android.intent.action.VIEW");
-                                                    intent.addCategory("android.intent.category.BROWSABLE");
-                                                    intent.addCategory("android.intent.category.DEFAULT");
-                                                    Uri contentUrl = Uri.parse(downloadurl);
-                                                    intent.setData(contentUrl);
-                                                    context.startActivity(intent);
-                                                } else {
-                                                    if (isApkFullyDownloaded) {
-                                                        //立即安装
-                                                        AppUtils.installApp(mApkFile);
-                                                        return;
-                                                    }
-                                                    if (!PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                                        PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                                                .callback(new PermissionUtils.SimpleCallback() {
-                                                                    @Override
-                                                                    public void onGranted() {
-                                                                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onDenied() {
-                                                                        onClick(v);
-                                                                    }
-                                                                })
-                                                                .request();
-                                                        return;
-                                                    }
-                                                    if (!isUpdating) {
-                                                        isUpdating = true;
-                                                    } else {
-                                                        return;
-                                                    }
-                                                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
-                                                    EasyHttp.download((AppCompatActivity) context)
-                                                            .method(HttpMethod.GET)
-                                                            .file(mApkFile)
-                                                            .url(downloadurl)
-                                                            .md5(newapkmd5)
-                                                            .listener(new OnDownloadListener() {
-                                                                @Override
-                                                                public void onStart(File file) {
-
-                                                                }
-
-                                                                @Override
-                                                                public void onProgress(File file, int progress) {
-                                                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText(progress + "%");
-                                                                }
-
-                                                                @Override
-                                                                public void onComplete(File file) {
-                                                                    if (!isforceupdate) {
-                                                                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                                                                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setText("暂不安装");
-                                                                    }
-                                                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("立即安装");
-                                                                    isUpdating = false;
-                                                                    isApkFullyDownloaded = true;
-                                                                    //AppUtils.installApp(finalFile);
-                                                                    installApp(context, file);
-                                                                }
-
-                                                                @Override
-                                                                public void onError(File file, Exception e) {
-                                                                    ToastUtils.showShort(e.toString());
-                                                                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
-                                                                    isUpdating = false;
-                                                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("立即更新");
-                                                                }
-
-                                                                @Override
-                                                                public void onEnd(File file) {
-
-                                                                }
-                                                            })
-                                                            .start();
-                                                }
+                                File mApkFile = new File(PathUtils.getExternalAppDownloadPath(), AppUtils.getAppName() + ".v." + newversionname + ".apk");
+                                if (FileUtils.isFileExists(mApkFile) && FileUtils.getFileMD5ToString(mApkFile).equalsIgnoreCase(newapkmd5)) {
+                                    isApkFullyDownloaded = true;
+                                }
+                                if (isBrowserDownload) {
+                                    isApkFullyDownloaded = false;
+                                }
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.LightAlertDialog)
+                                        .setTitle("发现新版本(V." + newversionname + ")")
+                                        .setMessage(jsonObject.optString("updatacontent"))
+                                        .setCancelable(false)
+                                        //点击事件在下面设置 防止点击后dialog消失
+                                        .setPositiveButton(isApkFullyDownloaded ? "立即安装" : "立即更新", null);
+                                if (!isforceupdate) {
+                                    builder = builder.setNegativeButton(isApkFullyDownloaded ? "暂不安装" : "暂不更新", null);
+                                }
+                                if (isBrowserDownload) {
+                                    builder = builder.setNeutralButton("复制下载链接", null);
+                                }
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                                reflectChangeTitleColor(dialog);
+                                Button neutralBtn = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                                neutralBtn.setOnClickListener(v -> {
+                                    ClipboardUtils.copyText(downloadurl);
+                                    ToastUtils.showShort("下载链接已复制至剪贴板");
+                                });
+                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (isBrowserDownload || Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                            //从其他浏览器打开
+                                            Intent intent = new Intent();
+                                            intent.setAction("android.intent.action.VIEW");
+                                            intent.addCategory("android.intent.category.BROWSABLE");
+                                            intent.addCategory("android.intent.category.DEFAULT");
+                                            Uri contentUrl = Uri.parse(downloadurl);
+                                            intent.setData(contentUrl);
+                                            context.startActivity(intent);
+                                        } else {
+                                            if (isApkFullyDownloaded) {
+                                                //立即安装
+                                                AppUtils.installApp(mApkFile);
+                                                return;
                                             }
-                                        });
-                                    } else {
-                                        if (!isSilent) {
-                                            ToastUtils.showShort("当前已是最新版本");
+                                            if (!PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                                PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                                        .callback(new PermissionUtils.SimpleCallback() {
+                                                            @Override
+                                                            public void onGranted() {
+                                                                dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                                                            }
+
+                                                            @Override
+                                                            public void onDenied() {
+                                                                onClick(v);
+                                                            }
+                                                        })
+                                                        .request();
+                                                return;
+                                            }
+                                            if (!isUpdating) {
+                                                isUpdating = true;
+                                            } else {
+                                                return;
+                                            }
+                                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+                                            EasyHttp.download((AppCompatActivity) context)
+                                                    .method(HttpMethod.GET)
+                                                    .file(mApkFile)
+                                                    .url(downloadurl)
+                                                    .md5(newapkmd5)
+                                                    .listener(new OnDownloadListener() {
+                                                        @Override
+                                                        public void onStart(File file) {
+
+                                                        }
+
+                                                        @Override
+                                                        public void onProgress(File file, int progress) {
+                                                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText(progress + "%");
+                                                        }
+
+                                                        @Override
+                                                        public void onComplete(File file) {
+                                                            if (!isforceupdate) {
+                                                                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+                                                                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setText("暂不安装");
+                                                            }
+                                                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("立即安装");
+                                                            isUpdating = false;
+                                                            isApkFullyDownloaded = true;
+                                                            //AppUtils.installApp(finalFile);
+                                                            installApp(context, file);
+                                                        }
+
+                                                        @Override
+                                                        public void onError(File file, Exception e) {
+                                                            ToastUtils.showShort(e.toString());
+                                                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setVisibility(View.VISIBLE);
+                                                            isUpdating = false;
+                                                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("立即更新");
+                                                        }
+
+                                                        @Override
+                                                        public void onEnd(File file) {
+
+                                                        }
+                                                    })
+                                                    .start();
                                         }
                                     }
-                                } catch (IOException | JSONException | PackageManager.NameNotFoundException e) {
-                                    e.printStackTrace();
-                                    onError(e);
-                                }
-                            }
-
-                            @Override
-                            public void onError(@NonNull Throwable e) {
+                                });
+                            } else {
                                 if (!isSilent) {
-                                    closeLoadingDialog();
-                                    ToastUtils.showShort("检查更新出错:" + e.toString());
+                                    ToastUtils.showShort("当前已是最新版本");
                                 }
                             }
+                        } catch (IOException | JSONException | PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                            onError(e);
+                        }
+                    }
 
-                            @Override
-                            public void onComplete() {
-                                if (!isSilent) {
-                                    closeLoadingDialog();
-                                }
-                            }
-                        });
-            }
-        });
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        if (!isSilent) {
+                            closeLoadingDialog();
+                            ToastUtils.showShort("检查更新出错:" + e.toString());
+                        }
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (!isSilent) {
+                            closeLoadingDialog();
+                        }
+                    }
+                });
     }
 
     private void reflectChangeTitleColor(AlertDialog dialog) {

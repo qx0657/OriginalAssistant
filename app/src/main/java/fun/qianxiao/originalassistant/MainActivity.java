@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -18,6 +19,7 @@ import fun.qianxiao.originalassistant.adapter.MyPageAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.AppInfo;
+import fun.qianxiao.originalassistant.config.AppConfig;
 import fun.qianxiao.originalassistant.databinding.ActivityMainBinding;
 import fun.qianxiao.originalassistant.fragment.find.FindFragment;
 import fun.qianxiao.originalassistant.fragment.me.MeFragment;
@@ -36,7 +38,8 @@ import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
  * @author QianXiao
  * @since 2023/3/10
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements ILoadingView {
+public class MainActivity extends BaseActivity<ActivityMainBinding>
+        implements ILoadingView, NetworkUtils.OnNetworkStatusChangedListener {
     private final String[] PAGES_TITLES = new String[]{"原创助手", "测试助手", "发现", "我的"};
     private final String[] PAGES_TAB_TEXTS = new String[]{"原创", "测试", "发现", "我的"};
     private final ArrayList<CustomTabEntity> tabEntities = new ArrayList<>();
@@ -82,10 +85,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
 
             }
         });
+        NetworkUtils.registerNetworkStatusChangedListener(this);
     }
 
     @Override
     protected void initData() {
+        initNetWorkState();
         PrivacyPolicyManager privacyPolicyManager = PrivacyPolicyManager.getInstance();
         if (!privacyPolicyManager.isAgreePrivacyPolicy()) {
             privacyPolicyManager.confrim(context, new PrivacyPolicyManager.OnPrivacyPolicyListener() {
@@ -93,6 +98,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
                 public void onAgree() {
                     // requestPermission();
                     MyApplication.uengInit();
+                    checkUpdateSilent();
                 }
 
                 @Override
@@ -108,7 +114,31 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
             });
         } else {
             MyApplication.uengInit();
+            checkUpdateSilent();
         }
+        initFragmentsAndTabData();
+        preLoadAppList();
+    }
+
+    private void initNetWorkState() {
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
+            @Override
+            public Boolean doInBackground() throws Throwable {
+                return NetworkUtils.isAvailable();
+            }
+
+            @Override
+            public void onSuccess(Boolean result) {
+                AppConfig.isNetAvailable = result;
+            }
+        });
+    }
+
+    private void checkUpdateSilent() {
+        CheckUpdateManager.getInstance().check(context, true);
+    }
+
+    private void initFragmentsAndTabData() {
         fragments.clear();
         fragments.add(new OriginalFragment<>());
         fragments.add(new TestFragment<>());
@@ -138,11 +168,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
             });
         }
         binding.tabLayout.setTabData(tabEntities);
-
-        preLoadAppList();
-        if (privacyPolicyManager.isAgreePrivacyPolicy()) {
-            CheckUpdateManager.getInstance().check(context, true);
-        }
     }
 
     private void preLoadAppList() {
@@ -195,5 +220,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements I
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    /**
+     * {@link NetworkUtils.OnNetworkStatusChangedListener}
+     */
+    @Override
+    public void onDisconnected() {
+        AppConfig.isNetAvailable = false;
+    }
+
+    /**
+     * {@link NetworkUtils.OnNetworkStatusChangedListener}
+     */
+    @Override
+    public void onConnected(NetworkUtils.NetworkType networkType) {
+        AppConfig.isNetAvailable = true;
     }
 }

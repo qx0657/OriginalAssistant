@@ -57,4 +57,6 @@ public class AppConfig {
             "com.huluxia.ui.home.HomeActivity",
             "com.huluxia.ui.home.ToolHomeActivity"
     };
+
+    public static boolean isNetAvailable = true;
 }
