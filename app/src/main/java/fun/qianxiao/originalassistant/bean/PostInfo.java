@@ -15,6 +15,7 @@ public class PostInfo {
     private AppLanguage appLanguage;
     private CharSequence appSpecialInstructions;
     private CharSequence appIntroduction;
+    private CharSequence appCompactIntroduction;
     private CharSequence appDownloadUrl;
 
     public enum AppLanguage {
@@ -105,6 +106,14 @@ public class PostInfo {
 
     public void setAppIntroduction(CharSequence appIntroduction) {
         this.appIntroduction = appIntroduction;
+    }
+
+    public CharSequence getAppCompactIntroduction() {
+        return appCompactIntroduction;
+    }
+
+    public void setAppCompactIntroduction(CharSequence appCompactIntroduction) {
+        this.appCompactIntroduction = appCompactIntroduction;
     }
 
     public CharSequence getAppDownloadUrl() {

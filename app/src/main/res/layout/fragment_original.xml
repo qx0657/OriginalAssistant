@@ -198,6 +198,26 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_compact_introduction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="一句话介绍"
+                android:visibility="gone"
+                app:hintTextColor="?attr/DayColorPrimaryNightWhite">
+
+                <EditText
+                    android:id="@+id/et_compact_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/original_f_edit_text_padding_top"
+                    android:background="@android:color/transparent"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:paddingStart="2dp"
+                    android:imeOptions="actionDone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="下载链接"

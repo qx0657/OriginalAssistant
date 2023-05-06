@@ -17,5 +17,6 @@
     <string name="p_key_app_query_channel">p_key_app_query_channel</string>
     <string name="p_key_clear_cache">p_key_clear_cache</string>
     <string name="p_key_switch_auto_test_tab_when_enter_app">p_key_switch_auto_test_tab_when_enter_app</string>
-    <string name="setting_post_prefix_dialog_message"><![CDATA[可用以设置图文混排团队图做为首图，如\'<image>g4/M01/50/AC/rBAAdl9m4TOAA31XAAA2xWcN6N0931.jpg,720,405</image><text></text>\']]></string>
+    <string name="setting_post_prefix_dialog_message"><![CDATA[可用以设置图文混排团队图做为首图，如\'<image>g4/M01/50/AC/rBAAdl9m4TOAA31XAAA2xWcN6N0931.jpg,720,405</image>\']]></string>
+    <string name="p_key_switch_compact_introduction">p_key_switch_compact_introduction</string>
 </resources>

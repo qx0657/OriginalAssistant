@@ -103,6 +103,11 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreference
+            app:key="@string/p_key_switch_compact_introduction"
+            app:title="一句话介绍"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreference
             app:key="@string/p_key_switch_auto_test_tab_when_enter_app"
             app:title="进入软件直达测试页面"
             app:iconSpaceReserved="false" />

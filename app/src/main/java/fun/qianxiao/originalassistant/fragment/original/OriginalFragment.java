@@ -432,7 +432,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         StringBuilder detail = new StringBuilder("<text>" + PostContentFormatUtils.getFormatDetail(postInfo) + "</text>");
         String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
         if (!TextUtils.isEmpty(postPrefix)) {
-            detail.insert(0, "<text>" + postPrefix + "</text>" + "<text>\n</text>");
+            detail.insert(0, "<text>" + postPrefix + "\n" + "</text>");
+        }
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_compact_introduction) &&
+                !TextUtils.isEmpty(postInfo.getAppCompactIntroduction())) {
+            detail.insert(0, "<text>" + postInfo.getAppCompactIntroduction() + "\n" + "</text>");
         }
         String postSuffix = SettingPreferences.getString(R.string.p_key_post_suffix);
         if (!TextUtils.isEmpty(postSuffix)) {
@@ -454,11 +458,15 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         StringBuilder detail = new StringBuilder("<text>" + PostContentFormatUtils.getFormatDetail(postInfo) + "</text>");
         String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
         if (!TextUtils.isEmpty(postPrefix)) {
-            if (postPrefix.startsWith("<text>")) {
+            if (postPrefix.startsWith("<image>")) {
                 detail.insert(0, postPrefix);
             } else {
                 detail.insert(0, "<text>" + postPrefix + "</text>");
             }
+        }
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_compact_introduction) &&
+                !TextUtils.isEmpty(postInfo.getAppCompactIntroduction())) {
+            detail.insert(0, "<text>" + postInfo.getAppCompactIntroduction() + "</text>");
         }
         detail.append("<text></text>");
         for (File file : picUploadResultMap.keySet()) {
@@ -566,6 +574,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         postInfo.setAppLanguage(PostInfo.AppLanguage.values()[getLanguageIndex()]);
         postInfo.setAppSpecialInstructions(binding.etSpecialInstructions.getText());
         postInfo.setAppIntroduction(binding.etGameIntroduction.getText());
+        postInfo.setAppCompactIntroduction(binding.etCompactIntroduction.getText());
         postInfo.setAppDownloadUrl(binding.etDownloadUrl.getText());
 
         return postInfo;
@@ -578,6 +587,12 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         CharSequence title = PostContentFormatUtils.getFormatTitle(postInfo);
         if (!TextUtils.isEmpty(title)) {
             stringBuilder.append(title).append(PostContentFormatUtils.FIELD_SEPARATOR);
+        }
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_compact_introduction)) {
+            String compactIntro = binding.etCompactIntroduction.getText().toString();
+            if (!TextUtils.isEmpty(compactIntro)) {
+                stringBuilder.append(compactIntro).append(PostContentFormatUtils.FIELD_SEPARATOR);
+            }
         }
         String postPrefix = SettingPreferences.getString(R.string.p_key_post_prefix);
         if (!TextUtils.isEmpty(postPrefix)) {
@@ -960,10 +975,19 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         }
     }
 
+    private void initCompactIntroductionTil() {
+        if (SettingPreferences.getBoolean(R.string.p_key_switch_compact_introduction)) {
+            binding.tilCompactIntroduction.setVisibility(View.VISIBLE);
+        } else {
+            binding.tilCompactIntroduction.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         initSpecialInstructionsSpinner();
         initFloatButtonData();
+        initCompactIntroductionTil();
     }
 }
