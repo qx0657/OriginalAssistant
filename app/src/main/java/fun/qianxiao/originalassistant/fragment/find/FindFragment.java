@@ -83,7 +83,7 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
                 if (uri != null) {
                     File file = UriUtils.uri2File(uri);
                     LogUtils.i(file);
-                    uploadPicturees(file);
+                    uploadPictures(file);
                 }
             }
         });
@@ -91,7 +91,7 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
         initHlxActivityData();
     }
 
-    private void uploadPicturees(File file) {
+    private void uploadPictures(File file) {
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
             ToastUtils.showShort("未登录");
@@ -112,8 +112,7 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
                     for (File file : result.keySet()) {
                         UploadPictureResult uploadPictureResult = result.get(file);
                         assert uploadPictureResult != null;
-                        resultUrl[i] = uploadPictureResult.getUrl();
-                        i++;
+                        resultUrl[i++] = uploadPictureResult.getUrl();
                     }
                     ClipboardUtils.copyText(resultUrl[0]);
                     ToastUtils.showShort("链接已复制至剪贴板");
