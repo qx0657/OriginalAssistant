@@ -97,10 +97,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private final int APP_QUERY_AUTO_ALL = -1;
 
     private final AtomicBoolean isAppQuerying = new AtomicBoolean(false);
+
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
+
     private AppPicturesAdapter picturesAdapter;
     private DragItemHelper dragItemHelper;
+
     private IQuery.OnAppQueryListener onAppQueryListener;
     private ITranslate.OnTranslateListener onTranslateListener;
 
