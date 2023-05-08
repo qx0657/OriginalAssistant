@@ -54,6 +54,12 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
     @Override
     protected void initData() {
         showBackIcon();
+        initActivityResultLauncher();
+        initRecycleView();
+        initHistory();
+    }
+
+    private void initActivityResultLauncher() {
         pickSingleMediaResultLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri uri) {
@@ -64,8 +70,6 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
                 }
             }
         });
-        initRecycleView();
-        initHistory();
     }
 
     private void initHistory() {

@@ -105,8 +105,11 @@ public abstract class BaseTestActivity<DB extends ViewBinding> extends BaseActiv
     protected void initData() {
         setTitle(getTestTitle());
         showBackIcon();
+        initActivityResultLauncher();
         setAppMode(SPUtils.getInstance().getInt(SPConstants.KEY_TEST_APP_MODE, Constants.APP_MODE_GAME));
+    }
 
+    private void initActivityResultLauncher() {
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {

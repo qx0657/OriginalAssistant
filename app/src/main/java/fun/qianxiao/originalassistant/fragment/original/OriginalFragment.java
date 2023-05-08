@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,9 +28,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.ConvertUtils;
@@ -49,7 +45,6 @@ import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +70,8 @@ import fun.qianxiao.originalassistant.manager.AppQueryManager;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.manager.TranslateManager;
+import fun.qianxiao.originalassistant.other.DragItemHelper;
+import fun.qianxiao.originalassistant.other.TextChanngedWatcher;
 import fun.qianxiao.originalassistant.translate.ITranslate;
 import fun.qianxiao.originalassistant.utils.HLXUtils;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
@@ -94,54 +91,18 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private final int MIN_TITLE_LENGTH = 5;
     private final int MAX_TITLE_LENGTH = 32;
     private final int MAX_DETAIL_LENGTH = 10000;
-    private ActivityResultLauncher<Intent> activityResultLauncher;
-    private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
-    private AtomicBoolean isAppQuerying = new AtomicBoolean(false);
-    private AppPicturesAdapter picturesAdapter;
-
-    private final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
-        @Override
-        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-            int dragFlags = 0;
-            if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
-                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-            } else if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
-                dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            }
-            return makeMovementFlags(dragFlags, 0);
-        }
-
-        @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-            //得到当拖拽的viewHolder的Position
-            int fromPosition = viewHolder.getBindingAdapterPosition();
-            //拿到当前拖拽到的item的viewHolder
-            int toPosition = target.getBindingAdapterPosition();
-            if (fromPosition == picturesAdapter.getItemCount() - 1 || toPosition == picturesAdapter.getItemCount() - 1) {
-                return false;
-            }
-            if (fromPosition < toPosition) {
-                for (int i = fromPosition; i < toPosition; i++) {
-                    Collections.swap(picturesAdapter.getDataList(), i, i + 1);
-                }
-            } else {
-                for (int i = fromPosition; i > toPosition; i--) {
-                    Collections.swap(picturesAdapter.getDataList(), i, i - 1);
-                }
-            }
-            picturesAdapter.notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-
-        @Override
-        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-        }
-    });
 
     private final int APP_QUERY_NOT_AUTO = -3;
     private final int APP_QUERY_MANUAL = -2;
     private final int APP_QUERY_AUTO_ALL = -1;
+
+    private final AtomicBoolean isAppQuerying = new AtomicBoolean(false);
+    private ActivityResultLauncher<Intent> activityResultLauncher;
+    private ActivityResultLauncher<String> pickMultipleMediaResultLauncher;
+    private AppPicturesAdapter picturesAdapter;
+    private DragItemHelper dragItemHelper;
+    private IQuery.OnAppQueryListener onAppQueryListener;
+    private ITranslate.OnTranslateListener onTranslateListener;
 
     @Override
     protected void initListener() {
@@ -169,23 +130,16 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private void clearAppPictureRecycleView() {
-        picturesAdapter = new AppPicturesAdapter(this, new ArrayList<>(Collections.singletonList(AppPicturesAdapter.PLACEHOLDER_ADD)));
-        binding.rvAppPics.setAdapter(picturesAdapter);
+        if (picturesAdapter == null) {
+            return;
+        }
+        picturesAdapter.getDataList().clear();
+        picturesAdapter.getDataList().add(AppPicturesAdapter.PLACEHOLDER_ADD);
         picturesAdapter.notifyDataSetChanged();
     }
 
     private void setSpecialInstructionsEditTextChangeListener() {
-        binding.etSpecialInstructions.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
+        binding.etSpecialInstructions.addTextChangedListener(new TextChanngedWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 if (TextUtils.isEmpty(s.toString())) {
@@ -201,37 +155,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    String[] s = getSpecialInstructionTexts();
-                    /*
-                    Use tag of view to save the added to prevent repeated addition
-                     */
-                    Object tag = binding.etSpecialInstructions.getTag();
-                    String tagStr = "";
-                    if (tag != null) {
-                        tagStr = (String) tag;
-                        String[] hasAdded = tagStr.split("#");
-                        for (String s1 : hasAdded) {
-                            if (Integer.parseInt(s1) == position) {
-                                binding.spinnerSpecialInstructionsSelect.setSelection(0);
-                                return;
-                            }
-                        }
-                    }
-                    CharSequence textOriginal = binding.etSpecialInstructions.getText();
-                    binding.etSpecialInstructions.requestFocus();
-                    if (TextUtils.isEmpty(textOriginal)) {
-                        binding.etSpecialInstructions.setText(s[position]);
-                    } else {
-                        binding.etSpecialInstructions.setText(textOriginal + "、" + s[position]);
-                    }
-                    if (TextUtils.isEmpty(tagStr)) {
-                        tagStr = String.valueOf(position);
-                    } else {
-                        tagStr = tagStr + "#" + position;
-                    }
-                    binding.etSpecialInstructions.setTag(tagStr);
-                    binding.etSpecialInstructions.setSelection(binding.etSpecialInstructions.getText().length());
-                    binding.spinnerSpecialInstructionsSelect.setSelection(0);
+                    specialInstructionSelected(position);
                 }
             }
 
@@ -240,13 +164,45 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
 
             }
         });
-        binding.tilSpecialInstructions.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.etSpecialInstructions.setText("");
-                binding.etSpecialInstructions.setTag(null);
-            }
+        binding.tilSpecialInstructions.setEndIconOnClickListener(v -> {
+            binding.etSpecialInstructions.setText("");
+            binding.etSpecialInstructions.setTag(null);
         });
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void specialInstructionSelected(int position) {
+        String[] s = getSpecialInstructionTexts();
+        /*
+        Use tag of view to save the added to prevent repeated addition
+         */
+        Object tag = binding.etSpecialInstructions.getTag();
+        String tagStr = "";
+        if (tag != null) {
+            tagStr = (String) tag;
+            String[] hasAdded = tagStr.split("#");
+            for (String s1 : hasAdded) {
+                if (Integer.parseInt(s1) == position) {
+                    binding.spinnerSpecialInstructionsSelect.setSelection(0);
+                    return;
+                }
+            }
+        }
+        CharSequence textOriginal = binding.etSpecialInstructions.getText();
+        binding.etSpecialInstructions.requestFocus();
+        if (TextUtils.isEmpty(textOriginal)) {
+            binding.etSpecialInstructions.setText(s[position]);
+        } else {
+            binding.etSpecialInstructions.setText(textOriginal + "、" + s[position]);
+        }
+        if (TextUtils.isEmpty(tagStr)) {
+            tagStr = String.valueOf(position);
+        } else {
+            tagStr = tagStr + "#" + position;
+        }
+        binding.etSpecialInstructions.setTag(tagStr);
+        binding.etSpecialInstructions.setSelection(binding.etSpecialInstructions.getText().length());
+        binding.spinnerSpecialInstructionsSelect.setSelection(0);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -383,47 +339,48 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             ToastUtils.showShort("请选择图片");
             return;
         }
-        HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
-            @Override
-            public void onResult(boolean valid, String errMsg) {
-                if (valid) {
-                    ((MainActivity) activity).openLoadingDialog("发帖中");
-                    ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<File>>() {
-                        @Override
-                        public List<File> doInBackground() throws Throwable {
-                            List<String> picsData = picturesAdapter.getDataList();
-                            return imagesToFileList(picsData);
-                        }
+        HLXApiManager.INSTANCE.checkKey(key, (valid, errMsg) -> {
+            if (valid) {
+                ((MainActivity) activity).openLoadingDialog("发帖中");
+                uploadPictureAndPost(key, postInfo);
+            } else {
+                ToastUtils.showShort(errMsg);
+            }
+        });
+    }
 
-                        @Override
-                        public void onSuccess(List<File> picsFiles) {
-                            LogUtils.i(picsFiles);
-                            if (picsFiles.size() == 0) {
+    private void uploadPictureAndPost(String key, PostInfo postInfo) {
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<File>>() {
+            @Override
+            public List<File> doInBackground() throws Throwable {
+                List<String> picsData = picturesAdapter.getDataList();
+                return imagesToFileList(picsData);
+            }
+
+            @Override
+            public void onSuccess(List<File> picsFiles) {
+                LogUtils.i(picsFiles);
+                if (picsFiles.size() == 0) {
+                    ((MainActivity) activity).closeLoadingDialog();
+                    ToastUtils.showShort("待上传图片列表为空");
+                    return;
+                }
+                HLXApiManager.INSTANCE.uploadPictures(key, picsFiles, new HLXApiManager.OnUploadPicturesListener() {
+                    @Override
+                    public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
+                        if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
+                            if (result.size() == 0) {
                                 ((MainActivity) activity).closeLoadingDialog();
-                                ToastUtils.showShort("待上传图片列表为空");
+                                ToastUtils.showShort("图片上传结果列表为空");
                                 return;
                             }
-                            HLXApiManager.INSTANCE.uploadPictures(key, picsFiles, new HLXApiManager.OnUploadPicturesListener() {
-                                @Override
-                                public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
-                                    if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
-                                        if (result.size() == 0) {
-                                            ((MainActivity) activity).closeLoadingDialog();
-                                            ToastUtils.showShort("图片上传结果列表为空");
-                                            return;
-                                        }
-                                        oneKeyPostInner(postInfo, key, result);
-                                    } else {
-                                        ((MainActivity) activity).closeLoadingDialog();
-                                        ToastUtils.showShort(errMsg);
-                                    }
-                                }
-                            });
+                            oneKeyPostInner(postInfo, key, result);
+                        } else {
+                            ((MainActivity) activity).closeLoadingDialog();
+                            ToastUtils.showShort(errMsg);
                         }
-                    });
-                } else {
-                    ToastUtils.showShort(errMsg);
-                }
+                    }
+                });
             }
         });
     }
@@ -615,6 +572,12 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
 
     @Override
     protected void initData() {
+        initActivityResultLauncher();
+        initAppPicturesRecycleView();
+        initAppMode();
+    }
+
+    private void initActivityResultLauncher() {
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
@@ -660,9 +623,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                 }
             }
         });
-
-        initAppPicturesRecycleView();
-        initAppMode();
     }
 
     private void initAppMode() {
@@ -680,6 +640,9 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     private void initAppPicturesRecycleView() {
         binding.rvAppPics.setLayoutManager(new GridLayoutManager(getContext(), 4));
         binding.rvAppPics.addItemDecoration(new RecyclerSpace(4));
+        picturesAdapter = new AppPicturesAdapter(OriginalFragment.this, new ArrayList<>());
+        binding.rvAppPics.setAdapter(picturesAdapter);
+        dragItemHelper = new DragItemHelper(picturesAdapter);
         clearAppPictureRecycleView();
     }
 
@@ -700,39 +663,42 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private IQuery.OnAppQueryListener getOnAppQueryListener() {
-        return new IQuery.OnAppQueryListener() {
-            @Override
-            public void onResult(int code, String message, AppQueryResult appQueryResult) {
-                isAppQuerying.set(false);
-                LogUtils.i(code, message,
-                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getFromChannel(),
-                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
-                        appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppPictures());
-                if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
-                    if (appQueryResult == null) {
-                        return;
-                    }
-                    String introduction = appQueryResult.getAppIntroduction();
-                    int introductionLengthMax = Integer.parseInt(SettingPreferences.getString(R.string.p_key_get_introduction_length_max, "1200"));
-                    if (introduction.length() > introductionLengthMax) {
-                        introduction = introduction.substring(0, introductionLengthMax);
-                    }
-                    binding.etGameIntroduction.setText(introduction);
-                    if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
-                        int downloadPictureNum = Integer.parseInt(SettingPreferences.getString(R.string.p_key_download_picture_num, "5"));
-                        if (appQueryResult.getAppPictures().size() > downloadPictureNum) {
-                            appQueryResult.setAppPictures(appQueryResult.getAppPictures().subList(0, downloadPictureNum));
+        if (onAppQueryListener == null) {
+            onAppQueryListener = new IQuery.OnAppQueryListener() {
+                @Override
+                public void onResult(int code, String message, AppQueryResult appQueryResult) {
+                    isAppQuerying.set(false);
+                    LogUtils.i(code, message,
+                            appQueryResult == null ? "appQueryResult null" : appQueryResult.getFromChannel(),
+                            appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppIntroduction(),
+                            appQueryResult == null ? "appQueryResult null" : appQueryResult.getAppPictures());
+                    if (code == IQuery.OnAppQueryListener.QUERY_CODE_SUCCESS) {
+                        if (appQueryResult == null) {
+                            return;
                         }
-                        appQueryResult.getAppPictures().add(AppPicturesAdapter.PLACEHOLDER_ADD);
-                        picturesAdapter = new AppPicturesAdapter(OriginalFragment.this, appQueryResult.getAppPictures());
-                        binding.rvAppPics.setAdapter(picturesAdapter);
-                        picturesAdapter.notifyDataSetChanged();
+                        String introduction = appQueryResult.getAppIntroduction();
+                        int introductionLengthMax = Integer.parseInt(SettingPreferences.getString(R.string.p_key_get_introduction_length_max, "1200"));
+                        if (introduction.length() > introductionLengthMax) {
+                            introduction = introduction.substring(0, introductionLengthMax);
+                        }
+                        binding.etGameIntroduction.setText(introduction);
+                        if (appQueryResult.getAppPictures() != null && appQueryResult.getAppPictures().size() > 0) {
+                            int downloadPictureNum = Integer.parseInt(SettingPreferences.getString(R.string.p_key_download_picture_num, "5"));
+                            if (appQueryResult.getAppPictures().size() > downloadPictureNum) {
+                                appQueryResult.setAppPictures(appQueryResult.getAppPictures().subList(0, downloadPictureNum));
+                            }
+                            picturesAdapter.getDataList().clear();
+                            picturesAdapter.getDataList().addAll(appQueryResult.getAppPictures());
+                            picturesAdapter.getDataList().add(AppPicturesAdapter.PLACEHOLDER_ADD);
+                            picturesAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        ToastUtils.showShort(message);
                     }
-                } else {
-                    ToastUtils.showShort(message);
                 }
-            }
-        };
+            };
+        }
+        return onAppQueryListener;
     }
 
     private void queryAppInfo(String appName, String packageName) {
@@ -781,9 +747,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         String[] strings = pKeySpecialInstructions.split("\n");
         String[] stringsRes = new String[strings.length + 1];
         stringsRes[0] = "";
-        for (int i = 0; i < strings.length; i++) {
-            stringsRes[i + 1] = strings[i];
-        }
+        System.arraycopy(strings, 0, stringsRes, 1, strings.length);
         return stringsRes;
     }
 
@@ -891,17 +855,20 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
     }
 
     private ITranslate.OnTranslateListener getOnTranslateListener() {
-        return new ITranslate.OnTranslateListener() {
-            @Override
-            public void onTranslateResult(int code, String msg, String result) {
-                if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
-                    binding.etGameIntroduction.setText(result);
-                    binding.etGameIntroduction.setSelection(binding.etGameIntroduction.getText().length());
-                } else {
-                    ToastUtils.showShort(msg);
+        if (onTranslateListener == null) {
+            onTranslateListener = new ITranslate.OnTranslateListener() {
+                @Override
+                public void onTranslateResult(int code, String msg, String result) {
+                    if (code == ITranslate.OnTranslateListener.TRANSLATE_SUCCESS) {
+                        binding.etGameIntroduction.setText(result);
+                        binding.etGameIntroduction.setSelection(binding.etGameIntroduction.getText().length());
+                    } else {
+                        ToastUtils.showShort(msg);
+                    }
                 }
-            }
-        };
+            };
+        }
+        return onTranslateListener;
     }
 
     private void translateIntroduction(String text) {
@@ -924,21 +891,6 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             TranslateManager.createTranslater(TranslateManager.TranslateInterfaceType.values()[transApi].getChannel())
                     .translate(text, onTranslateListener);
         }
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        if (binding.famOriginal.isExpanded()) {
-            binding.famOriginal.collapse();
-            return true;
-        }
-        return super.onBackPressed();
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
-        super.onDestroy();
     }
 
     @Override
@@ -968,10 +920,10 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         if (empty) {
             setAppPicturesOptionMode(false, false);
             binding.ivAppPictureDelete.setVisibility(View.GONE);
-            itemTouchHelper.attachToRecyclerView(null);
+            dragItemHelper.attach(null);
         } else {
             binding.ivAppPictureDelete.setVisibility(View.VISIBLE);
-            itemTouchHelper.attachToRecyclerView(binding.rvAppPics);
+            dragItemHelper.attach(binding.rvAppPics);
         }
     }
 
@@ -989,5 +941,20 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         initSpecialInstructionsSpinner();
         initFloatButtonData();
         initCompactIntroductionTil();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (binding.famOriginal.isExpanded()) {
+            binding.famOriginal.collapse();
+            return true;
+        }
+        return super.onBackPressed();
+    }
+
+    @Override
+    public void onDestroy() {
+        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
+        super.onDestroy();
     }
 }
