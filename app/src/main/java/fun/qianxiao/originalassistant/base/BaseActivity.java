@@ -67,6 +67,7 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

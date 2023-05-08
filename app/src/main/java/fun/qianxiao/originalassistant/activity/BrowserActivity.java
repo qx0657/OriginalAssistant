@@ -153,12 +153,10 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            finish();
-            return true;
-        } else if (id == R.id.menu_item_refresh_browser) {
+        if (id == R.id.menu_item_refresh_browser) {
             binding.webView.clearCache(true);
             binding.webView.reload();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
