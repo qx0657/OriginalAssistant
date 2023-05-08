@@ -1,7 +1,6 @@
 package fun.qianxiao.originalassistant.activity.opensourcelicense;
 
 import android.graphics.Rect;
-import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,13 +16,10 @@ import fun.qianxiao.originalassistant.activity.opensourcelicense.bean.OpenSource
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.databinding.ActivityOpensourcelicenseBinding;
 
-
 /**
  * @author QianXiao
  */
 public class OpenSourceLicenseActivity extends BaseActivity<ActivityOpensourcelicenseBinding> {
-
-
     @Override
     protected void initListener() {
 

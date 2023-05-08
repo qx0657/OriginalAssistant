@@ -29,7 +29,7 @@
 
         <item name="FloatingActionButtonLabelBgColor">#72000000</item>
         <item name="FloatingActionButtonNormalColor">?attr/colorPrimary</item>
-        <item name="FloatingActionButtonPressedColor">?attr/colorSecondary</item>
+        <item name="FloatingActionButtonPressedColor">@color/SkyBlue</item>
         <item name="RippleTransparentColor">#30808080</item>
         <item name="IconItemMe">#606060</item>
         <item name="DefaultTextViewColor">#606060</item>

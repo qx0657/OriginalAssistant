@@ -66,6 +66,7 @@
                 android:gravity="center"
                 android:textSize="12sp" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/ll_hlx_picture_bed"
             android:layout_width="0dp"
@@ -90,6 +91,7 @@
                 android:gravity="center"
                 android:textSize="12sp" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -102,6 +104,7 @@
             android:padding="5dp">
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -111,8 +114,7 @@
             android:orientation="vertical"
             android:gravity="center"
             android:background="@drawable/bg_test_select_item"
-            android:padding="5dp">
-        </LinearLayout>
+            android:padding="5dp"></LinearLayout>
     </LinearLayout>
 
     <TextView
