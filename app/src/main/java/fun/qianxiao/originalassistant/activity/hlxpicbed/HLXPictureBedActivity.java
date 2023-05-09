@@ -2,11 +2,14 @@ package fun.qianxiao.originalassistant.activity.hlxpicbed;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.blankj.utilcode.util.ClipboardUtils;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.hlxpicbed.adapter.HLXPicBedUploadHistoryAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseAdapter;
@@ -82,7 +86,9 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
             hlxPicBedUploadHistory.setUploadPictureResult(uploadPictureResult);
             list.add(hlxPicBedUploadHistory);
         }
+        adapter.getDataList().clear();
         adapter.getDataList().addAll(list);
+        adapter.notifyDataSetChanged();
     }
 
     private void initRecycleView() {
@@ -148,6 +154,11 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
         adapter.notifyDataSetChanged();
     }
 
+    private void clearHistory() {
+        SPUtils.getInstance().remove(SPConstants.KEY_HLX_PIC_BED_UPLOAD_HISTORY);
+        initHistory();
+    }
+
     public void openLoadingDialog(String msg) {
         if (loadingDialog == null) {
             loadingDialog = new MyLoadingDialog(context);
@@ -162,5 +173,21 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_hlx_pic_bed, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_item_clear) {
+            clearHistory();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
