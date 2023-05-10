@@ -1,12 +1,15 @@
 package fun.qianxiao.originalassistant.activity.selectapp;
 
 import android.content.Intent;
+import android.os.Build;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.AutoCompleteTextView;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -156,6 +159,14 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private void initSearchView(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.menu_item_search);
         searchView = (SearchView) menuItem.getActionView();
+        View view = searchView.getRootView().findViewById(R.id.search_src_text);
+        if (view instanceof AutoCompleteTextView) {
+            AutoCompleteTextView autoCompleteTextView = (AutoCompleteTextView) view;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                autoCompleteTextView.setTextCursorDrawable(R.drawable.edit_text_cursor_white);
+            }
+        }
+        ToastUtils.showShort(String.valueOf(view == null));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
