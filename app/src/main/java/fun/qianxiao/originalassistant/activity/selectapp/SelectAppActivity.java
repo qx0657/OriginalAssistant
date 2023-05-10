@@ -1,11 +1,9 @@
 package fun.qianxiao.originalassistant.activity.selectapp;
 
 import android.content.Intent;
-import android.graphics.PointF;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -15,14 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.lxj.xpopup.XPopup;
-import com.lxj.xpopup.impl.AttachListPopupView;
-import com.lxj.xpopup.interfaces.OnSelectListener;
 
-import java.io.File;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.R;
@@ -30,10 +23,7 @@ import fun.qianxiao.originalassistant.activity.selectapp.adapter.AppInfoAdapter;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseAdapter;
 import fun.qianxiao.originalassistant.bean.AppInfo;
-import fun.qianxiao.originalassistant.config.AppConfig;
-import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivitySelectAppBinding;
-import fun.qianxiao.originalassistant.utils.ApkExportUtils;
 import fun.qianxiao.originalassistant.utils.AppListTool;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
@@ -60,9 +50,6 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private SearchView searchView;
     private MyLoadingDialog loadingDialog;
 
-    private float touchX;
-    private float touchY;
-
     private final BaseAdapter.ItemClickListener<AppInfo> itemClickListener = (v, pos, bean) -> {
         Intent data = new Intent();
         data.putExtra(KEY_APP_NAME, bean.getAppName());
@@ -71,19 +58,11 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         SelectAppActivity.this.finish();
     };
 
-    private final BaseAdapter.ItemLongClickListener<AppInfo> itemLongClickListener = (v, pos, bean) -> {
-        v.getParent().requestDisallowInterceptTouchEvent(true);
-        AttachListPopupView attachListPopupView = new XPopup.Builder(context)
-                .asAttachList(new String[]{bean.getAppName().toString()}, null,
-                        new OnSelectListener() {
-                            @Override
-                            public void onSelect(int position, String text) {
+    private final AppInfoAdapter.OnItemLongClickPopItemSelectListener onItemLongClickPopItemSelectListener = new AppInfoAdapter.OnItemLongClickPopItemSelectListener() {
+        @Override
+        public void onPopItemSelectAppName(AppInfo appInfo) {
 
-                            }
-                        });
-        attachListPopupView.popupInfo.touchPoint = new PointF(touchX, touchY);
-        attachListPopupView.show();
-        return true;
+        }
     };
 
     @Override
@@ -102,15 +81,6 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         showBackIcon();
         binding.rvAppList.setLayoutManager(new LinearLayoutManager(context));
         getAppList(true);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_DOWN || ev.getAction() == MotionEvent.ACTION_MOVE) {
-            touchX = ev.getRawX();
-            touchY = ev.getRawY();
-        }
-        return super.dispatchTouchEvent(ev);
     }
 
     private void initRecycleViewAnim() {
@@ -171,7 +141,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private void showAppList(List<AppInfo> appInfoList) {
         adapter = new AppInfoAdapter(context, appInfoList);
         adapter.setItemClickListener(itemClickListener);
-        adapter.setItemLongClickListener(itemLongClickListener);
+        adapter.setOnItemLongClickPopItemSelectListener(onItemLongClickPopItemSelectListener);
         binding.rvAppList.setAdapter(adapter);
         initRecycleViewAnim();
     }

@@ -7,6 +7,8 @@ import android.widget.Filterable;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +26,25 @@ import fun.qianxiao.originalassistant.bean.AppInfo;
 public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolder> implements Filterable {
     private Context context;
     private List<AppInfo> beforeSearchAppInfoList = new ArrayList<>();
+    private OnItemLongClickPopItemSelectListener onItemLongClickPopItemSelectListener;
 
     public AppInfoAdapter(Context context, List<AppInfo> dataList) {
         super(dataList);
         this.context = context;
         beforeSearchAppInfoList.addAll(dataList);
+    }
+
+    public interface OnItemLongClickPopItemSelectListener {
+        /**
+         * onPopItemSelectAppName
+         *
+         * @param appInfo {@link AppInfo}
+         */
+        void onPopItemSelectAppName(AppInfo appInfo);
+    }
+
+    public void setOnItemLongClickPopItemSelectListener(OnItemLongClickPopItemSelectListener onItemLongClickPopItemSelectListener) {
+        this.onItemLongClickPopItemSelectListener = onItemLongClickPopItemSelectListener;
     }
 
     @Override
@@ -46,11 +62,22 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
                 itemClickListener.onItemClick(view, holder.getBindingAdapterPosition(), appInfo);
             }
         });
+        XPopup.Builder builder = new XPopup.Builder(context).watchView(holder.binding.cardView);
         holder.binding.cardView.setOnLongClickListener(view -> {
-            if (itemLongClickListener != null) {
-                return itemLongClickListener.onItemLongClick(view, holder.getBindingAdapterPosition(), appInfo);
-            }
-            return false;
+            view.getParent().requestDisallowInterceptTouchEvent(true);
+            builder.asAttachList(new String[]{appInfo.getAppName().toString()}, null,
+                    new OnSelectListener() {
+                        @Override
+                        public void onSelect(int position, String text) {
+                            if (onItemLongClickPopItemSelectListener != null) {
+                                if (position == 0) {
+                                    onItemLongClickPopItemSelectListener.onPopItemSelectAppName(appInfo);
+                                }
+                            }
+                        }
+                    })
+                    .show();
+            return true;
         });
     }
 
