@@ -120,6 +120,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
         preLoadAppList();
     }
 
+    public int getCurrentPosition() {
+        return currentPosition;
+    }
+
     private void initNetWorkState() {
         ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
             @Override

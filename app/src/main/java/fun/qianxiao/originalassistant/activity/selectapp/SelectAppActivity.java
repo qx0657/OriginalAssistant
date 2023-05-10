@@ -1,11 +1,7 @@
 package fun.qianxiao.originalassistant.activity.selectapp;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.PointF;
-import android.os.Build;
-import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,13 +11,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
 import androidx.appcompat.widget.SearchView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.TimeUtils;
@@ -41,7 +33,7 @@ import fun.qianxiao.originalassistant.bean.AppInfo;
 import fun.qianxiao.originalassistant.config.AppConfig;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivitySelectAppBinding;
-import fun.qianxiao.originalassistant.manager.PermissionManager;
+import fun.qianxiao.originalassistant.utils.ApkExportUtils;
 import fun.qianxiao.originalassistant.utils.AppListTool;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
@@ -87,7 +79,12 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                             @Override
                             public void onSelect(int position, String text) {
                                 if (position == 1) {
-                                    exportApk(bean);
+                                    String storePath = SPUtils.getInstance().getString(SPConstants.KEY_APK_EXPORT_DIR, AppConfig.DEFAULT_APK_EXPORT_DIR);
+                                    if (!storePath.endsWith(File.separator)) {
+                                        storePath = storePath + File.separator;
+                                    }
+                                    String outPath = storePath + bean.getAppName() + "_" + bean.getVersionName() + "_" + bean.getVersionCode() + ".apk";
+                                    ApkExportUtils.checkPermissionAndExportApk(context, bean.getPackageName(), storePath);
                                 }
                             }
                         });
@@ -95,41 +92,6 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
         attachListPopupView.show();
         return true;
     };
-
-    private void exportApkInner(AppInfo bean) {
-        String appPath = AppUtils.getAppPath(bean.getPackageName());
-        String storePath = SPUtils.getInstance().getString(SPConstants.KEY_APK_EXPORT_DIR, AppConfig.DEFAULT_APK_EXPORT_DIR);
-        if (!storePath.endsWith(File.separator)) {
-            storePath = storePath + File.separator;
-        }
-        String outPath = storePath + bean.getPackageName() + "_" + bean.getVersionName() + "_" + bean.getVersionCode() + ".apk";
-        LogUtils.i(appPath, outPath);
-        if (FileUtils.copy(appPath, outPath)) {
-            ToastUtils.showShort("Apk导出成功: " + outPath);
-        } else {
-            LogUtils.e("Apk导出失败");
-            ToastUtils.showShort("Apk导出失败");
-        }
-    }
-
-    private void exportApk(AppInfo bean) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
-                exportApkInner(bean);
-            } else {
-                ToastUtils.showShort("请给予" + AppUtils.getAppName() + "所有文件权限");
-                PermissionManager.getInstance().requestManageExternalStoragePermission(context);
-            }
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                exportApkInner(bean);
-            } else {
-                ToastUtils.showShort("请给予" + AppUtils.getAppName() + "文件读写权限");
-                PermissionManager.getInstance().requestReadWritePermission();
-            }
-        }
-    }
 
     @Override
     protected void initListener() {

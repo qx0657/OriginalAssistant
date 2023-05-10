@@ -1,127 +1,334 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-
-        <com.stx.xhb.androidx.XBanner
-            android:id="@+id/xbanner"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:AutoPlayTime="3000"
-            app:pointsContainerBackground="?attr/DayWhiteNightBlack"
-            app:pointsPosition="RIGHT"
-            app:tipTextSize="12sp"
-            app:isShowTips="true"
-            app:tipTextColor="?attr/DayDefaultTextViewNightWhite"
-            app:isClipChildrenMode="true"
-            app:isShowNumberIndicator="true"
-            app:isShowIndicatorOnlyOne="true"
-            app:isClipChildrenModeLessThree="true"
-            app:pageChangeDuration="800" />
-
-        <TextView
-            android:id="@+id/tv_no_activities"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="当前暂未活动"
-            android:textColor="?attr/DayDefaultTextViewNightWhite"
-            android:background="@drawable/ic_blank"
-            android:gravity="center"
-            android:visibility="gone" />
-    </RelativeLayout>
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="15dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/ll_hlx_fast_start_short_cut"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/bg_test_select_item"
-            android:padding="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/logo_huluxia" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="葫芦侠\n快速启动器"
-                android:layout_marginTop="3dp"
-                android:gravity="center"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_hlx_picture_bed"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="5dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/bg_test_select_item"
-            android:padding="5dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/logo_huluxia" />
+            <com.stx.xhb.androidx.XBanner
+                android:id="@+id/xbanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:AutoPlayTime="3000"
+                app:pointsContainerBackground="?attr/DayWhiteNightBlack"
+                app:pointsPosition="RIGHT"
+                app:tipTextSize="12sp"
+                app:isShowTips="true"
+                app:tipTextColor="?attr/DayDefaultTextViewNightWhite"
+                app:isClipChildrenMode="true"
+                app:isShowNumberIndicator="true"
+                app:isShowIndicatorOnlyOne="true"
+                app:isClipChildrenModeLessThree="true"
+                app:pageChangeDuration="800" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="葫芦侠\n图床"
-                android:layout_marginTop="3dp"
+                android:id="@+id/tv_no_activities"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="当前暂未活动"
+                android:textColor="?attr/DayDefaultTextViewNightWhite"
+                android:background="@drawable/ic_blank"
                 android:gravity="center"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="葫芦侠功能"
+            android:layout_marginTop="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginStart="15dp" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="invisible"
-            android:layout_marginStart="5dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/bg_test_select_item"
-            android:padding="5dp">
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="15dp">
 
+            <LinearLayout
+                android:id="@+id/ll_hlx_fast_start_short_cut"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/logo_huluxia" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="葫芦侠\n快速启动器"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_hlx_picture_bed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/logo_huluxia" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="葫芦侠\n图床"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp">
+
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="invisible"
-            android:layout_marginStart="5dp"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@drawable/bg_test_select_item"
-            android:padding="5dp"></LinearLayout>
+            android:text="系统工具"
+            android:layout_marginTop="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginStart="15dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="15dp">
+
+            <LinearLayout
+                android:id="@+id/ll_apk_export_find_f"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:paddingVertical="10dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apk提取"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:padding="5dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="代码复制"
+            android:layout_marginTop="20dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginStart="15dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="15dp">
+
+            <LinearLayout
+                android:id="@+id/ll_copy_code_1_find_f"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:paddingVertical="10dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="弹窗代码"
+                    android:ellipsize="middle"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_copy_code_2_find_f"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:paddingVertical="10dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_code_name_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="代码2"
+                    android:ellipsize="middle"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_copy_code_3_find_f"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:paddingVertical="10dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_code_name_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="代码3"
+                    android:ellipsize="middle"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_copy_code_4_find_f"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_test_select_item"
+                android:paddingVertical="10dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tv_code_name_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="代码4"
+                    android:ellipsize="middle"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="更多内容，敬请期待"
-        android:paddingBottom="100dp"
-        android:gravity="center" />
-</LinearLayout>
+</ScrollView>

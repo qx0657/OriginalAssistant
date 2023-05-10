@@ -387,4 +387,10 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
     public void closeLoadingDialog() {
         ((MainActivity) activity).closeLoadingDialog();
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
+    }
 }
