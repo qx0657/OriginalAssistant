@@ -39,7 +39,6 @@ import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
-import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 
 /**
  * MeFragment
@@ -47,7 +46,7 @@ import fun.qianxiao.originalassistant.view.loading.ILoadingView;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> implements ILoadingView {
+public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     private InputConfirmPopupView keyInputConfirmPopupView;
     private InputConfirmPopupView userIdInputConfirmPopupView;
     private boolean hasSignIn;
@@ -179,7 +178,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> im
 
     private void loginHLX(String key, String userId, boolean isSilent) {
         if (!isSilent) {
-            openLoadingDialog("登录中");
+            activity.openLoadingDialog("登录中");
         }
         HLXApiManager.INSTANCE.getUserInfo(
                 key,
@@ -187,7 +186,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> im
                 new HLXApiManager.OnGetUserInfoResult() {
                     @Override
                     public void onResult(boolean success, HLXUserInfo hlxUserInfo, String errMsg) {
-                        closeLoadingDialog();
+                        activity.closeLoadingDialog();
                         if (success) {
                             SPUtils.getInstance().put(SPConstants.KEY_HLX_USER_ID, userId);
                             if (!isSilent) {
@@ -224,11 +223,11 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> im
     }
 
     private void signInInner(String key) {
-        openLoadingDialog("签到中");
+        activity.openLoadingDialog("签到中");
         HLXApiManager.INSTANCE.signIn(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnCommonBooleanResultListener() {
             @Override
             public void onResult(boolean success, String errMsg) {
-                closeLoadingDialog();
+                activity.closeLoadingDialog();
                 if (success) {
                     ToastUtils.showShort("签到成功");
                     setHasSignIn();
@@ -375,15 +374,5 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> im
             binding.tvCommentCount.setText(String.valueOf(userInfo.getCommentCount()));
             Glide.with(binding.ivAvatar).load(userInfo.getAvatarUrl()).apply(RequestOptions.bitmapTransform(new CircleCrop())).into(binding.ivAvatar);
         }
-    }
-
-    @Override
-    public void openLoadingDialog(String msg) {
-        activity.openLoadingDialog(msg);
-    }
-
-    @Override
-    public void closeLoadingDialog() {
-        activity.closeLoadingDialog();
     }
 }
