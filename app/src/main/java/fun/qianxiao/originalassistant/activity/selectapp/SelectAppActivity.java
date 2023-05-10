@@ -166,7 +166,6 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
                 autoCompleteTextView.setTextCursorDrawable(R.drawable.edit_text_cursor_white);
             }
         }
-        ToastUtils.showShort(String.valueOf(view == null));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

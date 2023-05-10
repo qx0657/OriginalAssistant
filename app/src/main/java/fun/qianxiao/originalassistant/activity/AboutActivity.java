@@ -31,36 +31,16 @@ public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
 
     @Override
     protected void initListener() {
-        binding.content.tvProjectGithub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SysBrowserUtils.open(context, AppConfig.PROJECT_GITHUB_URL);
-            }
-        });
-        binding.content.tvOpenSource.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ActivityUtils.startActivity(OpenSourceLicenseActivity.class);
-            }
-        });
-        binding.content.tvPrivatePolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BrowserActivity.load(context, "隐私政策", AppConfig.PRIVACY_POLICY_URL);
-            }
-        });
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "给作者发送邮件？", Snackbar.LENGTH_LONG)
-                        .setAction("确定", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                SysMailUtils.send(context, "1540223760@qq.com", "【From 原创助手App】主题：");
-                            }
-                        }).show();
-            }
-        });
+        binding.content.tvProjectGithub.setOnClickListener(v -> SysBrowserUtils.open(context, AppConfig.PROJECT_GITHUB_URL));
+        binding.content.tvOpenSource.setOnClickListener(v -> ActivityUtils.startActivity(OpenSourceLicenseActivity.class));
+        binding.content.tvPrivatePolicy.setOnClickListener(v -> BrowserActivity.load(context, "隐私政策", AppConfig.PRIVACY_POLICY_URL));
+        binding.fab.setOnClickListener(view -> Snackbar.make(view, "给作者发送邮件？", Snackbar.LENGTH_LONG)
+                .setAction("确定", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SysMailUtils.send(context, "1540223760@qq.com", "【From 原创助手App】主题：");
+                    }
+                }).show());
     }
 
     @Override
