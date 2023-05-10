@@ -74,18 +74,11 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private final BaseAdapter.ItemLongClickListener<AppInfo> itemLongClickListener = (v, pos, bean) -> {
         v.getParent().requestDisallowInterceptTouchEvent(true);
         AttachListPopupView attachListPopupView = new XPopup.Builder(context)
-                .asAttachList(new String[]{bean.getAppName().toString(), "提取安装包"}, null,
+                .asAttachList(new String[]{bean.getAppName().toString()}, null,
                         new OnSelectListener() {
                             @Override
                             public void onSelect(int position, String text) {
-                                if (position == 1) {
-                                    String storePath = SPUtils.getInstance().getString(SPConstants.KEY_APK_EXPORT_DIR, AppConfig.DEFAULT_APK_EXPORT_DIR);
-                                    if (!storePath.endsWith(File.separator)) {
-                                        storePath = storePath + File.separator;
-                                    }
-                                    String outPath = storePath + bean.getAppName() + "_" + bean.getVersionName() + "_" + bean.getVersionCode() + ".apk";
-                                    ApkExportUtils.checkPermissionAndExportApk(context, bean.getPackageName(), storePath);
-                                }
+
                             }
                         });
         attachListPopupView.popupInfo.touchPoint = new PointF(touchX, touchY);

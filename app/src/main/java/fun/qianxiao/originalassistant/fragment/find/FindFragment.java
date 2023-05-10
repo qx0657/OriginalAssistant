@@ -368,22 +368,36 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
                             storePath = storePath + File.separator;
                         }
                         String outPath = storePath + appName + "_" + AppUtils.getAppVersionName(appPackageName) + "_" + AppUtils.getAppVersionCode(appPackageName) + ".apk";
-                        if (ApkExportUtils.exportApk(appPackageName, outPath)) {
-                            new XPopup.Builder(activity)
-                                    .dismissOnTouchOutside(false)
-                                    .asConfirm("Apk导出成功", outPath, "确定", "打开", new OnConfirmListener() {
-                                        @Override
-                                        public void onConfirm() {
-                                            FileOpenUtils.openFile(activity, new File(outPath));
-                                        }
-                                    }, new OnCancelListener() {
-                                        @Override
-                                        public void onCancel() {
+                        activity.openLoadingDialog("导出中");
+                        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
+                            @Override
+                            public Boolean doInBackground() throws Throwable {
+                                return ApkExportUtils.exportApk(appPackageName, outPath);
+                            }
 
-                                        }
-                                    }, false)
-                                    .show();
-                        }
+                            @Override
+                            public void onSuccess(Boolean result) {
+                                activity.closeLoadingDialog();
+                                if (result) {
+                                    new XPopup.Builder(activity)
+                                            .dismissOnTouchOutside(false)
+                                            .asConfirm("Apk导出成功", outPath, "确定", "打开", new OnConfirmListener() {
+                                                @Override
+                                                public void onConfirm() {
+                                                    FileOpenUtils.openFile(activity, new File(outPath));
+                                                }
+                                            }, new OnCancelListener() {
+                                                @Override
+                                                public void onCancel() {
+
+                                                }
+                                            }, false)
+                                            .show();
+                                } else {
+                                    ToastUtils.showShort("Apk导出失败");
+                                }
+                            }
+                        });
                     }
                 }
             }
