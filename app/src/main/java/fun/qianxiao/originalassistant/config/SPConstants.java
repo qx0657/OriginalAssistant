@@ -19,7 +19,8 @@ public class SPConstants {
     public static final String KEY_CODE_2 = "code_2";
     public static final String KEY_CODE_3 = "code_3";
     public static final String KEY_CODE_4 = "code_4";
-    public static final String KEY_CODE_NAME_2 = "code_Name_2";
-    public static final String KEY_CODE_NAME_3 = "code_Name_3";
-    public static final String KEY_CODE_NAME_4 = "code_Name_4";
+    public static final String KEY_CODE_NAME_1 = "code_name_1";
+    public static final String KEY_CODE_NAME_2 = "code_name_2";
+    public static final String KEY_CODE_NAME_3 = "code_name_3";
+    public static final String KEY_CODE_NAME_4 = "code_name_4";
 }

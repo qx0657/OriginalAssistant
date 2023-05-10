@@ -93,10 +93,12 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
         });
         binding.llHlxPictureBed.setOnClickListener(v -> ActivityUtils.startActivity(HLXPictureBedActivity.class));
         binding.llApkExportFindF.setOnClickListener(v -> appExport());
+
         binding.llCopyCode1FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_1));
         binding.llCopyCode2FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_2));
         binding.llCopyCode3FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_3));
         binding.llCopyCode4FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_4));
+
         binding.llCopyCode1FindF.setOnLongClickListener(v -> editCode(v, CODE_TYPE.CODE_1));
         binding.llCopyCode2FindF.setOnLongClickListener(v -> editCode(v, CODE_TYPE.CODE_2));
         binding.llCopyCode3FindF.setOnLongClickListener(v -> editCode(v, CODE_TYPE.CODE_3));
@@ -111,6 +113,7 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
 
     private enum CODE_TYPE {
         /**
+         * 自定义代码2
          * 默认: 弹窗代码
          */
         CODE_1,
@@ -131,22 +134,19 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
     private String getCurrentCode(CODE_TYPE code_type) {
         switch (code_type) {
             case CODE_1:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_1, CodeConstants.TOAST_CODE_TEXT);
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_1, CodeConstants.CODE_1);
             case CODE_2:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_2);
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_2, CodeConstants.CODE_2);
             case CODE_3:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_3);
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_3, CodeConstants.CODE_3);
             case CODE_4:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_4);
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_4, CodeConstants.CODE_4);
             default:
                 return "";
         }
     }
 
     private boolean editCode(View view, CODE_TYPE code_type) {
-        if (code_type == CODE_TYPE.CODE_1) {
-            return customCode(code_type);
-        }
         new XPopup.Builder(activity).atView(view)
                 .hasShadowBg(false)
                 .asAttachList(new String[]{"重命名", "自定义代码"}, null, new OnSelectListener() {
@@ -184,12 +184,14 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
 
     private String getCodeName(CODE_TYPE code_type) {
         switch (code_type) {
+            case CODE_1:
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_2, CodeConstants.CODE_1_NAME_DEFAULT);
             case CODE_2:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_2, "代码2");
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_2, CodeConstants.CODE_2_NAME_DEFAULT);
             case CODE_3:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_3, "代码3");
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_3, CodeConstants.CODE_3_NAME_DEFAULT);
             case CODE_4:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_4, "代码4");
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_4, CodeConstants.CODE_4_NAME_DEFAULT);
             default:
                 return "";
         }
@@ -203,6 +205,9 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
 
     private void saveCodeName(CODE_TYPE code_type, String text) {
         switch (code_type) {
+            case CODE_1:
+                SPUtils.getInstance().put(SPConstants.KEY_CODE_NAME_1, text);
+                break;
             case CODE_2:
                 SPUtils.getInstance().put(SPConstants.KEY_CODE_NAME_2, text);
                 break;
@@ -217,20 +222,15 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
         }
     }
 
-    private boolean customCode(CODE_TYPE code_type) {
+    private void customCode(CODE_TYPE code_type) {
         customCodeInputConfirmPopupView = new XPopup.Builder(activity)
                 .dismissOnTouchOutside(false)
-                .asInputConfirm("自定义代码", "", getCurrentCode(code_type), "", new OnInputConfirmListener() {
+                .asInputConfirm("自定义代码" + code_type.ordinal(), "", getCurrentCode(code_type), "", new OnInputConfirmListener() {
                     @Override
                     public void onConfirm(String code) {
                         if (TextUtils.isEmpty(code)) {
-                            if (code_type == CODE_TYPE.CODE_1) {
-                                ToastUtils.showShort("输入为空, 恢复默认");
-                                code = CodeConstants.TOAST_CODE_TEXT;
-                            } else {
-                                ToastUtils.showShort("输入为空");
-                                return;
-                            }
+                            ToastUtils.showShort("输入为空");
+                            return;
                         }
                         saveCode(code_type, code);
                         baseInputXPopViewDismiss(customCodeInputConfirmPopupView);
@@ -242,7 +242,6 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
             customCodeInputConfirmPopupView.getEditText().setMaxHeight(ScreenUtils.getScreenHeight() / 2 - 250);
             customCodeInputConfirmPopupView.getEditText().setSelection(customCodeInputConfirmPopupView.getEditText().getText().length());
         }, 100);
-        return true;
     }
 
     private void saveCode(CODE_TYPE code_type, String code) {

@@ -16,4 +16,14 @@ public class CodeConstants {
             "    move-result-object v0\n" +
             "\n" +
             "    invoke-virtual {v0}, Landroid/widget/Toast;->show()V";
+
+    public static final String CODE_1 = TOAST_CODE_TEXT;
+    public static final String CODE_2 = "";
+    public static final String CODE_3 = "";
+    public static final String CODE_4 = "";
+
+    public static final String CODE_1_NAME_DEFAULT = "弹窗代码";
+    public static final String CODE_2_NAME_DEFAULT = "代码2";
+    public static final String CODE_3_NAME_DEFAULT = "代码3";
+    public static final String CODE_4_NAME_DEFAULT = "代码4";
 }
