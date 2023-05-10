@@ -144,10 +144,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
 
     private void initFragmentsAndTabData() {
         fragments.clear();
-        fragments.add(new OriginalFragment<>());
-        fragments.add(new TestFragment<>());
-        fragments.add(new FindFragment<>());
-        fragments.add(new MeFragment<>());
+        fragments.add(new OriginalFragment());
+        fragments.add(new TestFragment());
+        fragments.add(new FindFragment());
+        fragments.add(new MeFragment());
         MyPageAdapter adapter = new MyPageAdapter(getSupportFragmentManager(), fragments, PAGES_TAB_TEXTS);
         binding.viewPager.setAdapter(adapter);
         binding.viewPager.setOffscreenPageLimit(4);
@@ -191,20 +191,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if (fragments.get(currentPosition).onBackPressed()) {
-            return;
-        }
-        super.onBackPressed();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        NetworkUtils.unregisterNetworkStatusChangedListener(this);
-    }
-
     public void setTabNavigationHide(boolean hide) {
         if (hide) {
             binding.tabLayout.setVisibility(View.INVISIBLE);
@@ -245,5 +231,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
     @Override
     public void onConnected(NetworkUtils.NetworkType networkType) {
         AppConfig.isNetAvailable = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragments.get(currentPosition).onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NetworkUtils.unregisterNetworkStatusChangedListener(this);
+        KeyboardUtils.unregisterSoftInputChangedListener(getWindow());
     }
 }

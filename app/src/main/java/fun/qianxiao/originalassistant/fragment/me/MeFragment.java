@@ -31,7 +31,6 @@ import fun.qianxiao.originalassistant.activity.BrowserActivity;
 import fun.qianxiao.originalassistant.activity.SettingsActivity;
 import fun.qianxiao.originalassistant.activity.SupportActivity;
 import fun.qianxiao.originalassistant.api.hlx.HLXApi;
-import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.HLXUserInfo;
 import fun.qianxiao.originalassistant.config.AppConfig;
@@ -48,7 +47,7 @@ import fun.qianxiao.originalassistant.view.loading.ILoadingView;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentMeBinding, A> implements ILoadingView {
+public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> implements ILoadingView {
     private InputConfirmPopupView keyInputConfirmPopupView;
     private InputConfirmPopupView userIdInputConfirmPopupView;
     private boolean hasSignIn;
@@ -380,17 +379,11 @@ public class MeFragment<A extends BaseActivity<?>> extends BaseFragment<Fragment
 
     @Override
     public void openLoadingDialog(String msg) {
-        ((MainActivity) activity).openLoadingDialog(msg);
+        activity.openLoadingDialog(msg);
     }
 
     @Override
     public void closeLoadingDialog() {
-        ((MainActivity) activity).closeLoadingDialog();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
+        activity.closeLoadingDialog();
     }
 }

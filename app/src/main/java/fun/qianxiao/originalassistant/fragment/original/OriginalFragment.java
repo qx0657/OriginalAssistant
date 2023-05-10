@@ -56,7 +56,6 @@ import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
 import fun.qianxiao.originalassistant.appquery.IQuery;
-import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.AppQueryResult;
 import fun.qianxiao.originalassistant.bean.PostInfo;
@@ -86,7 +85,7 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentOriginalBinding, A>
+public class OriginalFragment extends BaseFragment<FragmentOriginalBinding, MainActivity>
         implements AppPicturesAdapter.OnAppPicturesAdapterListener {
     private final int MIN_TITLE_LENGTH = 5;
     private final int MAX_TITLE_LENGTH = 32;
@@ -122,11 +121,11 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
 
         KeyboardUtils.registerSoftInputChangedListener(activity, height -> {
             if (height != 0) {
-                ((MainActivity) activity).setTabNavigationHide(true);
+                activity.setTabNavigationHide(true);
                 binding.famOriginal.collapse();
                 binding.famOriginal.setVisibility(View.GONE);
             } else {
-                ((MainActivity) activity).setTabNavigationHide(false);
+                activity.setTabNavigationHide(false);
                 ThreadUtils.runOnUiThreadDelayed(() -> binding.famOriginal.setVisibility(View.VISIBLE), 50);
             }
         });
@@ -344,7 +343,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
         }
         HLXApiManager.INSTANCE.checkKey(key, (valid, errMsg) -> {
             if (valid) {
-                ((MainActivity) activity).openLoadingDialog("发帖中");
+                activity.openLoadingDialog("发帖中");
                 uploadPictureAndPost(key, postInfo);
             } else {
                 ToastUtils.showShort(errMsg);
@@ -364,7 +363,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             public void onSuccess(List<File> picsFiles) {
                 LogUtils.i(picsFiles);
                 if (picsFiles.size() == 0) {
-                    ((MainActivity) activity).closeLoadingDialog();
+                    activity.closeLoadingDialog();
                     ToastUtils.showShort("待上传图片列表为空");
                     return;
                 }
@@ -373,13 +372,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
                     public void onUploadPicturesResult(int code, String errMsg, Map<File, UploadPictureResult> result) {
                         if (code == HLXApiManager.OnUploadPicturesListener.UPLOAD_ALL_SUCCESS) {
                             if (result.size() == 0) {
-                                ((MainActivity) activity).closeLoadingDialog();
+                                activity.closeLoadingDialog();
                                 ToastUtils.showShort("图片上传结果列表为空");
                                 return;
                             }
                             oneKeyPostInner(postInfo, key, result);
                         } else {
-                            ((MainActivity) activity).closeLoadingDialog();
+                            activity.closeLoadingDialog();
                             ToastUtils.showShort(errMsg);
                         }
                     }
@@ -470,13 +469,13 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             images = getNoRichImagesText(picUploadResultMap);
         }
         if (!checkDetail(detail)) {
-            ((MainActivity) activity).closeLoadingDialog();
+            activity.closeLoadingDialog();
             return;
         }
         HLXApiManager.INSTANCE.post(key, title, detail, images, isRich, new HLXApiManager.OnPostListener() {
             @Override
             public void onSuccess(PostResultInfo postResultInfo) {
-                ((MainActivity) activity).closeLoadingDialog();
+                activity.closeLoadingDialog();
                 new XPopup.Builder(getContext())
                         .dismissOnBackPressed(false)
                         .dismissOnTouchOutside(false)
@@ -489,7 +488,7 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
 
             @Override
             public void onError(int code, String errMsg) {
-                ((MainActivity) activity).closeLoadingDialog();
+                activity.closeLoadingDialog();
                 ToastUtils.showShort(errMsg);
             }
         });
@@ -953,11 +952,5 @@ public class OriginalFragment<A extends BaseActivity<?>> extends BaseFragment<Fr
             return true;
         }
         return super.onBackPressed();
-    }
-
-    @Override
-    public void onDestroy() {
-        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
-        super.onDestroy();
     }
 }

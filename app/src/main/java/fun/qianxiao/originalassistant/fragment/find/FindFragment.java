@@ -39,9 +39,9 @@ import com.stx.xhb.androidx.XBanner;
 import java.io.File;
 import java.util.List;
 
+import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.activity.hlxpicbed.HLXPictureBedActivity;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
-import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
 import fun.qianxiao.originalassistant.bean.FindBannerInfo;
 import fun.qianxiao.originalassistant.config.AppConfig;
@@ -62,7 +62,7 @@ import fun.qianxiao.originalassistant.utils.ShortCutUtils;
  * @Author QianXiao
  * @Date 2023/3/10
  */
-public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<FragmentFindBinding, A> {
+public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity> {
     private ActivityResultLauncher<Intent> activityResultLauncher;
 
     private InputConfirmPopupView customCodeInputConfirmPopupView;
@@ -430,11 +430,5 @@ public class FindFragment<A extends BaseActivity<?>> extends BaseFragment<Fragme
         }
         intent.putExtra("tab_index", tabIndex);
         ShortCutUtils.create(activity, intent, "葫芦侠快速启动");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        KeyboardUtils.unregisterSoftInputChangedListener(activity.getWindow());
     }
 }

@@ -109,13 +109,14 @@
                     android:text="破解类型" />
 
                 <RadioGroup
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:layout_weight="1">
 
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/rb_mod_type_internal_purchase"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="38dp"
                         android:background="@null"
                         android:paddingLeft="3dp"
@@ -126,7 +127,7 @@
 
                     <androidx.appcompat.widget.AppCompatRadioButton
                         android:id="@+id/rb_mod_type_game_modify"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="38dp"
                         android:background="@null"
                         android:paddingLeft="@dimen/radio_button_padding_left"
