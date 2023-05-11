@@ -54,6 +54,7 @@ import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.utils.ApkExportUtils;
 import fun.qianxiao.originalassistant.utils.FileOpenUtils;
 import fun.qianxiao.originalassistant.utils.HLXUtils;
+import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.ShortCutUtils;
 
 /**
@@ -91,7 +92,13 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
                 }
             }
         });
-        binding.llHlxPictureBed.setOnClickListener(v -> ActivityUtils.startActivity(HLXPictureBedActivity.class));
+        binding.llHlxPictureBed.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(HlxKeyLocal.read())) {
+                ToastUtils.showShort("未登录");
+                return;
+            }
+            ActivityUtils.startActivity(HLXPictureBedActivity.class);
+        });
         binding.llApkExportFindF.setOnClickListener(v -> appExport());
 
         binding.llCopyCode1FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_1));
