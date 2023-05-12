@@ -31,21 +31,11 @@ public class ShortCutUtils {
                     .setIntent(intent)
                     .build();
             PendingIntent shortcutCallbackIntent;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                shortcutCallbackIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, MyReceiver.class), PendingIntent.FLAG_IMMUTABLE);
-            } else {
-                shortcutCallbackIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, MyReceiver.class), 0);
-            }
+            Intent broadcastIntent = ShortcutManagerCompat.createShortcutResultIntent(context, info);
+            shortcutCallbackIntent = PendingIntent.getBroadcast(context, 0, broadcastIntent, PendingIntent.FLAG_IMMUTABLE);
             ShortcutManagerCompat.requestPinShortcut(context, info, shortcutCallbackIntent.getIntentSender());
         } else {
             ToastUtils.showShort("抱歉，您的设备不支持，请检查是否给予相关权限");
-        }
-    }
-
-    public static class MyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            LogUtils.i("MyReceiver onReceive: ");
         }
     }
 }
