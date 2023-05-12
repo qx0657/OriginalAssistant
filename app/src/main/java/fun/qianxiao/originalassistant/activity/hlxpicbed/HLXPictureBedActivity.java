@@ -2,9 +2,11 @@ package fun.qianxiao.originalassistant.activity.hlxpicbed;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,6 +19,10 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
+import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
+import com.lxj.xpopup.interfaces.OnCancelListener;
+import com.lxj.xpopup.interfaces.OnConfirmListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,9 +64,27 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
     @Override
     protected void initData() {
         showBackIcon();
+        setTitle("葫芦侠图床");
         initActivityResultLauncher();
         initRecycleView();
         initHistory();
+        showTip();
+    }
+
+    private void showTip() {
+        if (!SPUtils.getInstance().getBoolean(SPConstants.KEY_HLX_PIC_BED_TIP)) {
+            BasePopupView basePopupView = new XPopup.Builder(context)
+                    .dismissOnTouchOutside(false)
+                    .asConfirm("温馨提示", "该功能依赖您葫芦侠身份认证标识key使用葫芦侠图片上传接口实现，请合理使用该功能，请勿上传非法文件。", "", "不再提示", new OnConfirmListener() {
+                        @Override
+                        public void onConfirm() {
+                            SPUtils.getInstance().put(SPConstants.KEY_HLX_PIC_BED_TIP, true);
+                        }
+                    }, null, true)
+                    .show();
+            TextView tvContent = basePopupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
+            tvContent.setGravity(Gravity.START);
+        }
     }
 
     private void initActivityResultLauncher() {

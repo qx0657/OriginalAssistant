@@ -28,4 +28,6 @@ public class SPConstants {
     public static final String KEY_CODE_NAME_2 = "code_name_2";
     public static final String KEY_CODE_NAME_3 = "code_name_3";
     public static final String KEY_CODE_NAME_4 = "code_name_4";
+
+    public static final String KEY_HLX_PIC_BED_TIP = "hlx_pic_bed_tip";
 }
