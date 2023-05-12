@@ -21,7 +21,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.UriUtils;
 import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
-import com.lxj.xpopup.interfaces.OnCancelListener;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
 
 import java.io.File;
@@ -41,6 +40,7 @@ import fun.qianxiao.originalassistant.bean.UploadPictureResult;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivityHlxPictureBedBinding;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
+import fun.qianxiao.originalassistant.manager.PermissionManager;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.view.RecyclerSpace;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
@@ -58,7 +58,15 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
 
     @Override
     protected void initListener() {
-        binding.fabHlxPictureBedSelectPicture.setOnClickListener(v -> pickSingleMediaResultLauncher.launch("image/*"));
+        binding.fabHlxPictureBedSelectPicture.setOnClickListener(v -> selectPic());
+    }
+
+    private void selectPic() {
+        if (!PermissionManager.getInstance().hasRequestReadWritePermission()) {
+            PermissionManager.getInstance().requestReadWritePermission();
+            return;
+        }
+        pickSingleMediaResultLauncher.launch("image/*");
     }
 
     @Override
@@ -148,7 +156,7 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
                     List<UploadPictureResult> uploadPictureResults = new ArrayList<>(result.values());
                     UploadPictureResult pictureResult = uploadPictureResults.get(0);
                     ClipboardUtils.copyText(pictureResult.getUrl());
-                    ToastUtils.showShort("链接已复制至剪贴板");
+                    ToastUtils.showShort("图片上传成功/n链接已复制至剪贴板");
                     addHistory(file, pictureResult);
                 } else {
                     ToastUtils.showShort(errMsg);
