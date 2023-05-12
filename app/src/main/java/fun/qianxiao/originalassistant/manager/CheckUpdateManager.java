@@ -1,6 +1,5 @@
 package fun.qianxiao.originalassistant.manager;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,7 +18,6 @@ import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.FileUtils;
 import com.blankj.utilcode.util.PathUtils;
-import com.blankj.utilcode.util.PermissionUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.hjq.http.EasyHttp;
 import com.hjq.http.listener.OnDownloadListener;
@@ -35,6 +33,7 @@ import java.lang.reflect.Field;
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.api.CheckUpdateApi;
 import fun.qianxiao.originalassistant.manager.net.ApiServiceManager;
+import fun.qianxiao.originalassistant.utils.SysBrowserUtils;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -136,22 +135,16 @@ public final class CheckUpdateManager {
                                 dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if (isBrowserDownload || Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                        if (isBrowserDownload) {
                                             //从其他浏览器打开
-                                            Intent intent = new Intent();
-                                            intent.setAction("android.intent.action.VIEW");
-                                            intent.addCategory("android.intent.category.BROWSABLE");
-                                            intent.addCategory("android.intent.category.DEFAULT");
-                                            Uri contentUrl = Uri.parse(downloadurl);
-                                            intent.setData(contentUrl);
-                                            context.startActivity(intent);
+                                            SysBrowserUtils.open(context, downloadurl);
                                         } else {
                                             if (isApkFullyDownloaded) {
                                                 //立即安装
                                                 AppUtils.installApp(mApkFile);
                                                 return;
                                             }
-                                            if (!PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                            /*if (!PermissionUtils.isGranted(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                                                 PermissionUtils.permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                                         .callback(new PermissionUtils.SimpleCallback() {
                                                             @Override
@@ -166,7 +159,7 @@ public final class CheckUpdateManager {
                                                         })
                                                         .request();
                                                 return;
-                                            }
+                                            }*/
                                             if (!isUpdating) {
                                                 isUpdating = true;
                                             } else {
@@ -271,7 +264,7 @@ public final class CheckUpdateManager {
         intent.setAction(Intent.ACTION_VIEW);
         Uri uri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(context, AppUtils.getAppPackageName() + ".utilcode.provider", mApkFile);
+            uri = FileProvider.getUriForFile(context, AppUtils.getAppPackageName() + ".utilcode.fileprovider", mApkFile);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         } else {
             uri = Uri.fromFile(mApkFile);

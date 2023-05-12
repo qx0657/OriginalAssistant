@@ -39,7 +39,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CommonApp"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true" >
+        android:requestLegacyExternalStorage="true">
 
         <activity
             android:name=".activity.SplashActivity"

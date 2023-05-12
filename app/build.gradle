@@ -84,7 +84,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.9.3"
 
     // EasyHttp
-    implementation 'com.hjq:http:9.0'
+    implementation 'com.github.getActivity:EasyHttp:11.8'
 
     // Retrofit https://github.com/square/retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"

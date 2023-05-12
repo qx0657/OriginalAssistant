@@ -97,8 +97,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
                 @Override
                 public void onAgree() {
                     // requestPermission();
-                    MyApplication.uengInit();
-                    checkUpdateSilent();
+                    initAfterPolicy();
                 }
 
                 @Override
@@ -113,11 +112,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
                 }
             });
         } else {
-            MyApplication.uengInit();
-            checkUpdateSilent();
+            initAfterPolicy();
         }
         initFragmentsAndTabData();
         preLoadAppList();
+    }
+
+    private void initAfterPolicy() {
+        MyApplication.uengInit();
+        checkUpdateSilent();
     }
 
     public int getCurrentPosition() {

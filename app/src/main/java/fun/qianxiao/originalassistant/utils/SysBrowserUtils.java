@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.ToastUtils;
 
 /**
  * SysBrowserUtils
@@ -32,10 +33,14 @@ public class SysBrowserUtils {
             context.startActivity(intent);
             return;
         }
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        intent.putExtra("url", url);
-        String title = "选择浏览器";
-        Intent intentChooser = Intent.createChooser(intent, title);
-        context.startActivity(intentChooser);
+        try {
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.putExtra("url", url);
+            String title = "选择浏览器";
+            Intent intentChooser = Intent.createChooser(intent, title);
+            context.startActivity(intentChooser);
+        } catch (Exception e) {
+            ToastUtils.showShort(e.getMessage());
+        }
     }
 }
