@@ -156,7 +156,7 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
                     List<UploadPictureResult> uploadPictureResults = new ArrayList<>(result.values());
                     UploadPictureResult pictureResult = uploadPictureResults.get(0);
                     ClipboardUtils.copyText(pictureResult.getUrl());
-                    ToastUtils.showShort("图片上传成功/n链接已复制至剪贴板");
+                    ToastUtils.showShort("图片上传成功\n链接已复制至剪贴板");
                     addHistory(file, pictureResult);
                 } else {
                     ToastUtils.showShort(errMsg);
