@@ -16,7 +16,7 @@ import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 
-import com.orhanobut.logger.Logger;
+import com.blankj.utilcode.util.LogUtils;
 
 import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.base.BaseActivity;
@@ -118,7 +118,7 @@ public class BrowserActivity extends BaseActivity<ActivityBrowserBinding> {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                Logger.e("onReceivedError:\n" +
+                LogUtils.e("onReceivedError:\n" +
                         "code: %d\n" +
                         "description: %s", error.getErrorCode(), error.getDescription());
                 binding.llErrorBrowser.setVisibility(View.VISIBLE);

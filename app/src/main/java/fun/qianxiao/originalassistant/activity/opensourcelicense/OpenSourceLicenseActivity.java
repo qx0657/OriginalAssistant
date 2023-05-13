@@ -44,7 +44,7 @@ public class OpenSourceLicenseActivity extends BaseActivity<ActivityOpensourceli
                 new OpenSourceLicense("RxJava", "ReactiveX", "RxJava is a Java VM implementation of Reactive Extensions: a library for composing asynchronous and event-based programs by using observable sequences.", "Apache 2.0", "https://github.com/ReactiveX/RxJava"),
                 new OpenSourceLicense("Glide", "bumptech", "Glide is a fast and efficient open source media management and image loading framework for Android that wraps media decoding, memory and disk caching, and resource pooling into a simple and easy to use interface.", "BSD, part MIT and Apache 2.0", "https://github.com/bumptech/glide"),
                 new OpenSourceLicense("XPopup", "li-xiaojun", "XPopup2.0版本重磅来袭，2倍以上性能提升，带来可观的动画性能优化和交互细节的提升！！！功能强大，交互优雅，动画丝滑的通用弹窗！", "Apache 2.0", "https://github.com/li-xiaojun/XPopup"),
-                new OpenSourceLicense("Logger", "orhanobut", "Simple, pretty and powerful logger for android", "Apache 2.0", "https://github.com/orhanobut/logger"),
+                // new OpenSourceLicense("Logger", "orhanobut", "Simple, pretty and powerful logger for android", "Apache 2.0", "https://github.com/orhanobut/logger"),
                 new OpenSourceLicense("FlycoTabLayout", "H07000223", "An Android TabLayout Lib has 3 kinds of TabLayout at present.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
                 new OpenSourceLicense("FloatingActionButton", "zendesk", "Yet another library for drawing Material Design promoted actions.", "Apache 2.0", "https://github.com/H07000223/FlycoTabLayout"),
                 new OpenSourceLicense("EasyHttp", "轮子哥", "简单易用的网络框架", "Apache 2.0", "https://github.com/getActivity/EasyHttp"),

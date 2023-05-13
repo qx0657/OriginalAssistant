@@ -8,8 +8,8 @@ import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.PermissionUtils;
-import com.orhanobut.logger.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,12 +77,12 @@ public class PermissionManager {
                 .callback(new PermissionUtils.FullCallback() {
                     @Override
                     public void onGranted(@NonNull List<String> granted) {
-                        Logger.i("Permission onGranted\n", Arrays.toString(granted.toArray()));
+                        LogUtils.i("Permission onGranted\n", Arrays.toString(granted.toArray()));
                     }
 
                     @Override
                     public void onDenied(@NonNull List<String> deniedForever, @NonNull List<String> denied) {
-                        Logger.e("Permission onDenied: \n" +
+                        LogUtils.e("Permission onDenied: \n" +
                                 "denied:\n" +
                                 "%s", Arrays.toString(denied.toArray()));
                         hasReRequestTimes++;
@@ -98,7 +98,7 @@ public class PermissionManager {
     public boolean hasAllPermission() {
         boolean ret = PermissionUtils.isGranted(NEEDED_PERMISSIONS);
         if (ret) {
-            Logger.i("hasAllPermission");
+            LogUtils.i("hasAllPermission");
         }
         return ret;
     }

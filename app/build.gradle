@@ -75,7 +75,7 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.31.0'
 
     // Logger https://github.com/orhanobut/logger
-    implementation 'com.orhanobut:logger:2.2.0'
+    // implementation 'com.orhanobut:logger:2.2.0'
 
     // 弹窗XPopup https://github.com/li-xiaojun/XPopup/wiki/
     implementation 'com.github.li-xiaojun:XPopup:2.7.2'
