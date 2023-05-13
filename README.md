@@ -163,7 +163,82 @@ sequenceDiagram
 
 其主要模拟请求Web端与LKME的4次交互（如上图），获取最终的关键信息字段deeplink_id、deeplink_name，即可拼装生成android scheme跳转链接。
 
+```html
+hlx.floor://linkedme?lkme=1&r={timestamp_ms}&uid={deeplink_id}&click_id={deeplink_name}
+```
+
 支持跳转的葫芦侠App Activity页面及参数可反编译葫芦侠App查看`com.huluxia.ui.home.linkedme.MiddleActivity`类。
+
+LKME跳转Activity信息封装：
+
+```json
+{
+    "JumpActivity": "XXActivity",
+    "TopicID": "45344479",
+    "isVideo": "0"
+}
+```
+
+
+
+##### 支持跳转的Activity
+
+* TopicDetailActivity
+
+  > 帖子详情页面
+
+  LKME跳转Activity信息封装格式：
+
+  ```json
+  {
+      "JumpActivity": "TopicDetailActivity",
+      "ExtendedParameterName": "ExtendedParameterValue",
+      ……
+  }
+  ```
+
+* ActionDetailActivity
+
+  > 活动详情页面
+
+  LKME跳转Activity信息封装：
+
+  ```json
+  {
+      "JumpActivity": "ActionDetailActivity",
+      "ActionID": "417",
+      "extraInfo": ""
+  }
+  ```
+
+* ResourceCuzActivity
+
+  > 应用详情页面
+
+  LKME跳转Activity信息封装：
+
+  ```json
+  {
+      "JumpActivity": "ResourceCuzActivity",
+      "GameID": "88772",
+      "From": ""
+  }
+  ```
+
+* ResourceTopicDetailActivity
+
+  > 应用专题详情页面
+
+  LKME跳转Activity信息封装：
+
+  ```json
+  {
+      "JumpActivity": "ResourceTopicDetailActivity",
+      "TOPIC_ID": "985",
+      "TOPIC_TITLE": "",
+      "TOPIC_TYPE": ""
+  }
+  ```
 
 
 
