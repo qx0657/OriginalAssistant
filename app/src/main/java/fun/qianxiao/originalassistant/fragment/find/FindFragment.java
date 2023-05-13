@@ -232,7 +232,7 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
     private void customCode(CODE_TYPE code_type) {
         customCodeInputConfirmPopupView = new XPopup.Builder(activity)
                 .dismissOnTouchOutside(false)
-                .asInputConfirm("自定义代码" + code_type.ordinal(), "", getCurrentCode(code_type), "", new OnInputConfirmListener() {
+                .asInputConfirm("自定义代码" + (code_type.ordinal() + 1), "", getCurrentCode(code_type), "", new OnInputConfirmListener() {
                     @Override
                     public void onConfirm(String code) {
                         if (TextUtils.isEmpty(code)) {
