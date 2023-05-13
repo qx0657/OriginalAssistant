@@ -1,18 +1,14 @@
 package fun.qianxiao.originalassistant.manager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
@@ -191,8 +187,7 @@ public final class CheckUpdateManager {
                                                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setText("立即安装");
                                                             isUpdating = false;
                                                             isApkFullyDownloaded = true;
-                                                            //AppUtils.installApp(finalFile);
-                                                            installApp(context, file);
+                                                            AppUtils.installApp(file);
                                                         }
 
                                                         @Override
@@ -257,22 +252,6 @@ public final class CheckUpdateManager {
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
-
-    private void installApp(Context context, File mApkFile) {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(context, AppUtils.getAppPackageName() + ".utilcode.fileprovider", mApkFile);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        } else {
-            uri = Uri.fromFile(mApkFile);
-        }
-
-        intent.setDataAndType(uri, "application/vnd.android.package-archive");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     public void openLoadingDialog(Context context, String msg) {
