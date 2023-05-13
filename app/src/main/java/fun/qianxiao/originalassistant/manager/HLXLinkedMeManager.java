@@ -221,4 +221,23 @@ public enum HLXLinkedMeManager {
         }
         linkedMeJump(jsonObject);
     }
+
+    /**
+     * Jump to hlx app resource detail page
+     *
+     * @param gameId app_id
+     */
+    public void gotoResourceDetail(long gameId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("JumpActivity", "ResourceCuzActivity");
+            jsonObject.put("GameID", String.valueOf(gameId));
+            jsonObject.put("From", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            ToastUtils.showShort("出错了");
+            return;
+        }
+        linkedMeJump(jsonObject);
+    }
 }
