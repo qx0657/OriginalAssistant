@@ -1,6 +1,7 @@
 package fun.qianxiao.originalassistant.config;
 
 import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.Utils;
 
 import java.io.File;
 
@@ -57,6 +58,11 @@ public class AppConfig {
             "com.huluxia.ui.home.HomeActivity",
             "com.huluxia.ui.home.ToolHomeActivity"
     };
+
+    /**
+     * BlankJ utils add this file provider in the app, we can use it.
+     */
+    public static final String FILE_PROVIDER_AUTHORITY = Utils.getApp().getPackageName() + ".utilcode.fileprovider";
 
     public static boolean isNetAvailable = true;
 }

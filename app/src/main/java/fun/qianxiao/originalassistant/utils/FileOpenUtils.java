@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Locale;
 
-import fun.qianxiao.originalassistant.BuildConfig;
+import fun.qianxiao.originalassistant.config.AppConfig;
 
 /**
  * FileOpenUtils
@@ -48,7 +48,7 @@ public class FileOpenUtils {
         // intent.addCategory(Intent.CATEGORY_DEFAULT);
         Uri uriForFile;
         if (Build.VERSION.SDK_INT > 23) {
-            uriForFile = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".utilcode.fileprovider", file);
+            uriForFile = FileProvider.getUriForFile(context, AppConfig.FILE_PROVIDER_AUTHORITY, file);
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         } else {
             uriForFile = Uri.fromFile(file);
