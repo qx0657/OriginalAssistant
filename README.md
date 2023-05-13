@@ -124,6 +124,8 @@ AppQueryMannager.getInstance().query("应用名", "应用包名", new IQuery.OnA
 2. 继承`AbstractAppQuerier`抽象类，泛型传入渠道`retrofit`请求接口（`? extends AppQueryaApi`）和响应对象格式（`JSONObject`或`okhttp3.ResponseBody`），创建XX渠道查询器。并实现抽象的查询过程方法。
 3. 在`AppQueryMannager.AppQueryChannel`中创建渠道枚举定义，传入渠道名称图标及渠道查询器（`Class<? extends AbstractAppQuerier<?, ?>>`）。
 
+
+
 ### 深度链接跳转接入
 
 葫芦侠App（含三楼）目前已接入了深度链接（lkme.cc），支持跳转帖子详情页、活动详情页、应用详情页等。当在App分享某页面时葫芦侠App会生成网页链接，浏览器访问该网页，点击葫芦侠打开按钮，会直接跳转葫芦侠APP相关页面。通过抓包并分析了其原理，并在原创助手中模拟请求，实现跳转葫芦侠相关页面的功能（如跳转到指定帖子详情页面等）。
@@ -162,6 +164,8 @@ sequenceDiagram
 其主要模拟请求Web端与LKME的4次交互（如上图），获取最终的关键信息字段deeplink_id、deeplink_name，即可拼装生成android scheme跳转链接。
 
 支持跳转的葫芦侠App Activity页面及参数可反编译葫芦侠App查看`com.huluxia.ui.home.linkedme.MiddleActivity`类。
+
+
 
 ### 更多内容
 
