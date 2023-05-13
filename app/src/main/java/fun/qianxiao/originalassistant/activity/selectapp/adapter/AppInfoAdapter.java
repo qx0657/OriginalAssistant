@@ -1,6 +1,7 @@
 package fun.qianxiao.originalassistant.activity.selectapp.adapter;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -56,7 +57,11 @@ public class AppInfoAdapter extends BaseAdapter<AppInfo, AppInfoAdapterViewHolde
     protected void onBindViewHolder(@NonNull AppInfoAdapterViewHolder holder, AppInfo appInfo) {
         holder.binding.tvAppName.setText(appInfo.getAppName());
         holder.binding.tvAppPackageName.setText(appInfo.getPackageName());
-        Glide.with(holder.binding.ivAppIcon).load(appInfo.getIcon()).into(holder.binding.ivAppIcon);
+        if (appInfo.getIcon() != null) {
+            Glide.with(holder.binding.ivAppIcon).load(appInfo.getIcon()).into(holder.binding.ivAppIcon);
+        } else {
+            holder.binding.ivAppIcon.setVisibility(View.GONE);
+        }
         holder.binding.cardView.setOnClickListener(view -> {
             if (itemClickListener != null) {
                 itemClickListener.onItemClick(view, holder.getBindingAdapterPosition(), appInfo);

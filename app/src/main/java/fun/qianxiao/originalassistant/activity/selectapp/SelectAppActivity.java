@@ -97,7 +97,7 @@ public class SelectAppActivity extends BaseActivity<ActivitySelectAppBinding> im
     private void getAppList(boolean isShowLoadingDialog) {
         final long startTime = TimeUtils.getNowMills();
         Observable.create((ObservableOnSubscribe<List<AppInfo>>) emitter -> {
-            List<AppInfo> appInfoList = AppListTool.getAppList(context);
+            List<AppInfo> appInfoList = AppListTool.getAppList();
             emitter.onNext(appInfoList);
             emitter.onComplete();
         }).subscribeOn(Schedulers.computation())

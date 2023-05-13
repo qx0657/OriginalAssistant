@@ -112,6 +112,12 @@
             app:title="进入软件直达测试页面"
             app:iconSpaceReserved="false" />
 
+        <SwitchPreference
+            app:key="@string/p_key_switch_get_sys_app_list_with_no_icon"
+            app:title="不带图标获取应用列表"
+            app:summary="打开后可提升App列表加载速度"
+            app:iconSpaceReserved="false" />
+
         <ListPreference
             app:key="@string/p_key_current_translate_api"
             app:isPreferenceVisible="true"

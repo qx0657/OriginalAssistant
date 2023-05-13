@@ -90,6 +90,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
 
     @Override
     protected void initData() {
+        preLoadAppList();
         initNetWorkState();
         PrivacyPolicyManager privacyPolicyManager = PrivacyPolicyManager.getInstance();
         if (!privacyPolicyManager.isAgreePrivacyPolicy()) {
@@ -115,7 +116,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
             initAfterPolicy();
         }
         initFragmentsAndTabData();
-        preLoadAppList();
     }
 
     private void initAfterPolicy() {
@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
         ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<List<AppInfo>>() {
             @Override
             public List<AppInfo> doInBackground() throws Throwable {
-                return AppListTool.getAppList(context);
+                return AppListTool.getAppList();
             }
 
             @Override
