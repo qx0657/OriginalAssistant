@@ -153,12 +153,8 @@ public enum HLXApiManager {
      * @param userId userId
      * @param result Callback
      */
-    public void getUserInfo(String key, String userId, OnGetUserInfoResult result) {
-        if (!MyStringUtils.isNumeric(userId)) {
-            result.onResult(false, null, "userId非法");
-            return;
-        }
-        hlxApi.userInfo(key, Long.parseLong(userId))
+    public void getUserInfo(String key, long userId, OnGetUserInfoResult result) {
+        hlxApi.userInfo(key, userId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ResponseBody>() {

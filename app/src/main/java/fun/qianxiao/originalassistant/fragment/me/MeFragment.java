@@ -158,7 +158,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                         public void onConfirm() {
                             SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
                             displayUserInfo(null);
-                            String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
+                            long userId = SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID);
                             setUserId(userId);
                         }
                     })
@@ -167,8 +167,8 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     }
 
     private void loginingByKey() {
-        String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
-        if (TextUtils.isEmpty(userId)) {
+        long userId = SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID);
+        if (userId == -1L) {
             ToastUtils.showShort("设置Key成功，如需获取用户信息请设置userId");
             signInCheck(HlxKeyLocal.read());
         } else {
@@ -176,7 +176,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
         }
     }
 
-    private void loginHLX(String key, String userId, boolean isSilent) {
+    private void loginHLX(String key, long userId, boolean isSilent) {
         if (!isSilent) {
             activity.openLoadingDialog("登录中");
         }
@@ -208,7 +208,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                         }
                                         displayUserInfo(null);
                                     } else {
-                                        setUserId(null);
+                                        setUserId(-1L);
                                         //setKeyToNick(key);
                                         SPUtils.getInstance().remove(SPConstants.KEY_HLX_USER_ID);
                                     }
@@ -252,15 +252,19 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     }
 
     private void setUserId() {
-        String userIdSp = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
-        if (!TextUtils.isEmpty(userIdSp)) {
+        String key = HlxKeyLocal.read();
+        if (TextUtils.isEmpty(key)) {
+            ToastUtils.showShort("请先登录");
+            return;
+        }
+        long userIdSp = SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID);
+        if (userIdSp != -1L) {
             new XPopup.Builder(getContext())
                     .asConfirm("温馨提示", "是否重设userId?", new OnConfirmListener() {
                         @Override
                         public void onConfirm() {
                             SPUtils.getInstance().remove(SPConstants.KEY_HLX_USER_ID);
                             displayUserInfo(null);
-                            String key = HlxKeyLocal.read();
                             setKeyToNick(key);
                         }
                     })
@@ -277,13 +281,9 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                     ToastUtils.showShort("输入非法");
                                 } else {
                                     baseInputXPopViewDismiss(userIdInputConfirmPopupView);
-                                    setUserId(userId);
-                                    String key = HlxKeyLocal.read();
-                                    if (TextUtils.isEmpty(key)) {
-                                        ToastUtils.showShort("userId设置成功，请设置key登录");
-                                    } else {
-                                        loginHLX(key, userId, false);
-                                    }
+                                    long userIdL = Long.parseLong(userId);
+                                    setUserId(userIdL);
+                                    loginHLX(key, userIdL, false);
                                 }
                             });
             baseInputXPopViewShow(userIdInputConfirmPopupView);
@@ -298,8 +298,8 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     }
 
     @SuppressLint("SetTextI18n")
-    private void setUserId(String userId) {
-        if (!TextUtils.isEmpty(userId)) {
+    private void setUserId(long userId) {
+        if (userId != -1L) {
             binding.tvId.setTag(userId);
             binding.tvId.setText("ID: " + userId);
         } else {
@@ -314,11 +314,11 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
         if (!TextUtils.isEmpty(key)) {
             setKeyToNick(key);
         }
-        String userId = SPUtils.getInstance().getString(SPConstants.KEY_HLX_USER_ID);
-        if (!TextUtils.isEmpty(userId)) {
+        long userId = SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID);
+        if (userId != -1L) {
             setUserId(userId);
         }
-        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(userId)) {
+        if (!TextUtils.isEmpty(key) && userId != -1L) {
             loginHLX(key, userId, true);
         } else if (!TextUtils.isEmpty(key)) {
             HLXApiManager.INSTANCE.checkKey(key, new HLXApiManager.OnCommonBooleanResultListener() {
@@ -368,7 +368,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
             binding.tvCommentCount.setText("-");
             binding.ivAvatar.setImageResource(R.drawable.ic_svg_default_avatar);
         } else {
-            setUserId(String.valueOf(userInfo.getUserId()));
+            setUserId(userInfo.getUserId());
             binding.tvNick.setText(userInfo.getNick());
             binding.tvPostCount.setText(String.valueOf(userInfo.getPostCount()));
             binding.tvCommentCount.setText(String.valueOf(userInfo.getCommentCount()));
