@@ -64,5 +64,7 @@ public class AppConfig {
      */
     public static final String FILE_PROVIDER_AUTHORITY = Utils.getApp().getPackageName() + ".utilcode.fileprovider";
 
+    public static final long HLX_ORIGINAL_ASSISTANT_APP_ID = 88590;
+
     public static boolean isNetAvailable = true;
 }
