@@ -452,9 +452,9 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
 
     private void setActivityData(List<FindBannerInfo> data) {
         if (data.size() == 0) {
-            binding.tvNoActivities.setVisibility(View.VISIBLE);
+            binding.ivNoActivities.setVisibility(View.VISIBLE);
         } else {
-            binding.tvNoActivities.setVisibility(View.GONE);
+            binding.ivNoActivities.setVisibility(View.GONE);
             binding.xbanner.setBannerData(data);
         }
     }
