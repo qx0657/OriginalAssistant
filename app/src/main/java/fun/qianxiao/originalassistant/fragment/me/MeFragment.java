@@ -204,19 +204,22 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                             ToastUtils.showShort("Key已失效, 请重新登录");
                                             SPUtils.getInstance().remove(SPConstants.KEY_HLX_KEY);
                                         } else {
-                                            ToastUtils.showShort(errMsg);
+                                            if (!isSilent) {
+                                                ToastUtils.showShort(errMsg);
+                                            }
                                         }
                                         displayUserInfo(null);
+                                        setUserId(SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID));
                                     } else {
+                                        if (!isSilent) {
+                                            ToastUtils.showShort(errMsg);
+                                        }
                                         setUserId(-1L);
                                         //setKeyToNick(key);
                                         SPUtils.getInstance().remove(SPConstants.KEY_HLX_USER_ID);
                                     }
                                 }
                             });
-                            if (!isSilent) {
-                                ToastUtils.showShort(errMsg);
-                            }
                         }
                     }
                 });
