@@ -9,6 +9,7 @@ import okhttp3.ResponseBody;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -87,6 +88,7 @@ public interface HLXApi {
      * @return {@link Observable<ResponseBody>}
      */
     @Multipart
+    @Headers({"WRITE_TIMEOUT:60000"})
     @POST("http://upload.huluxia.com/upload/v3/image")
     Observable<ResponseBody> uploadPicture(@QueryMap Map<String, String> getParams, @Part List<MultipartBody.Part> file);
 

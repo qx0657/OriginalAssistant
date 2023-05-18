@@ -30,6 +30,7 @@ public class ApiServiceManager {
                         .addHeaderLine("App: true")
                         .addHeaderLine("User-Agent: okhttp/4.9.3 APP_Original_Assistant")
                         .build())
+                .addInterceptor(new TimeOutTimeInterceptor())
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(AppConfig.APP_HOST)
