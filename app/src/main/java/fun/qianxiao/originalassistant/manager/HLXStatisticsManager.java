@@ -5,7 +5,6 @@ import android.os.ConditionVariable;
 import androidx.annotation.IntRange;
 import androidx.annotation.WorkerThread;
 
-import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 
@@ -82,18 +81,20 @@ public class HLXStatisticsManager {
                                     JSONObject post = posts.optJSONObject(i);
                                     FinalPostInfo finalPostInfo = new FinalPostInfo();
 
-                                    finalPostInfo.setPostId(post.optLong("postID"));
+                                    // finalPostInfo.setPostId(post.optLong("postID"));
                                     finalPostInfo.setTitle(post.optString("title"));
                                     // finalPostInfo.setDetail(post.optString("detail"));
                                     finalPostInfo.setScore(post.optInt("score"));
-                                    finalPostInfo.setHit(post.optInt("hit"));
-                                    finalPostInfo.setCommentCount(post.optInt("commentCount"));
+                                    // finalPostInfo.setHit(post.optInt("hit"));
+                                    // finalPostInfo.setCommentCount(post.optInt("commentCount"));
                                     finalPostInfo.setGood(post.optInt("isGood") == 1);
+                                    // finalPostInfo.setCreateTime(post.optLong("createTime"));
+
                                     JSONObject category = post.optJSONObject("category");
                                     if (category != null) {
                                         finalPostInfo.getCategoryInfo().setCategoryId(category.optInt("categoryID"));
                                     }
-                                    finalPostInfo.setImages(GsonUtils.fromJson(post.optString("images"), String[].class));
+                                    // finalPostInfo.setImages(GsonUtils.fromJson(post.optString("images"), String[].class));
 
                                     finalPostInfoList.add(finalPostInfo);
                                 }

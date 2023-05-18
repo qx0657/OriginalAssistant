@@ -131,7 +131,6 @@
             </RadioGroup>
         </LinearLayout>
 
-
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chat_pie_post_prefix_count"
             android:layout_width="match_parent"

@@ -157,7 +157,7 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
             return;
         }
         initViewBySp();
-        initChart(binding.chatPiePostPrefixCount);
+        initPieChart(binding.chatPiePostPrefixCount);
         initUserInfo();
     }
 
@@ -172,12 +172,11 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
         }
     }
 
-    private void initChart(PieChart chart) {
+    private void initPieChart(PieChart chart) {
         chart.setUsePercentValues(false);
         chart.getDescription().setEnabled(false);
         chart.setExtraOffsets(5, 10, 5, 5);
         chart.setDragDecelerationFrictionCoef(0.95f);
-        chart.setCenterText("帖子前缀\n帖子数统计");
         chart.setDrawHoleEnabled(true);
         chart.setHoleColor(Color.WHITE);
         chart.setTransparentCircleColor(Color.WHITE);
@@ -197,11 +196,13 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
-        l.setXEntrySpace(7f);
+        l.setXEntrySpace(12f);
         l.setYEntrySpace(0f);
         l.setYOffset(5f);
+        // for multi lines
         l.setWordWrapEnabled(true);
         // entry label styling
+        chart.setCenterTextSize(13);
         chart.setEntryLabelColor(Color.WHITE);
         chart.setEntryLabelTextSize(12f);
     }
