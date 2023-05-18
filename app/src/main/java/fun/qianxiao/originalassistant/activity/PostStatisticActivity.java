@@ -2,16 +2,22 @@ package fun.qianxiao.originalassistant.activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.net.Uri;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.RadioGroup;
 
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.UriUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -26,6 +32,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointF;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +48,8 @@ import fun.qianxiao.originalassistant.manager.HLXApiManager;
 import fun.qianxiao.originalassistant.manager.HLXStatisticsManager;
 import fun.qianxiao.originalassistant.other.TextChanngedWatcher;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
+import fun.qianxiao.originalassistant.utils.ShareUtils;
+import fun.qianxiao.originalassistant.utils.ViewCaptureUtils;
 import fun.qianxiao.originalassistant.view.loading.ILoadingView;
 import fun.qianxiao.originalassistant.view.loading.MyLoadingDialog;
 
@@ -343,6 +352,44 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
         binding.chatPiePostPrefixCount.setCenterText("总发帖：" + totalPost + "\n" +
                 "收录：" + include + "\n" +
                 "精贴：" + good);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_statistic, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_share) {
+            shareData();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareData() {
+        String file = PathUtils.getExternalAppFilesPath() + File.separator + "statistic.jpeg";
+        binding.tvStartStatistic.setVisibility(View.GONE);
+        ThreadUtils.executeBySingle(new ThreadUtils.SimpleTask<Boolean>() {
+            @Override
+            public Boolean doInBackground() throws Throwable {
+                return ViewCaptureUtils.view2PicFile(binding.svStatistic, file);
+            }
+
+            @Override
+            public void onSuccess(Boolean success) {
+                binding.tvStartStatistic.setVisibility(View.VISIBLE);
+                if (success) {
+                    Uri uri = UriUtils.file2Uri(new File(file));
+                    ShareUtils.shareImage(uri);
+                } else {
+                    ToastUtils.showShort("出错了");
+                }
+            }
+        });
     }
 
     @Override
