@@ -126,4 +126,10 @@ dependencies {
 
     // XBanner https://github.com/xiaohaibin/XBanner
     implementation 'com.github.xiaohaibin:XBanner:androidx_v1.2.6'
+
+    // BubbleSeekBar https://github.com/woxingxiao/BubbleSeekBar
+    // implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
+
+    // MPAndroidChart https://github.com/PhilJay/MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

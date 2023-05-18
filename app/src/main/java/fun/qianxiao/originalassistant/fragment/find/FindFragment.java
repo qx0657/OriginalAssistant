@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.List;
 
 import fun.qianxiao.originalassistant.MainActivity;
+import fun.qianxiao.originalassistant.activity.PostStatisticActivity;
 import fun.qianxiao.originalassistant.activity.hlxpicbed.HLXPictureBedActivity;
 import fun.qianxiao.originalassistant.activity.selectapp.SelectAppActivity;
 import fun.qianxiao.originalassistant.base.BaseFragment;
@@ -100,6 +101,7 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
             ActivityUtils.startActivity(HLXPictureBedActivity.class);
         });
         binding.llApkExportFindF.setOnClickListener(v -> appExport());
+        binding.llHlxPostStatistic.setOnClickListener(v -> postStatistic());
 
         binding.llCopyCode1FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_1));
         binding.llCopyCode2FindF.setOnClickListener(v -> copyCode(CODE_TYPE.CODE_2));
@@ -116,6 +118,20 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
                 XPopupUtils.moveUpToKeyboard(height + 30, customCodeInputConfirmPopupView);
             }
         });
+    }
+
+    private void postStatistic() {
+        String key = HlxKeyLocal.read();
+        if (TextUtils.isEmpty(key)) {
+            ToastUtils.showShort("请先登录");
+            return;
+        }
+        long userId = SPUtils.getInstance().getLong(SPConstants.KEY_HLX_USER_ID);
+        if (userId == -1L) {
+            ToastUtils.showShort("请设置userId");
+            return;
+        }
+        ActivityUtils.startActivity(PostStatisticActivity.class);
     }
 
     private enum CODE_TYPE {

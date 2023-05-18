@@ -108,4 +108,16 @@ public interface HLXApi {
      */
     @GET("http://floor.huluxia.com/activity/list/ANDROID/2.1")
     Observable<ResponseBody> activityList();
+
+    /**
+     * getPostList
+     *
+     * @param key    key, optional
+     * @param userId user id
+     * @return {@link Observable<ResponseBody>}
+     */
+    @GET("http://floor.huluxia.com/post/create/list/ANDROID/4.1.8")
+    Observable<ResponseBody> getPostList(@Query("_key") String key, @Query("user_id") long userId,
+                                         @Query("start") long start, @Query("count") int count);
+
 }

@@ -65,6 +65,10 @@ public enum HLXApiManager {
         hlxApi = ApiServiceManager.getInstance().create(HLXApi.class);
     }
 
+    public HLXApi getHlxApi() {
+        return hlxApi;
+    }
+
     public interface OnCommonBooleanResultListener {
         /**
          * OnCommonBooleanResultListener onResult

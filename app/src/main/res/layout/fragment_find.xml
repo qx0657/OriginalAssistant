@@ -106,15 +106,28 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_hlx_post_statistic"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:layout_marginStart="5dp"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/bg_test_select_item"
                 android:padding="5dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/logo_huluxia" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="葫芦侠\n发帖统计"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 

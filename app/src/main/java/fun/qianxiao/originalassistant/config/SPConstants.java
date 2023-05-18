@@ -29,4 +29,7 @@ public class SPConstants {
     public static final String KEY_CODE_NAME_2 = "code_name_2";
     public static final String KEY_CODE_NAME_3 = "code_name_3";
     public static final String KEY_CODE_NAME_4 = "code_name_4";
+
+    public static final String KEY_STATISTIC_PLATE = "statistic_plate";
+    public static final String KEY_STATISTIC_INCLUDE_SCORE_THRESHOLD = "statistic_include_score_threshold";
 }

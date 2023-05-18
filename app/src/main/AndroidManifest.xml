@@ -71,6 +71,7 @@
         <activity android:name=".activity.test.ReviseSuccessActivity" />
         <activity android:name=".activity.SupportActivity" />
         <activity android:name=".activity.hlxpicbed.HLXPictureBedActivity" />
+        <activity android:name=".activity.PostStatisticActivity" />
     </application>
 
 </manifest>
