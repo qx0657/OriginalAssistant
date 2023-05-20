@@ -118,8 +118,8 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                 .asConfirm("一键签到结果", "签到成功：" + successCatList.size() + "板块\n" +
                                                 "签到失败：" + errorCatList.size() + "板块\n" +
                                                 "已签到：" + hasSignCatList.size() + "板块\n" +
-                                                "经验：" + expAdd + "\n" +
-                                                "模式：+" + modes[position] + "\n" +
+                                                "经验：+" + expAdd + "\n" +
+                                                "模式：" + modes[position] + "\n" +
                                                 String.format("用时：%.1fs", spend / 1000.0f) +
                                                 ((finalMode == HLXSignInManager.SIGN_IN_MODE_SAFE)
                                                         ? String.format("\n（请求间隔%dms）", HLXSignInManager.SAFE_MODE_INTERVAL_TIME)
