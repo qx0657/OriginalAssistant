@@ -54,13 +54,12 @@ import fun.qianxiao.originalassistant.utils.MyStringUtils;
 public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     private InputConfirmPopupView keyInputConfirmPopupView;
     private InputConfirmPopupView userIdInputConfirmPopupView;
-    private boolean hasSignIn;
+    private boolean hasSignInOriginal;
 
     @Override
     protected void initListener() {
         binding.tvNick.setOnClickListener(v -> showLogin());
         binding.tvSignin.setOnClickListener(v -> signIn());
-        binding.tvSignin.setOnLongClickListener(v -> signInLongClick());
         binding.tvId.setOnClickListener(v -> setUserId());
         binding.tvId.setOnLongClickListener(v -> {
             copyId();
@@ -121,9 +120,9 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                 .asConfirm("一键签到结果", "签到成功：" + successCatList.size() + "板块\n" +
                                                 "签到失败：" + errorCatList.size() + "板块\n" +
                                                 "已签到：" + hasSignCatList.size() + "板块\n" +
-                                                "经验：+" + expAdd + "\n" +
+                                                "经验：" + expAdd + "\n" +
                                                 "模式：+" + modes[position] + "\n" +
-                                                String.format("用时：%.1fms", spend / 1000.0f) +
+                                                String.format("用时：%.1fs", spend / 1000.0f) +
                                                 ((finalMode == HLXSignInManager.SIGN_IN_MODE_SAFE)
                                                         ? String.format("\n（请求间隔%dms）", HLXSignInManager.SAFE_MODE_INTERVAL_TIME)
                                                         : String.format("\n（并发线程数：%d）", HLXSignInManager.FAST_SIGN_IN_THREAD_NUM)),
@@ -152,31 +151,6 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                 });
             }
         }).show();
-    }
-
-    private boolean signInLongClick() {
-        String key = HlxKeyLocal.read();
-        if (TextUtils.isEmpty(key)) {
-            ToastUtils.showShort("未登录");
-            return false;
-        }
-        if (SPUtils.getInstance().getBoolean(SPConstants.KEY_SWITCH_APP_PRO)) {
-            if (!SPUtils.getInstance().getBoolean(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP)) {
-                BasePopupView popupView = new XPopup.Builder(activity).asConfirm("温馨提示", "原创助手提供一键签到功能，一键签到存在封号风险，如您由于使用该功能造成任何损失，原创助手不承担任何责任，请合理使用该功能。", "", "不再提示", new OnConfirmListener() {
-                    @Override
-                    public void onConfirm() {
-                        SPUtils.getInstance().put(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP, true);
-                        signInAll(key);
-                    }
-                }, null, true).show();
-                TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
-                tvContent.setGravity(Gravity.START);
-                return true;
-            }
-            signInAll(key);
-            return true;
-        }
-        return false;
     }
 
     private void copyId() {
@@ -342,11 +316,27 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
             ToastUtils.showShort("未登录");
             return;
         }
-        if (hasSignIn) {
-            ToastUtils.showShort("今日已签到");
-            return;
+        if (SPUtils.getInstance().getBoolean(SPConstants.KEY_SWITCH_APP_PRO)) {
+            if (!SPUtils.getInstance().getBoolean(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP)) {
+                BasePopupView popupView = new XPopup.Builder(activity).asConfirm("温馨提示", "原创助手提供一键签到功能，一键签到存在封号风险，如您由于使用该功能造成任何损失，原创助手不承担任何责任，请合理使用该功能。", "", "不再提示", new OnConfirmListener() {
+                    @Override
+                    public void onConfirm() {
+                        SPUtils.getInstance().put(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP, true);
+                        signInAll(key);
+                    }
+                }, null, true).show();
+                TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
+                tvContent.setGravity(Gravity.START);
+            } else {
+                signInAll(key);
+            }
+        } else {
+            if (hasSignInOriginal) {
+                ToastUtils.showShort("今日已签到");
+                return;
+            }
+            signInInner(key);
         }
-        signInInner(key);
     }
 
     private void setUserId() {
@@ -439,7 +429,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     }
 
     private void setHasSignIn() {
-        hasSignIn = true;
+        hasSignInOriginal = true;
         binding.tvSignin.setText("已签到");
     }
 
