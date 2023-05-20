@@ -88,7 +88,7 @@ import fun.qianxiao.originalassistant.view.RecyclerSpace;
 public class OriginalFragment extends BaseFragment<FragmentOriginalBinding, MainActivity>
         implements AppPicturesAdapter.OnAppPicturesAdapterListener {
     private final int MIN_TITLE_LENGTH = 5;
-    private final int MAX_TITLE_LENGTH = 32;
+    private final int MAX_TITLE_LENGTH = 50; // 32 in hlx app
     private final int MAX_DETAIL_LENGTH = 10000;
 
     private final int APP_QUERY_NOT_AUTO = -3;
