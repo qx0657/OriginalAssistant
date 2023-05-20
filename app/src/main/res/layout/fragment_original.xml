@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="@dimen/original_f_edit_text_padding_top"
                     android:background="@android:color/transparent"
-                    android:digits=".0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits=".0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     android:maxLines="1"
                     android:paddingStart="2dp"
                     android:singleLine="true"
