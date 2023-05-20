@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import fun.qianxiao.originalassistant.api.hlx.HLXApi;
 import fun.qianxiao.originalassistant.config.AppConfig;
 
 /**
@@ -59,6 +60,25 @@ public class HLXUtils {
         }
         sb.append("secret=").append(SECRET);
         return EncryptUtils.encryptMD5ToString(sb.toString()).toUpperCase(Locale.ROOT);
+    }
+
+    /**
+     * sign
+     * for post, sign_in
+     *
+     * @param map data map
+     * @return sign result
+     */
+    public static String sign2(Map<String, String> map) {
+        String[] strArr = (String[]) map.keySet().toArray(new String[0]);
+        Arrays.sort(strArr);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : strArr) {
+            stringBuilder.append(s);
+            stringBuilder.append(map.get(s) == null ? "" : map.get(s));
+        }
+        stringBuilder.append(HLXApi.SIGN_SALT);
+        return EncryptUtils.encryptMD5ToString(stringBuilder.toString()).toUpperCase(Locale.ROOT);
     }
 
     public static String getDeviceCode() {

@@ -210,6 +210,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding>
         if (!loadingDialog.isShowing()) {
             loadingDialog.setMessage(msg);
             loadingDialog.show();
+        } else {
+            loadingDialog.updateMessage(msg);
         }
     }
 

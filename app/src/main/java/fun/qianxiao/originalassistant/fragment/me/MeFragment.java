@@ -20,9 +20,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.lxj.xpopup.XPopup;
+import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.impl.InputConfirmPopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
+import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.XPopupUtils;
+
+import java.util.Map;
 
 import fun.qianxiao.originalassistant.MainActivity;
 import fun.qianxiao.originalassistant.R;
@@ -37,6 +41,7 @@ import fun.qianxiao.originalassistant.config.AppConfig;
 import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.FragmentMeBinding;
 import fun.qianxiao.originalassistant.manager.HLXApiManager;
+import fun.qianxiao.originalassistant.manager.HLXSignInManager;
 import fun.qianxiao.originalassistant.utils.HlxKeyLocal;
 import fun.qianxiao.originalassistant.utils.MyStringUtils;
 
@@ -55,6 +60,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     protected void initListener() {
         binding.tvNick.setOnClickListener(v -> showLogin());
         binding.tvSignin.setOnClickListener(v -> signIn());
+        binding.tvSignin.setOnLongClickListener(v -> signInLongClick());
         binding.tvId.setOnClickListener(v -> setUserId());
         binding.tvId.setOnLongClickListener(v -> {
             copyId();
@@ -82,6 +88,95 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                 XPopupUtils.moveUpToKeyboard(height + 100, userIdInputConfirmPopupView);
             }
         });
+    }
+
+    private void signInAll(String key) {
+        final String[] modes = new String[]{"极速模式", "安全模式"};
+        new XPopup.Builder(activity).asCenterList("一键签到，请选择签到模式", modes, new OnSelectListener() {
+            @Override
+            public void onSelect(int position, String text) {
+                int mode = 0;
+                if (position == 0) {
+                    mode = HLXSignInManager.SIGN_IN_MODE_FAST;
+                } else if (position == 1) {
+                    mode = HLXSignInManager.SIGN_IN_MODE_SAFE;
+                }
+                final long[] timeStart = {0};
+                int finalMode = mode;
+                HLXSignInManager.INSTANCE.signInAllCategory(key, mode, new HLXSignInManager.OnSignInAllCategoryListener() {
+                    @Override
+                    public void onStart() {
+                        timeStart[0] = System.currentTimeMillis();
+                        activity.openLoadingDialog("获取板块列表");
+                    }
+
+                    @SuppressLint("DefaultLocale")
+                    @Override
+                    public void onResult(Map<Integer, String> successCatList,
+                                         Map<Integer, String> errorCatList,
+                                         Map<Integer, String> hasSignCatList, int expAdd) {
+                        long spend = System.currentTimeMillis() - timeStart[0];
+                        new XPopup.Builder(activity)
+                                .dismissOnTouchOutside(false)
+                                .asConfirm("一键签到结果", "签到成功：" + successCatList.size() + "板块\n" +
+                                                "签到失败：" + errorCatList.size() + "板块\n" +
+                                                "已签到：" + hasSignCatList.size() + "板块\n" +
+                                                "经验：+" + expAdd + "\n" +
+                                                "模式：+" + modes[position] + "\n" +
+                                                String.format("用时：%.1fms", spend / 1000.0f) +
+                                                ((finalMode == HLXSignInManager.SIGN_IN_MODE_SAFE)
+                                                        ? String.format("\n（请求间隔%dms）", HLXSignInManager.SAFE_MODE_INTERVAL_TIME)
+                                                        : String.format("\n（并发线程数：%d）", HLXSignInManager.FAST_SIGN_IN_THREAD_NUM)),
+                                        "", "确认", new OnConfirmListener() {
+                                            @Override
+                                            public void onConfirm() {
+
+                                            }
+                                        }, null, true).show();
+                    }
+
+                    @Override
+                    public void onProgress(Map.Entry<Integer, String> curCategory, int pos, int total) {
+                        activity.openLoadingDialog(curCategory.getValue() + "(" + pos + "/" + total + ")");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        activity.closeLoadingDialog();
+                    }
+
+                    @Override
+                    public void onError(String errMsg) {
+                        ToastUtils.showShort(errMsg);
+                    }
+                });
+            }
+        }).show();
+    }
+
+    private boolean signInLongClick() {
+        String key = HlxKeyLocal.read();
+        if (TextUtils.isEmpty(key)) {
+            ToastUtils.showShort("未登录");
+            return false;
+        }
+        if (SPUtils.getInstance().getBoolean(SPConstants.KEY_SWITCH_APP_PRO)) {
+            if (!SPUtils.getInstance().getBoolean(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP)) {
+                BasePopupView popupView = new XPopup.Builder(activity).asConfirm("温馨提示", "原创助手提供一键签到功能，一键签到存在封号风险，如您由于使用该功能造成任何损失，原创助手不承担任何责任，请合理使用该功能。", "", "不再提示", new OnConfirmListener() {
+                    @Override
+                    public void onConfirm() {
+                        SPUtils.getInstance().put(SPConstants.KEY_HLX_SIGN_IN_ALL_TIP, true);
+                        signInAll(key);
+                    }
+                }, null, true).show();
+                TextView tvContent = popupView.getPopupContentView().findViewById(com.lxj.xpopup.R.id.tv_content);
+                tvContent.setGravity(Gravity.START);
+                return true;
+            }
+            signInAll(key);
+            return true;
+        }
+        return false;
     }
 
     private void copyId() {
@@ -227,16 +322,16 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
 
     private void signInInner(String key) {
         activity.openLoadingDialog("签到中");
-        HLXApiManager.INSTANCE.signIn(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnCommonBooleanResultListener() {
+        HLXSignInManager.INSTANCE.signIn(key, HLXApi.CAT_ID_ORIGINAL, new HLXSignInManager.OnSignResultListener() {
             @Override
-            public void onResult(boolean success, String errMsg) {
-                activity.closeLoadingDialog();
-                if (success) {
-                    ToastUtils.showShort("签到成功");
-                    setHasSignIn();
-                } else {
-                    ToastUtils.showShort(errMsg);
-                }
+            public void onSuccess(int expAdd) {
+                ToastUtils.showShort("签到成功");
+                setHasSignIn();
+            }
+
+            @Override
+            public void onError(String errMsg) {
+                ToastUtils.showShort(errMsg);
             }
         });
     }
@@ -349,14 +444,17 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     }
 
     private void signInCheck(String key) {
-        HLXApiManager.INSTANCE.signInCheck(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnCommonBooleanResultListener() {
+        HLXApiManager.INSTANCE.signInCheck(key, HLXApi.CAT_ID_ORIGINAL, new HLXApiManager.OnSignInResultListener() {
             @Override
-            public void onResult(boolean valid, String errMsg) {
-                if (valid) {
-                    // has not sign in, auto sign in in future
-                } else if ("今日已签到".equals(errMsg)) {
+            public void onResult(boolean hasSign) {
+                if (hasSign) {
                     setHasSignIn();
                 }
+            }
+
+            @Override
+            public void onError(String errMsg) {
+
             }
         });
     }

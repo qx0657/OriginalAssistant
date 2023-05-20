@@ -9,6 +9,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
+import com.blankj.utilcode.util.VibrateUtils;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -16,6 +19,7 @@ import fun.qianxiao.originalassistant.R;
 import fun.qianxiao.originalassistant.activity.opensourcelicense.OpenSourceLicenseActivity;
 import fun.qianxiao.originalassistant.base.BaseActivity;
 import fun.qianxiao.originalassistant.config.AppConfig;
+import fun.qianxiao.originalassistant.config.SPConstants;
 import fun.qianxiao.originalassistant.databinding.ActivityAboutBinding;
 import fun.qianxiao.originalassistant.manager.CheckUpdateManager;
 import fun.qianxiao.originalassistant.utils.SysBrowserUtils;
@@ -28,6 +32,8 @@ import fun.qianxiao.originalassistant.utils.SysMailUtils;
  * @Date 2023/3/10
  */
 public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
+    private final int OPEN_APP_PRO_CLICK_TIMES = 10;
+    private int versionClickTimes;
 
     @Override
     protected void initListener() {
@@ -41,6 +47,14 @@ public class AboutActivity extends BaseActivity<ActivityAboutBinding> {
                         SysMailUtils.send(context, "1540223760@qq.com", "【From 原创助手App】主题：");
                     }
                 }).show());
+        binding.content.tvVersion.setOnClickListener(v -> {
+            versionClickTimes++;
+            if (versionClickTimes >= OPEN_APP_PRO_CLICK_TIMES) {
+                SPUtils.getInstance().put(SPConstants.KEY_SWITCH_APP_PRO, true);
+                VibrateUtils.vibrate(50);
+                ToastUtils.showShort("已开启隐藏功能");
+            }
+        });
     }
 
     @Override

@@ -27,6 +27,7 @@ public interface HLXApi {
     String MARKET_ID_HLX_3L = "floor_web";
     String MARKET_ID_HLX = "tool_web";
     int CAT_ID_ORIGINAL = 45;
+    int CAT_ID_ACTIVITY = 94;
     int TAG_ID_ORIGINAL = 4501;
 
     /**
@@ -122,4 +123,12 @@ public interface HLXApi {
     Observable<ResponseBody> getPostList(@Query("_key") String key, @Query("user_id") long userId,
                                          @Query("start") long start, @Query("count") int count);
 
+    /**
+     * getCatList
+     *
+     * @param hidden default 1
+     * @return {@link Observable<ResponseBody>}
+     */
+    @GET("http://floor.huluxia.com/category/list/ANDROID/2.0")
+    Observable<ResponseBody> getCatList(@Query("is_hidden") int hidden);
 }

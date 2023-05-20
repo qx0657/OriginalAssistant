@@ -4,10 +4,8 @@ import android.os.ConditionVariable;
 
 import androidx.annotation.MainThread;
 
-import com.blankj.utilcode.util.EncryptUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
-import com.blankj.utilcode.util.TimeUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,11 +14,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -201,16 +197,10 @@ public enum HLXApiManager {
                 });
     }
 
-    private String sign(Map<String, String> map) {
-        String[] strArr = (String[]) map.keySet().toArray(new String[0]);
-        Arrays.sort(strArr);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : strArr) {
-            stringBuilder.append(s);
-            stringBuilder.append(map.get(s) == null ? "" : map.get(s));
-        }
-        stringBuilder.append(HLXApi.SIGN_SALT);
-        return EncryptUtils.encryptMD5ToString(stringBuilder.toString()).toUpperCase(Locale.ROOT);
+    public interface OnSignInResultListener {
+        void onResult(boolean hasSign);
+
+        void onError(String errMsg);
     }
 
     /**
@@ -220,7 +210,7 @@ public enum HLXApiManager {
      * @param catId  catId
      * @param result result true if has not sign in
      */
-    public void signInCheck(String key, int catId, OnCommonBooleanResultListener result) {
+    public void signInCheck(String key, int catId, OnSignInResultListener result) {
         hlxApi.signInCheck(key, catId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -237,72 +227,22 @@ public enum HLXApiManager {
                             JSONObject jsonObject = new JSONObject(data);
                             if (jsonObject.optInt("status") == 1) {
                                 if (jsonObject.optInt("signin") == 1) {
-                                    result.onResult(false, "今日已签到");
+                                    result.onResult(true);
                                 } else {
-                                    result.onResult(true, "今日未签到");
+                                    result.onResult(false);
                                 }
                             } else {
-                                result.onResult(false, jsonObject.optString("msg"));
+                                result.onError(jsonObject.optString("msg"));
                             }
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
-                            result.onResult(false, e.getMessage());
+                            result.onError(e.getMessage());
                         }
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        result.onResult(false, e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
-    /**
-     * Sign in
-     *
-     * @param key    key
-     * @param catId  cat_id
-     * @param result Callback
-     */
-    public void signIn(String key, int catId, OnCommonBooleanResultListener result) {
-        long tsp = TimeUtils.getNowMills();
-        Map<String, String> map = new HashMap<>();
-        map.put("cat_id", String.valueOf(catId));
-        map.put("time", String.valueOf(tsp));
-        String sign = sign(map);
-        hlxApi.signIn(key, catId, tsp, sign)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull ResponseBody responseBody) {
-                        try {
-                            String data = responseBody.string();
-                            JSONObject jsonObject = new JSONObject(data);
-                            if (jsonObject.optInt("status", 0) == 1) {
-                                result.onResult(true, null);
-                            } else {
-                                result.onResult(false, jsonObject.optString("msg"));
-                            }
-                        } catch (JSONException | IOException e) {
-                            e.printStackTrace();
-                            result.onResult(false, e.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        result.onResult(false, e.getMessage());
+                        result.onError(e.getMessage());
                     }
 
                     @Override
@@ -483,7 +423,7 @@ public enum HLXApiManager {
         postMap.put("device_code", HLXUtils.getDeviceCode());
         postMap.put("_key", key);
         postMap.put("voice", "");
-        postMap.put("sign", sign(postMap));
+        postMap.put("sign", HLXUtils.sign2(postMap));
         postMap.remove("_key");
         postMap.put("cat_id", String.valueOf(HLXApi.CAT_ID_ORIGINAL));
         postMap.put("tag_id", String.valueOf(HLXApi.TAG_ID_ORIGINAL));
@@ -609,6 +549,82 @@ public enum HLXApiManager {
                     @Override
                     public void onError(@NonNull Throwable e) {
                         listListener.onGetActivityList(OnGetActivityListListener.FAILED, e.getMessage(), null);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public interface OnGetCatListListener {
+        /**
+         * onResult
+         *
+         * @param catList category map, <id, name>
+         */
+        void onResult(Map<Integer, String> catList);
+
+        /**
+         * onError
+         *
+         * @param errMsg error message
+         */
+        void onError(String errMsg);
+    }
+
+    /**
+     * Get category list
+     *
+     * @param listListener onGetCatListListener
+     */
+    public void getCatList(OnGetCatListListener listListener) {
+        boolean hidden = true;
+        hlxApi.getCatList(hidden ? 1 : 0)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull ResponseBody responseBody) {
+                        try {
+                            String data = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(data);
+                            if (jsonObject.optInt("status", 0) == 1) {
+                                JSONArray categories = jsonObject.optJSONArray("categories");
+                                if (categories != null) {
+                                    Map<Integer, String> result = new LinkedHashMap<>();
+                                    for (int i = 0; i < categories.length(); i++) {
+                                        JSONObject category = categories.optJSONObject(i);
+                                        if (category != null) {
+                                            int categoryId = category.optInt("categoryID");
+                                            String categoryName = category.optString("title");
+                                            if (categoryId != 0 && categoryId != HLXApi.CAT_ID_ACTIVITY) {
+                                                result.put(categoryId, categoryName);
+                                            }
+                                        }
+                                    }
+                                    listListener.onResult(result);
+                                } else {
+                                    listListener.onError("categories array is null");
+                                }
+                            } else {
+                                listListener.onError(jsonObject.optString("msg"));
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                            listListener.onError(e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        listListener.onError(e.getMessage());
                     }
 
                     @Override
