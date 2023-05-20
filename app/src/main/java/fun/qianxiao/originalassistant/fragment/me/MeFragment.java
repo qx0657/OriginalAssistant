@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -61,10 +62,7 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
         binding.tvNick.setOnClickListener(v -> showLogin());
         binding.tvSignin.setOnClickListener(v -> signIn());
         binding.tvId.setOnClickListener(v -> setUserId());
-        binding.tvId.setOnLongClickListener(v -> {
-            copyId();
-            return true;
-        });
+        binding.tvId.setOnLongClickListener(v -> copyId());
         binding.ivAvatar.setOnClickListener(v -> binding.tvNick.performClick());
         binding.llAbout.setOnClickListener(v -> {
             ActivityUtils.startActivity(new Intent(activity, AboutActivity.class));
@@ -153,11 +151,15 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
         }).show();
     }
 
-    private void copyId() {
+    private boolean copyId() {
         Object tag = binding.tvId.getTag();
         if (tag != null) {
-            ClipboardUtils.copyText((CharSequence) tag);
+            long userId = (long) tag;
+            ClipboardUtils.copyText(String.valueOf(userId));
             ToastUtils.showShort("ID已复制至剪贴板");
+            return true;
+        } else {
+            return false;
         }
     }
 
