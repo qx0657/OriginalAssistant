@@ -116,9 +116,9 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
 
     private void setPrefixPieChartDataByRbId(PostStatisticsResult postStatisticsResult, int checkedId) {
         if (checkedId == R.id.rb_all_plate_statistic) {
-            setPrefixPieChartData(postStatisticsResult.getPrefixCountMap());
+            setPrefixPieChartData(postStatisticsResult.getPrefixCountMap(), postStatisticsResult.getPostCount());
         } else if (checkedId == R.id.rb_original_plate_statistic) {
-            setPrefixPieChartData(postStatisticsResult.getPrefixCountOriginalMap());
+            setPrefixPieChartData(postStatisticsResult.getPrefixCountOriginalMap(), postStatisticsResult.getOriginalCount());
         }
     }
 
@@ -296,7 +296,7 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
         binding.chatPiePostPrefixCount.invalidate();
     }
 
-    private void setPrefixPieChartData(Map<String, Integer> preChatData) {
+    private void setPrefixPieChartData(Map<String, Integer> preChatData, int postCount) {
         if (preChatData == null) {
             return;
         }
@@ -341,6 +341,15 @@ public class PostStatisticActivity extends BaseActivity<ActivityPostStatisticBin
             @Override
             public String getFormattedValue(float value) {
                 return String.valueOf((int) value);
+            }
+
+            @Override
+            public String getPieLabel(float value, PieEntry pieEntry) {
+                if (value / postCount < 0.05) {
+                    pieEntry.setLabel("");
+                    return "";
+                }
+                return super.getPieLabel(value, pieEntry);
             }
         });
         binding.chatPiePostPrefixCount.setData(data);
