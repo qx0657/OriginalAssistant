@@ -208,7 +208,7 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
     private String getCodeName(CODE_TYPE code_type) {
         switch (code_type) {
             case CODE_1:
-                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_2, CodeConstants.CODE_1_NAME_DEFAULT);
+                return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_1, CodeConstants.CODE_1_NAME_DEFAULT);
             case CODE_2:
                 return SPUtils.getInstance().getString(SPConstants.KEY_CODE_NAME_2, CodeConstants.CODE_2_NAME_DEFAULT);
             case CODE_3:
@@ -221,6 +221,7 @@ public class FindFragment extends BaseFragment<FragmentFindBinding, MainActivity
     }
 
     private void refreshCodeName() {
+        binding.tvCodeName1.setText(getCodeName(CODE_TYPE.CODE_1));
         binding.tvCodeName2.setText(getCodeName(CODE_TYPE.CODE_2));
         binding.tvCodeName3.setText(getCodeName(CODE_TYPE.CODE_3));
         binding.tvCodeName4.setText(getCodeName(CODE_TYPE.CODE_4));
