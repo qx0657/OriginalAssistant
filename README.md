@@ -126,6 +126,75 @@ AppQueryMannager.getInstance().query("应用名", "应用包名", new IQuery.OnA
 
 
 
+### 翻译模块
+
+##### 模块类图
+
+```mermaid
+classDiagram
+	class ITranslate {
+		<<Interface>>
+		+translate(…)
+	}
+	class AbstractTranslate~T~ {
+		<<abstract>>
+		#translate(…)
+		#request(…) Observable
+		#response(…)
+	}
+	
+	class BaiduTranslate
+	class YoudaoTranslate
+	
+	ITranslate <|.. AbstractTranslate
+	AbstractTranslate <|-- BaiduTranslate
+	AbstractTranslate <|-- YoudaoTranslate
+	
+	
+	
+	class TranslateApi {
+		<<Interface>>
+	}
+	class BaiduTranslateApi {
+		<<Interface>>
+		+String API_NAME$
+	}
+	class YoudaoTranslateApi {
+		<<Interface>>
+		+String API_NAME$
+	}
+	TranslateApi <|-- BaiduTranslateApi
+	TranslateApi <|-- YoudaoTranslateApi
+	
+	
+	TranslateApi -->"T" AbstractTranslate
+	
+	
+	class TranslateManager {
+		-instance
+		+createTranslater() IQuery
+		+translate(…)
+	}
+	
+	BaiduTranslate o-- TranslateManager
+	YoudaoTranslate o-- TranslateManager
+	
+	
+	class TranslateInterfaceType {
+		<<enumeration>>
+		YOUDAO_TRANSLATE, BAIDU_TRANSLATE;
+	}
+	TranslateInterfaceType <--> TranslateManager
+	AbstractTranslate --> TranslateInterfaceType
+	
+```
+
+##### 架构说明
+
+类似APP信息查询模块，此处不再赘述。
+
+
+
 ### 深度链接跳转接入
 
 葫芦侠App（含三楼）目前已接入了深度链接（lkme.cc），支持跳转帖子详情页、活动详情页、应用详情页等。当在App分享某页面时葫芦侠App会生成网页链接，浏览器访问该网页，点击葫芦侠打开按钮，会直接跳转葫芦侠APP相关页面。通过抓包并分析了其原理，并在原创助手中模拟请求，实现跳转葫芦侠相关页面的功能（如跳转到指定帖子详情页面等）。
@@ -174,12 +243,9 @@ LKME跳转Activity信息封装：
 ```json
 {
     "JumpActivity": "XXActivity",
-    "TopicID": "45344479",
-    "isVideo": "0"
+    "ExtendedParameterName": "ExtendedParameterValue"
 }
 ```
-
-
 
 ##### 支持跳转的Activity
 
@@ -192,8 +258,8 @@ LKME跳转Activity信息封装：
   ```json
   {
       "JumpActivity": "TopicDetailActivity",
-      "ExtendedParameterName": "ExtendedParameterValue",
-      ……
+      "TopicID": "45344479",
+      "isVideo": "0"
   }
   ```
 
