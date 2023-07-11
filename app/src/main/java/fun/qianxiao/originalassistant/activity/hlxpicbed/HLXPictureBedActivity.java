@@ -83,7 +83,7 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
         if (!SPUtils.getInstance().getBoolean(SPConstants.KEY_HLX_PIC_BED_TIP)) {
             BasePopupView basePopupView = new XPopup.Builder(context)
                     .dismissOnTouchOutside(false)
-                    .asConfirm("温馨提示", "该功能依赖您葫芦侠身份认证标识key使用葫芦侠图片上传接口实现，请合理使用该功能，请勿上传非法文件。", "", "不再提示", new OnConfirmListener() {
+                    .asConfirm("温馨提示", "该功能在您登录后依赖您葫芦侠身份认证标识key使用葫芦侠图片上传接口实现，请合理使用该功能，请勿上传非法文件。", "", "不再提示", new OnConfirmListener() {
                         @Override
                         public void onConfirm() {
                             SPUtils.getInstance().put(SPConstants.KEY_HLX_PIC_BED_TIP, true);
@@ -140,8 +140,7 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
     private void uploadPictures(File file) {
         String key = HlxKeyLocal.read();
         if (TextUtils.isEmpty(key)) {
-            ToastUtils.showShort("未登录");
-            return;
+            key = "";
         }
         openLoadingDialog("上传中");
         HLXApiManager.INSTANCE.uploadPictures(key, Collections.singletonList(file), new HLXApiManager.OnUploadPicturesListener() {
