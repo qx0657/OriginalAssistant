@@ -180,8 +180,8 @@ public class HLXPictureBedActivity extends BaseActivity<ActivityHlxPictureBedBin
         HLXPicBedUploadHistory hlxPicBedUploadHistory = new HLXPicBedUploadHistory();
         hlxPicBedUploadHistory.setFilePath(file.toString());
         hlxPicBedUploadHistory.setUploadPictureResult(pictureResult);
-        adapter.getDataList().add(hlxPicBedUploadHistory);
-        adapter.notifyItemInserted(adapter.getDataList().size() - 1);
+        adapter.getDataList().add(0, hlxPicBedUploadHistory);
+        adapter.notifyItemInserted(0);
         adapter.notifyDataSetChanged();
     }
 
