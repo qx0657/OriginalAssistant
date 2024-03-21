@@ -424,7 +424,6 @@ public enum HLXApiManager {
         postMap.put("_key", key);
         postMap.put("voice", "");
         postMap.put("sign", HLXUtils.sign2(postMap));
-        postMap.remove("_key");
         postMap.put("cat_id", String.valueOf(HLXApi.CAT_ID_ORIGINAL));
         postMap.put("tag_id", String.valueOf(HLXApi.TAG_ID_ORIGINAL));
         postMap.put("type", "0");
