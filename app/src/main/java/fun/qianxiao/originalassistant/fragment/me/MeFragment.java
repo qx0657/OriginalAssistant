@@ -239,13 +239,11 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
                                     }
                                     if (RegexUtils.isMatch("^[A-F0-9]{112}$", text)) {
                                         login(text);
-                                    } else if (RegexUtils.isMatch("(?:https?)://(?:.*)", text)) {
-                                        if (RegexUtils.isMatch("(?:https?)://(?:.*)_key=([A-F0-9]{112})(?:.*)", text)) {
-                                            List<String> matches = RegexUtils.getMatches("(?:https?)://(?:.*)_key=([A-F0-9]{112})(?:.*)", text);
-                                            if (matches.size() == 1) {
-                                                login(text);
-                                                return;
-                                            }
+                                    } else if (RegexUtils.isMatch("(https?)://(?:.*)", text)) {
+                                        List<String> matches = RegexUtils.getMatches("(?<=[?&]_key=)([A-F0-9]{112})", text);
+                                        if (matches.size() == 1) {
+                                            login(matches.get(0));
+                                            return;
                                         }
                                         ToastUtils.showShort("链接中未匹配到合法Key");
                                     } else if (text.length() != KEY_VALID_LENGTH) {
