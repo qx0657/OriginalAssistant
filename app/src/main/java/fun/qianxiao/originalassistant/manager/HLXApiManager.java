@@ -316,7 +316,7 @@ public enum HLXApiManager {
 
     private Observable<ResponseBody> getUploadObservable(String key, File file) {
         Map<String, String> map = new HashMap<>();
-        map.put("key", key);
+        map.put("_key", key);
         map.put("timestamp", String.valueOf(System.currentTimeMillis()));
         map.put("sign", HLXUtils.sign(map));
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
