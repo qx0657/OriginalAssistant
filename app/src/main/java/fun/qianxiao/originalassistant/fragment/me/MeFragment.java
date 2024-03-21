@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.ClipboardUtils;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ThreadUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -23,9 +24,11 @@ import com.lxj.xpopup.XPopup;
 import com.lxj.xpopup.core.BasePopupView;
 import com.lxj.xpopup.impl.InputConfirmPopupView;
 import com.lxj.xpopup.interfaces.OnConfirmListener;
+import com.lxj.xpopup.interfaces.OnInputConfirmListener;
 import com.lxj.xpopup.interfaces.OnSelectListener;
 import com.lxj.xpopup.util.XPopupUtils;
 
+import java.util.List;
 import java.util.Map;
 
 import fun.qianxiao.originalassistant.MainActivity;
@@ -212,24 +215,44 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
             keyInputConfirmPopupView = new XPopup.Builder(activity)
                     .dismissOnTouchOutside(false)
                     .asInputConfirm(
-                            "葫芦侠Key登录", style, "", "请输入Key",
-                            text -> {
-                                final int KEY_VALID_LENGTH = 112;
-                                if (TextUtils.isEmpty(text)) {
-                                    ToastUtils.showShort("输入为空");
-                                } else if (text.length() != KEY_VALID_LENGTH) {
-                                    ToastUtils.showShort("Key长度应为112位");
-                                } else {
-                                    HLXApiManager.INSTANCE.checkKey(text, (valid, errMsg) -> {
+                            "葫芦侠Key登录", style, "", "请输入Key（或带有key的链接）",
+                            new OnInputConfirmListener() {
+                                private void login(String key) {
+                                    HLXApiManager.INSTANCE.checkKey(key, (valid, errMsg) -> {
                                         if (valid) {
-                                            HlxKeyLocal.write(text);
-                                            setKeyToNick(text);
-                                            baseInputXPopViewDismiss(keyInputConfirmPopupView);
-                                            loginingByKey();
+                                            HlxKeyLocal.write(key);
+                                            MeFragment.this.setKeyToNick(key);
+                                            MeFragment.this.baseInputXPopViewDismiss(keyInputConfirmPopupView);
+                                            MeFragment.this.loginingByKey();
                                         } else {
                                             ToastUtils.showShort(errMsg);
                                         }
                                     });
+                                }
+
+                                @Override
+                                public void onConfirm(String text) {
+                                    final int KEY_VALID_LENGTH = 112;
+                                    if (TextUtils.isEmpty(text)) {
+                                        ToastUtils.showShort("输入为空");
+                                        return;
+                                    }
+                                    if (RegexUtils.isMatch("^[A-F0-9]{112}$", text)) {
+                                        login(text);
+                                    } else if (RegexUtils.isMatch("(?:https?)://(?:.*)", text)) {
+                                        if (RegexUtils.isMatch("(?:https?)://(?:.*)_key=([A-F0-9]{112})(?:.*)", text)) {
+                                            List<String> matches = RegexUtils.getMatches("(?:https?)://(?:.*)_key=([A-F0-9]{112})(?:.*)", text);
+                                            if (matches.size() == 1) {
+                                                login(text);
+                                                return;
+                                            }
+                                        }
+                                        ToastUtils.showShort("链接中未匹配到合法Key");
+                                    } else if (text.length() != KEY_VALID_LENGTH) {
+                                        ToastUtils.showShort("Key长度应为112位");
+                                    } else {
+                                        ToastUtils.showShort("Key格式非法");
+                                    }
                                 }
                             });
             baseInputXPopViewShow(keyInputConfirmPopupView);
