@@ -59,10 +59,12 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
     @Override
     protected void initListener() {
         binding.tvNick.setOnClickListener(v -> showLogin());
+        binding.tvNick.setOnLongClickListener(v -> copyKey());
         binding.tvSignin.setOnClickListener(v -> signIn());
         binding.tvId.setOnClickListener(v -> setUserId());
         binding.tvId.setOnLongClickListener(v -> copyId());
         binding.ivAvatar.setOnClickListener(v -> binding.tvNick.performClick());
+        binding.ivAvatar.setOnLongClickListener(v -> copyKey());
         binding.llAbout.setOnClickListener(v -> {
             ActivityUtils.startActivity(new Intent(activity, AboutActivity.class));
         });
@@ -179,6 +181,16 @@ public class MeFragment extends BaseFragment<FragmentMeBinding, MainActivity> {
             KeyboardUtils.hideSoftInput(popupView.getEditText());
             ThreadUtils.runOnUiThreadDelayed(popupView::dismiss, 50);
         }
+    }
+
+    private boolean copyKey() {
+        String key = HlxKeyLocal.read();
+        if (TextUtils.isEmpty(HlxKeyLocal.read())) {
+            return false;
+        }
+        ClipboardUtils.copyText(key);
+        ToastUtils.showShort("key已复制至剪贴板");
+        return true;
     }
 
     private void showLogin() {
