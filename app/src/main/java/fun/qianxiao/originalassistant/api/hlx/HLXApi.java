@@ -26,6 +26,7 @@ public interface HLXApi {
     String SIGN_SALT = "fa1c28a5b62e79c3e63d9030b6142e4b";
     String MARKET_ID_HLX_3L = "floor_web";
     String MARKET_ID_HLX = "tool_web";
+    String UPLOAD_USE_TYPE = "1";
     int CAT_ID_ORIGINAL = 45;
     int CAT_ID_ACTIVITY = 94;
     int TAG_ID_ORIGINAL = 4501;

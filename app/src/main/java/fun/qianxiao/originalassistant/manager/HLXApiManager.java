@@ -318,6 +318,7 @@ public enum HLXApiManager {
         Map<String, String> map = new HashMap<>();
         map.put("_key", key);
         map.put("timestamp", String.valueOf(System.currentTimeMillis()));
+        map.put("use_type", HLXApi.UPLOAD_USE_TYPE);
         map.put("sign", HLXUtils.sign(map));
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody multipartBody = new MultipartBody.Builder().addFormDataPart("_key", "key_10")
